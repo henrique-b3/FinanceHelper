@@ -1,4 +1,4 @@
-package com.ecommerce.project.exceptions;
+package com.app.FinanceHelper.exceptions;
 
 import lombok.NoArgsConstructor;
 

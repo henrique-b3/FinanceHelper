@@ -7,8 +7,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.ecommerce.project.exceptions.APIexception;
-import com.ecommerce.project.exceptions.ResourceNotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;

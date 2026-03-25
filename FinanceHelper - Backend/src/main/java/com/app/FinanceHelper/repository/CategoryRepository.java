@@ -6,11 +6,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
     public Boolean existsByName(String name);
 
-    List<CategoryResponse> findAllByUserProfile_Id(UUID userID);
+    List<Category> findAllByUserProfile_Id(UUID userID);
+    Optional<Category> findByIdAndUserProfile_Id(UUID categoryID, UUID userID);
+    Optional<Category> findByNameAndUserProfile_Id(String name, UUID userID);
+
 }

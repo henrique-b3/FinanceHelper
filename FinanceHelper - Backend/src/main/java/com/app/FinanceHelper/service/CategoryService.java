@@ -14,4 +14,8 @@ public interface CategoryService {
     CategoryResponse createCategory(UUID userID, CategoryDTO categoryDTO);
 
     List<CategoryResponse> getAllCategories(UUID userID);
+
+    CategoryResponse getCategoryById( UUID userID,UUID categoryID);
+
+    CategoryResponse getCategoryByName( UUID userID,String categoryName);
 }

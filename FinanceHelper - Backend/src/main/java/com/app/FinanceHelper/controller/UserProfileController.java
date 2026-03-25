@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/api/public/social")
 public class UserProfileController {
 
     @Autowired
     UserProfileService userProfileService;
 
-    @PostMapping("/api/public/social/users")
+    @PostMapping("/user")
     public ResponseEntity<UserProfileResponse> createUser(
             @RequestBody UserProfileDTO userProfileDTO
             ){
@@ -24,23 +25,23 @@ public class UserProfileController {
         return new ResponseEntity<UserProfileResponse>(createdUser, HttpStatus.CREATED);
     }
 
-    @GetMapping("/api/public/social/getUser")
+    @GetMapping("/users/{userID}")
     public ResponseEntity<UserProfileResponse> getUser(
-            @RequestHeader UUID userID
+            @PathVariable UUID userID
     ){
         UserProfileResponse foundUser = userProfileService.getUserById(userID);
         return new ResponseEntity<UserProfileResponse>(foundUser, HttpStatus.OK);
     }
 
-    @GetMapping("/api/public/social/getUser")
+    @GetMapping("/userByName/{name}")
     public ResponseEntity<UserProfileResponse> getUserByName(
-            @RequestHeader String name
+            @PathVariable String name
     ){
         UserProfileResponse foundUser = userProfileService.getUserByName(name);
         return new ResponseEntity<UserProfileResponse>(foundUser, HttpStatus.OK);
     }
 
-    @GetMapping("/api/public/social/getAllUsers")
+    @GetMapping("/allUsers")
     public ResponseEntity<UserProfileResponse> getAllUsers(){
         return null;
     }

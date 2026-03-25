@@ -20,24 +20,37 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(
-            @RequestHeader UUID userID,
+            @RequestParam UUID userID,
             @RequestBody CategoryDTO categoryDTO
             ){
         CategoryResponse createdCategory = categoryService.createCategory(userID,categoryDTO);
-        return new ResponseEntity<CategoryResponse>(createdCategory, HttpStatus.CREATED);
+        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
 
     @GetMapping("/getAllCategories")
     public ResponseEntity<List<CategoryResponse>> getAllCategories(
-            @RequestHeader UUID userID
+            @PathVariable UUID userID
     ){
         List<CategoryResponse> allCategories = categoryService.getAllCategories(userID);
-        return new ResponseEntity<List<CategoryResponse>>(allCategories, HttpStatus.CREATED);
+        return new ResponseEntity<>(allCategories, HttpStatus.OK);
     }
 
-    @GetMapping("/{categoryID}")
-    public ResponseEntity<CategoryResponse> getCategory(){
-        return null;
+    @GetMapping("/categoryById/{categoryID}")
+    public ResponseEntity<CategoryResponse> getCategoryById(
+            @PathVariable UUID userID,
+            @PathVariable UUID categoryID
+    ){
+        CategoryResponse categoryResponse = categoryService.getCategoryById(userID,categoryID);
+        return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/categoryByName/{categoryName}")
+    public ResponseEntity<CategoryResponse> getCategoryByName(
+            @PathVariable UUID userID,
+            @PathVariable String categoryName
+    ){
+        CategoryResponse categoryResponse = categoryService.getCategoryByName(userID,categoryName);
+        return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.OK);
     }
 
     @PutMapping("/{categoryID}")
