@@ -22,4 +22,16 @@ public class Category {
     @ManyToOne
     @JoinColumn(name = "user_id")
     UserProfile userProfile;
+
+    @PrePersist
+    public void defaultValues() {
+        if (this.image == null || this.image.isBlank()) {
+            this.image = "icone_padrao.png";
+        }
+
+        if (this.color == null || this.color.isBlank()) {
+            this.color = "#CCCCCC";
+        }
+    }
+
 }

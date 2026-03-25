@@ -29,4 +29,7 @@ public class UserProfile {
     @OneToMany(mappedBy = "userProfile")
     List<Transaction> transactions;
 
+    @OneToMany(mappedBy = "userProfile")
+    List<Company> companies;
+
 }

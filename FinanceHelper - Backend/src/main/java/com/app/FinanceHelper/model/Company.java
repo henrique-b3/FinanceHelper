@@ -3,6 +3,7 @@ package com.app.FinanceHelper.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -16,4 +17,12 @@ public class Company {
     UUID id;
     String name;
     String color;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    UserProfile userProfile;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    Category category;
 }
