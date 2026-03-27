@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -62,4 +63,29 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .map(userProfile -> modelMapper.map(userProfile, UserProfileResponse.class))
                 .toList();
     }
+
+    @Override
+    public UserProfileResponse updateName(UUID userID, String newName) {
+        UserProfile userProfile = userProfileRepository.findById(userID)
+                .orElseThrow(() -> new ResourceNotFoundException("UserProfile", "userID", userID));
+
+        userProfile.setName(newName);
+        UserProfile updatedUser = userProfileRepository.save(userProfile);
+
+        return modelMapper.map(updatedUser, UserProfileResponse.class);
+    }
+
+
+    @Override
+    public UserProfileResponse deleteUserById(UUID userID) {
+
+        UserProfile userProfile = userProfileRepository.findById(userID).orElseThrow(()
+                -> new ResourceNotFoundException("UserProfile","userID", userID));
+
+        userProfileRepository.deleteById(userID);
+
+        return modelMapper.map(userProfile, UserProfileResponse.class);
+    }
+
+
 }

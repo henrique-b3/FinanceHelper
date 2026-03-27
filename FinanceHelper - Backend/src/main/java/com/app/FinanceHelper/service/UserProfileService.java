@@ -17,4 +17,9 @@ public interface UserProfileService {
     UserProfileResponse getUserByName(String name);
 
     List<UserProfileResponse> getAllUsers();
+
+    UserProfileResponse deleteUserById(UUID userID);
+
+    UserProfileResponse updateName(UUID userID, String newName);
+
 }

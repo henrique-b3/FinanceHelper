@@ -49,4 +49,22 @@ public class UserProfileController {
         List<UserProfileResponse> allUsers = userProfileService.getAllUsers();
         return new ResponseEntity<List<UserProfileResponse>>(allUsers, HttpStatus.OK);
     }
+
+    @PatchMapping("/users/{userID}/name")
+    public ResponseEntity<UserProfileResponse> updateName(
+            @PathVariable UUID userID,
+            @RequestBody String newName
+    ) {
+        UserProfileResponse updatedUser = userProfileService.updateName(userID, newName);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+
+    @DeleteMapping("/users/{userID}")
+    public ResponseEntity<UserProfileResponse> deleteUser(
+            @PathVariable UUID userID
+    ){
+        UserProfileResponse deletedUser = userProfileService.deleteUserById(userID);
+        return new ResponseEntity<UserProfileResponse>(deletedUser, HttpStatus.OK);
+    }
 }
