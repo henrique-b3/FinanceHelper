@@ -53,15 +53,31 @@ public class CategoryController {
         return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/{categoryID}")
-    public ResponseEntity<CategoryResponse> updateCategory(){
+    @PutMapping("/update/{categoryID}")
+    public ResponseEntity<CategoryResponse> updateCategory(
+            @RequestBody CategoryDTO categoryDTO
+    ){
+        return null;
+    }
+
+    @PutMapping("/image/{categoryID}")
+    public ResponseEntity<CategoryResponse> updateImage(){
+        return null;
+    }
+
+    @PutMapping("/color/{categoryID}")
+    public ResponseEntity<CategoryResponse> updateColor(){
         return null;
     }
 
     @DeleteMapping("/{categoryID}")
-    public ResponseEntity<CategoryResponse> deleteCategory(){
+    public ResponseEntity<CategoryResponse> deleteCategory(
+            @PathVariable UUID userID,
+            @PathVariable UUID categoryID
+    ){
         return null;
     }
+
 
     @DeleteMapping("/deleteAllCategories")
     public ResponseEntity<List<CategoryResponse>> deleteAllCategories(){

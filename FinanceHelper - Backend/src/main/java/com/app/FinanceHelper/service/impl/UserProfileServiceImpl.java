@@ -9,8 +9,10 @@ import com.app.FinanceHelper.repository.UserProfileRepository;
 import com.app.FinanceHelper.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -51,5 +53,13 @@ public class UserProfileServiceImpl implements UserProfileService {
                 -> new ResourceNotFoundException("UserProfile","userID", name));
 
         return modelMapper.map(userProfile, UserProfileResponse.class);
+    }
+
+    @Override
+    public List<UserProfileResponse> getAllUsers() {
+        return userProfileRepository.findAll()
+                .stream()
+                .map(userProfile -> modelMapper.map(userProfile, UserProfileResponse.class))
+                .toList();
     }
 }

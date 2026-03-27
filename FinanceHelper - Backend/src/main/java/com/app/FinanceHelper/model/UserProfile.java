@@ -11,6 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@Table(name = "tb_users")
 public class UserProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,10 +24,10 @@ public class UserProfile {
     @Column(nullable = false)
     String password;
 
-    @OneToMany(mappedBy = "userProfile")
+    @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Category> categoryList;
 
-    @OneToMany(mappedBy = "userProfile")
+    @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Transaction> transactions;
 
     @OneToMany(mappedBy = "userProfile")

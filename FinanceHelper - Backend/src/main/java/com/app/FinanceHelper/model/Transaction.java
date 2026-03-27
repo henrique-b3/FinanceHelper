@@ -18,8 +18,8 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
     String description;
-    @Column(name = "amount")
-    BigDecimal value;
+
+    BigDecimal amount;
 
     @Column(name = "transaction_date")
     LocalDate date;

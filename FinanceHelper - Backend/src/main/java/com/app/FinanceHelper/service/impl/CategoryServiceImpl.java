@@ -30,8 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
         UserProfile user = userProfileRepository.findById(userID)
                 .orElseThrow(() -> new ResourceNotFoundException("UserProfile", "userID", userID));
 
-
-        if(categoryRepository.existsByName(categoryDTO.getName())){
+        if(categoryRepository.existsByNameAndUserProfile_Id(categoryDTO.getName(), userID)){
             throw new APIexception("Category already exists with name: " + categoryDTO.getName());
         }
 

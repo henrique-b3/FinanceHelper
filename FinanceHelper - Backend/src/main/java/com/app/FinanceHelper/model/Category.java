@@ -3,6 +3,7 @@ package com.app.FinanceHelper.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -22,6 +23,9 @@ public class Category {
     @ManyToOne
     @JoinColumn(name = "user_id")
     UserProfile userProfile;
+
+    @OneToMany(mappedBy = "category")
+    List<Transaction> transactions;
 
     @PrePersist
     public void defaultValues() {
