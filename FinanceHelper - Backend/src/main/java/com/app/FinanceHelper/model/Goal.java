@@ -38,7 +38,16 @@ public class Goal {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @NotNull(message = "Category cannot be empty!")
+    @Column(nullable = false)
     Category category;
+
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @NotNull(message = "Category cannot be empty!")
+    @Column(nullable = false)
+    UserProfile userProfile;
 
 
     @PrePersist

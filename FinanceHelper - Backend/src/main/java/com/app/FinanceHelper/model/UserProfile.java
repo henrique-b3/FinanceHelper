@@ -45,4 +45,7 @@ public class UserProfile {
     @OneToMany(mappedBy = "userProfile")
     List<Company> companies;
 
+    @OneToMany(mappedBy = "userProfile")
+    List<Goal> goals;
+
 }

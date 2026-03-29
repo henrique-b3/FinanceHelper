@@ -23,17 +23,17 @@ public class CompanyController {
             @PathVariable UUID userID,
             @Valid @RequestBody CompanyDTO companyDTO
     ){
-        CompanyResponse createdCompany = companyService.createCompany(userID, companyDTO);
-        return new ResponseEntity<>(createdCompany, HttpStatus.CREATED);
+        CompanyResponse companyResponse = companyService.createCompany(userID, companyDTO);
+        return new ResponseEntity<>(companyResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/{companyID}")
-    public ResponseEntity<CompanyResponse> getCompanyById(
+    public ResponseEntity<CompanyResponse> getCompany(
             @PathVariable UUID userID,
             @PathVariable UUID companyID
     ){
-        CompanyResponse searchCompany = companyService.getCompany(userID, companyID);
-        return new ResponseEntity<>(searchCompany, HttpStatus.OK);
+        CompanyResponse companyResponse = companyService.getCompany(userID, companyID);
+        return new ResponseEntity<>(companyResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{companyID}")
@@ -41,8 +41,8 @@ public class CompanyController {
             @PathVariable UUID userID,
             @PathVariable UUID companyID
     ){
-        CompanyResponse deletedCompany = companyService.deleteCompany(userID, companyID);
-        return new ResponseEntity<>(deletedCompany, HttpStatus.OK);
+        CompanyResponse companyResponse = companyService.deleteCompany(userID, companyID);
+        return new ResponseEntity<>(companyResponse, HttpStatus.OK);
     }
 
 }

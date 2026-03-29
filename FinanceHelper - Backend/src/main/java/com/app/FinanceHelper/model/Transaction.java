@@ -1,6 +1,7 @@
 package com.app.FinanceHelper.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -20,29 +21,29 @@ public class Transaction {
     UUID id;
     String description;
 
-    @NotNull(message = "Amount cannot be empty!")
+    @NotBlank(message = "Amount cannot be empty!")
     @Column(nullable = false)
     BigDecimal amount;
 
-    @NotNull(message = "Transaction date cannot be empty!")
+    @NotBlank(message = "Transaction date cannot be empty!")
     @Column(nullable = false)
     LocalDate transaction_date;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotNull(message = "UserProfile cannot be empty!")
+    @NotBlank(message = "UserProfile cannot be empty!")
     @Column(nullable = false)
     UserProfile userProfile;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
-    @NotNull(message = "Company cannot be empty!")
+    @NotBlank(message = "Company cannot be empty!")
     @Column(nullable = false)
     Company company;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @NotNull(message = "Category cannot be empty!")
+    @NotBlank(message = "Category cannot be empty!")
     @Column(nullable = false)
     Category category;
 }

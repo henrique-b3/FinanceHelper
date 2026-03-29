@@ -22,10 +22,10 @@ public class UserProfileDTO {
     String email;
 
     @NotBlank(message = "Last name cannot be empty!")
-    @Size(min = 3, max = 50, message = "The name must has more than {min} and less than {max} characters")
+    @Size(min = 3, max = 50, message = "The last name must has more than {min} and less than {max} characters")
     String lastName;
 
     @NotBlank(message = "Password cannot be empty!")
-    @Size(min = 6, max = 50, message = "The name must has more than {min} and less than {max} characters")
+    @Size(min = 6, max = 20, message = "The password must has more than {min} and less than {max} characters")
     String password;
 }

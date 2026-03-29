@@ -23,17 +23,9 @@ public class CategoryController {
     public ResponseEntity<CategoryResponse> createCategory(
             @PathVariable UUID userID,
             @Valid @RequestBody CategoryDTO categoryDTO
-            ){
-        CategoryResponse createdCategory = categoryService.createCategory(userID,categoryDTO);
-        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/getAllCategories")
-    public ResponseEntity<List<CategoryResponse>> getAllCategories(
-            @PathVariable UUID userID
     ){
-        List<CategoryResponse> allCategories = categoryService.getAllCategories(userID);
-        return new ResponseEntity<>(allCategories, HttpStatus.OK);
+        CategoryResponse categoryResponse = categoryService.createCategory(userID,categoryDTO);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/categoryById/{categoryID}")
@@ -41,8 +33,8 @@ public class CategoryController {
             @PathVariable UUID userID,
             @PathVariable UUID categoryID
     ){
-        CategoryResponse categoryResponse = categoryService.getCategoryById(userID,categoryID);
-        return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.OK);
+        CategoryResponse categoryResponse = categoryService.getCategory(userID,categoryID);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @GetMapping("/categoryByName/{categoryName}")
@@ -51,7 +43,15 @@ public class CategoryController {
             @PathVariable String categoryName
     ){
         CategoryResponse categoryResponse = categoryService.getCategoryByName(userID,categoryName);
-        return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.OK);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllCategories")
+    public ResponseEntity<List<CategoryResponse>> getAllCategories(
+            @PathVariable UUID userID
+    ){
+        List<CategoryResponse> categoryResponse = categoryService.getAllCategories(userID);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @PutMapping("/update/{categoryID}")

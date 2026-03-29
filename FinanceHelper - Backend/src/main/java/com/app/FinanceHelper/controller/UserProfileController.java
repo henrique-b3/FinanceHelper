@@ -22,33 +22,33 @@ public class UserProfileController {
     @PostMapping("/user")
     public ResponseEntity<UserProfileResponse> createUser(
             @Valid @RequestBody UserProfileDTO userProfileDTO
-            ){
-        UserProfileResponse createdUser = userProfileService.createUser(userProfileDTO);
-        return new ResponseEntity<UserProfileResponse>(createdUser, HttpStatus.CREATED);
+    ){
+        UserProfileResponse userProfileResponse = userProfileService.createUser(userProfileDTO);
+        return new ResponseEntity<>(userProfileResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/users/{userID}")
     public ResponseEntity<UserProfileResponse> getUser(
             @PathVariable UUID userID
     ){
-        UserProfileResponse foundUser = userProfileService.getUserById(userID);
-        return new ResponseEntity<UserProfileResponse>(foundUser, HttpStatus.OK);
+        UserProfileResponse userProfileResponse = userProfileService.getUser(userID);
+        return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);
     }
 
     @GetMapping("/userByName/{name}")
     public ResponseEntity<UserProfileResponse> getUserByName(
             @PathVariable String name
     ){
-        UserProfileResponse foundUser = userProfileService.getUserByName(name);
-        return new ResponseEntity<UserProfileResponse>(foundUser, HttpStatus.OK);
+        UserProfileResponse userProfileResponse = userProfileService.getUserByName(name);
+        return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);
     }
 
     @GetMapping("/allUsers")
     public ResponseEntity<List<UserProfileResponse>> getAllUsers(
             @PathVariable UUID userID
     ){
-        List<UserProfileResponse> allUsers = userProfileService.getAllUsers();
-        return new ResponseEntity<List<UserProfileResponse>>(allUsers, HttpStatus.OK);
+        List<UserProfileResponse> userProfileResponse = userProfileService.getAllUsers();
+        return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);
     }
 
     @PatchMapping("/users/{userID}/name")
@@ -56,8 +56,8 @@ public class UserProfileController {
             @PathVariable UUID userID,
             @RequestParam String newName
     ) {
-        UserProfileResponse updatedUser = userProfileService.updateName(userID, newName);
-        return ResponseEntity.ok(updatedUser);
+        UserProfileResponse userProfileResponse = userProfileService.updateName(userID, newName);
+        return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);
     }
 
 
@@ -65,7 +65,7 @@ public class UserProfileController {
     public ResponseEntity<UserProfileResponse> deleteUser(
             @PathVariable UUID userID
     ){
-        UserProfileResponse deletedUser = userProfileService.deleteUserById(userID);
-        return new ResponseEntity<UserProfileResponse>(deletedUser, HttpStatus.OK);
+        UserProfileResponse userProfileResponse = userProfileService.deleteUserById(userID);
+        return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);
     }
 }

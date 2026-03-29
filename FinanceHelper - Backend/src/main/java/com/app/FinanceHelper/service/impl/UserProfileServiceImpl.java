@@ -34,7 +34,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public UserProfileResponse getUserById(UUID userID) {
+    public UserProfileResponse getUser(UUID userID) {
 
         UserProfile userProfile = userProfileRepository.findById(userID).orElseThrow(()
                 -> new ResourceNotFoundException("UserProfile","userID", userID));

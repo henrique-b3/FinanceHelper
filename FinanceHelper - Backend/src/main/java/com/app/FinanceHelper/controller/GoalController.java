@@ -2,9 +2,11 @@ package com.app.FinanceHelper.controller;
 
 import com.app.FinanceHelper.payload.dto.GoalDTO;
 import com.app.FinanceHelper.payload.response.GoalResponse;
+import com.app.FinanceHelper.payload.response.TransactionResponse;
 import com.app.FinanceHelper.service.GoalService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +24,9 @@ public class GoalController {
     public ResponseEntity<GoalResponse> createGoal(
             @PathVariable UUID userID,
             @Valid @RequestBody GoalDTO goalDTO
-            ){
-        return null;
+    ){
+        GoalResponse goalResponse = goalService.createGoal(userID,goalDTO);
+        return new ResponseEntity<>(goalResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/{goalID}")
@@ -31,7 +34,8 @@ public class GoalController {
             @PathVariable UUID userID,
             @PathVariable UUID goalID
     ){
-        return null;
+        GoalResponse goalResponse = goalService.getGoal(userID,goalID);
+        return new ResponseEntity<>(goalResponse, HttpStatus.OK);
     }
 
     @PutMapping("/{goalID}")
@@ -66,6 +70,7 @@ public class GoalController {
             @PathVariable UUID userID,
             @PathVariable UUID goalID
     ){
-        return null;
+        GoalResponse goalResponse = goalService.deleteGoal(userID,goalID);
+        return new ResponseEntity<>(goalResponse, HttpStatus.CREATED);
     }
 }

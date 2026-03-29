@@ -43,6 +43,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public CategoryResponse getCategory(UUID userID, UUID categoryID) {
+        if (!userProfileRepository.existsById(userID)) {
+            throw new ResourceNotFoundException("UserProfile", "userID", userID);
+        }
+
+        Category category = categoryRepository
+                .findByIdAndUserProfile_Id(categoryID, userID)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", categoryID));
+
+        return modelMapper.map(category, CategoryResponse.class);
+    }
+
+    @Override
     public List<CategoryResponse> getAllCategories(UUID userID) {
         if(!userProfileRepository.existsById(userID)){
             throw new ResourceNotFoundException("UserProfile","userID", userID);
@@ -54,18 +67,6 @@ public class CategoryServiceImpl implements CategoryService {
                 .toList();
     }
 
-    @Override
-    public CategoryResponse getCategoryById(UUID userID, UUID categoryID) {
-        if (!userProfileRepository.existsById(userID)) {
-            throw new ResourceNotFoundException("UserProfile", "userID", userID);
-        }
-
-        Category category = categoryRepository
-                .findByIdAndUserProfile_Id(categoryID, userID)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", categoryID));
-
-        return modelMapper.map(category, CategoryResponse.class);
-    }
 
     @Override
     public CategoryResponse getCategoryByName(UUID userID, String categoryName) {
