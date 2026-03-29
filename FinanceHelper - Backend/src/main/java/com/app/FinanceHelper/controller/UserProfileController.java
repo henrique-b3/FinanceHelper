@@ -3,6 +3,7 @@ package com.app.FinanceHelper.controller;
 import com.app.FinanceHelper.payload.dto.UserProfileDTO;
 import com.app.FinanceHelper.payload.response.UserProfileResponse;
 import com.app.FinanceHelper.service.UserProfileService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class UserProfileController {
 
     @PostMapping("/user")
     public ResponseEntity<UserProfileResponse> createUser(
-            @RequestBody UserProfileDTO userProfileDTO
+            @Valid @RequestBody UserProfileDTO userProfileDTO
             ){
         UserProfileResponse createdUser = userProfileService.createUser(userProfileDTO);
         return new ResponseEntity<UserProfileResponse>(createdUser, HttpStatus.CREATED);
@@ -53,7 +54,7 @@ public class UserProfileController {
     @PatchMapping("/users/{userID}/name")
     public ResponseEntity<UserProfileResponse> updateName(
             @PathVariable UUID userID,
-            @RequestBody String newName
+            @RequestParam String newName
     ) {
         UserProfileResponse updatedUser = userProfileService.updateName(userID, newName);
         return ResponseEntity.ok(updatedUser);

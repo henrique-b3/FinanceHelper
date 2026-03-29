@@ -26,10 +26,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public UserProfileResponse createUser(UserProfileDTO userProfileDTO) {
 
-        if (userProfileDTO.getId() != null && userProfileRepository.existsById(userProfileDTO.getId())) {
-            throw new APIexception("UserProfile already exists");
-        }
-
         UserProfile userToSave = modelMapper.map(userProfileDTO, UserProfile.class);
 
         UserProfile savedUser = userProfileRepository.save(userToSave);

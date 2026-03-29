@@ -1,6 +1,8 @@
 package com.app.FinanceHelper.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
@@ -17,10 +19,20 @@ public class UserProfile {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
+    @NotNull(message = "User name cannot be empty!")
     @Column(nullable = false)
     String name;
+
+    @NotNull(message = "Last name cannot be empty!")
+    @Column(nullable = false)
     String lastName;
 
+    @NotNull(message = "UserProfile cannot be empty!")
+    @Column(nullable = false)
+    @Email
+    String email;
+
+    @NotNull(message = "Password cannot be empty!")
     @Column(nullable = false)
     String password;
 

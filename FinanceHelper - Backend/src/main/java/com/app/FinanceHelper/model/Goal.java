@@ -1,7 +1,8 @@
 package com.app.FinanceHelper.model;
 
-
+import com.app.FinanceHelper.exceptions.APIexception;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,12 +22,15 @@ public class Goal {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
+    @NotNull(message = "Name cannot be empty!")
     @Column(nullable = false)
     String name;
 
     String icon;
     String color;
 
+    @NotNull(message = "Limit amount cannot be empty!")
+    @Column(nullable = false)
     BigDecimal limitAmount;
 
     LocalDate startDate;
@@ -49,6 +53,16 @@ public class Goal {
 
         if (this.limitAmount == null || this.limitAmount.signum() < 0) {
             this.limitAmount = BigDecimal.ZERO;
+        }
+
+        if(this.startDate != null && this.endDate == null){
+            throw new APIexception("End date cannot be null");
+        } else if (this.startDate == null && this.endDate != null) {
+            throw new APIexception("Start date cannot be null");
+        }
+
+        if(this.startDate != null && this.endDate != null && (this.startDate.isAfter(endDate) || this.startDate.isEqual(endDate))){
+            throw new APIexception("Start date cannot be after end date");
         }
     }
 }

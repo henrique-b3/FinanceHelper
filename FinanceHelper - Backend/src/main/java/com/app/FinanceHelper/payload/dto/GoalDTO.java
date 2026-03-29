@@ -14,15 +14,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class GoalDTO {
-    UUID id;
-
     @NotBlank(message = "Goal Name cannot be empty!")
     @Size(min = 3, max = 50, message = "The name must has more than {min} and less than {max} characters")
     String name;
     String icon;
     String color;
 
-
+    @NotBlank(message = "Goal Name cannot be empty!")
     BigDecimal limitAmount;
 
     LocalDate startDate;

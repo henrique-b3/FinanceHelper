@@ -3,6 +3,7 @@ package com.app.FinanceHelper.controller;
 import com.app.FinanceHelper.payload.dto.CategoryDTO;
 import com.app.FinanceHelper.payload.response.CategoryResponse;
 import com.app.FinanceHelper.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/categories/{userID}")
+@RequestMapping("/api/category/{userID}")
 public class CategoryController {
 
     @Autowired
@@ -20,8 +21,8 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(
-            @RequestParam UUID userID,
-            @RequestBody CategoryDTO categoryDTO
+            @PathVariable UUID userID,
+            @Valid @RequestBody CategoryDTO categoryDTO
             ){
         CategoryResponse createdCategory = categoryService.createCategory(userID,categoryDTO);
         return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
@@ -55,7 +56,7 @@ public class CategoryController {
 
     @PutMapping("/update/{categoryID}")
     public ResponseEntity<CategoryResponse> updateCategory(
-            @RequestBody CategoryDTO categoryDTO
+           @Valid @RequestBody CategoryDTO categoryDTO
     ){
         return null;
     }
@@ -77,7 +78,6 @@ public class CategoryController {
     ){
         return null;
     }
-
 
     @DeleteMapping("/deleteAllCategories")
     public ResponseEntity<List<CategoryResponse>> deleteAllCategories(){
