@@ -1,8 +1,7 @@
 package com.app.FinanceHelper.controller;
 
 import com.app.FinanceHelper.model.Transaction;
-import com.app.FinanceHelper.payload.dto.CompanyDTO;
-import com.app.FinanceHelper.payload.response.CompanyResponse;
+import com.app.FinanceHelper.payload.dto.TransactionDTO;
 import com.app.FinanceHelper.payload.response.TransactionResponse;
 import com.app.FinanceHelper.service.TransactionService;
 import jakarta.validation.Valid;
@@ -23,7 +22,7 @@ public class TransactionController {
     @PostMapping
     public ResponseEntity<TransactionResponse> createTransaction(
             @PathVariable UUID userID,
-            @Valid @RequestBody Transaction transactionDTO
+            @Valid @RequestBody TransactionDTO transactionDTO
     ){
         TransactionResponse transactionResponse = transactionService.createTransaction(userID,transactionDTO);
         return new ResponseEntity<>(transactionResponse, HttpStatus.CREATED);

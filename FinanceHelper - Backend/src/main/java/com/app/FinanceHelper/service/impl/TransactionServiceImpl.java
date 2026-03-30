@@ -5,6 +5,7 @@ import com.app.FinanceHelper.model.Category;
 import com.app.FinanceHelper.model.Company;
 import com.app.FinanceHelper.model.Transaction;
 import com.app.FinanceHelper.model.UserProfile;
+import com.app.FinanceHelper.payload.dto.TransactionDTO;
 import com.app.FinanceHelper.payload.response.CompanyResponse;
 import com.app.FinanceHelper.payload.response.TransactionResponse;
 import com.app.FinanceHelper.repository.CategoryRepository;
@@ -30,20 +31,21 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public TransactionResponse createTransaction(UUID userID, Transaction transactionDTO) {
+    public TransactionResponse createTransaction(UUID userID, TransactionDTO transactionDTO) {
+
+
+        Transaction transaction = modelMapper.map(transactionDTO, Transaction.class);
 
         UserProfile user = userProfileRepository.findById(userID)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userID));
 
-        Category category = categoryRepository.findByIdAndUserProfile_Id(transactionDTO.getCategory().getId(), userID)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", transactionDTO.getCategory().getId()));
+        Category category = categoryRepository.findByIdAndUserProfile_Id(transaction.getCategory().getId(), userID)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", transaction.getCategory().getId()));
 
 
-        Company company = companyRepository.findByIdAndUserProfile_Id(transactionDTO.getCompany().getId(), userID)
-                .orElseThrow(() -> new ResourceNotFoundException("Company", "id", transactionDTO.getCompany().getId()));
+        Company company = companyRepository.findByIdAndUserProfile_Id(transaction.getCompany().getId(), userID)
+                .orElseThrow(() -> new ResourceNotFoundException("Company", "id", transaction.getCompany().getId()));
 
-
-        Transaction transaction = modelMapper.map(transactionDTO, Transaction.class);
         transaction.setUserProfile(user);
         transaction.setCategory(category);
         transaction.setCompany(company);
