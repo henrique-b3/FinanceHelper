@@ -11,14 +11,18 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class TransactionResponse {
-
+public class GoalResponse {
     UUID id;
-    String description;
-    BigDecimal amount;
-    LocalDate transaction_date;
+    String name;
+    String icon;
+    String color;
 
-    UUID userID;
-    UUID companyID;
-    UUID categoryID;
+    String status;
+
+    LocalDate startDate;
+    LocalDate endDate;
+
+    BigDecimal limitAmount;
+    BigDecimal spendAmount;
+    BigDecimal remainingAmount;
 }

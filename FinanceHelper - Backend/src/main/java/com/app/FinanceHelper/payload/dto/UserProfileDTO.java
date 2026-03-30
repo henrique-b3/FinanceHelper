@@ -1,5 +1,6 @@
 package com.app.FinanceHelper.payload.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -12,17 +13,19 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class UserProfileDTO {
-    UUID id;
-
-    @NotBlank(message = "Category Name cannot be empty!")
-    @Size(min = 3, max = 50, message = "The name must has more than {min} and less than {max} characters")
+    @NotBlank(message = "User name cannot be empty!")
+    @Size(min = 5, max = 50, message = "The name must has more than {min} and less than {max} characters")
     String name;
 
-    @NotBlank(message = "Category Name cannot be empty!")
-    @Size(min = 3, max = 50, message = "The name must has more than {min} and less than {max} characters")
+    @NotBlank(message = "Email cannot be empty!")
+    @Email(message = "Invalid email format")
+    String email;
+
+    @NotBlank(message = "Last name cannot be empty!")
+    @Size(min = 3, max = 50, message = "The last name must has more than {min} and less than {max} characters")
     String lastName;
 
-    @NotBlank(message = "Category Name cannot be empty!")
-    @Size(min = 3, max = 50, message = "The name must has more than {min} and less than {max} characters")
+    @NotBlank(message = "Password cannot be empty!")
+    @Size(min = 6, max = 20, message = "The password must has more than {min} and less than {max} characters")
     String password;
 }

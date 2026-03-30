@@ -9,8 +9,11 @@ import com.app.FinanceHelper.repository.UserProfileRepository;
 import com.app.FinanceHelper.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,10 +26,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public UserProfileResponse createUser(UserProfileDTO userProfileDTO) {
 
-        if (userProfileDTO.getId() != null && userProfileRepository.existsById(userProfileDTO.getId())) {
-            throw new APIexception("UserProfile already exists");
-        }
-
         UserProfile userToSave = modelMapper.map(userProfileDTO, UserProfile.class);
 
         UserProfile savedUser = userProfileRepository.save(userToSave);
@@ -35,7 +34,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public UserProfileResponse getUserById(UUID userID) {
+    public UserProfileResponse getUser(UUID userID) {
 
         UserProfile userProfile = userProfileRepository.findById(userID).orElseThrow(()
                 -> new ResourceNotFoundException("UserProfile","userID", userID));
@@ -52,4 +51,37 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         return modelMapper.map(userProfile, UserProfileResponse.class);
     }
+
+    @Override
+    public List<UserProfileResponse> getAllUsers() {
+        return userProfileRepository.findAll()
+                .stream()
+                .map(userProfile -> modelMapper.map(userProfile, UserProfileResponse.class))
+                .toList();
+    }
+
+    @Override
+    public UserProfileResponse updateName(UUID userID, String newName) {
+        UserProfile userProfile = userProfileRepository.findById(userID)
+                .orElseThrow(() -> new ResourceNotFoundException("UserProfile", "userID", userID));
+
+        userProfile.setName(newName);
+        UserProfile updatedUser = userProfileRepository.save(userProfile);
+
+        return modelMapper.map(updatedUser, UserProfileResponse.class);
+    }
+
+
+    @Override
+    public UserProfileResponse deleteUserById(UUID userID) {
+
+        UserProfile userProfile = userProfileRepository.findById(userID).orElseThrow(()
+                -> new ResourceNotFoundException("UserProfile","userID", userID));
+
+        userProfileRepository.deleteById(userID);
+
+        return modelMapper.map(userProfile, UserProfileResponse.class);
+    }
+
+
 }

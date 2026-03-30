@@ -3,6 +3,7 @@ package com.app.FinanceHelper.controller;
 import com.app.FinanceHelper.payload.dto.CategoryDTO;
 import com.app.FinanceHelper.payload.response.CategoryResponse;
 import com.app.FinanceHelper.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/categories/{userID}")
+@RequestMapping("/api/category/{userID}")
 public class CategoryController {
 
     @Autowired
@@ -20,19 +21,11 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(
-            @RequestParam UUID userID,
-            @RequestBody CategoryDTO categoryDTO
-            ){
-        CategoryResponse createdCategory = categoryService.createCategory(userID,categoryDTO);
-        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/getAllCategories")
-    public ResponseEntity<List<CategoryResponse>> getAllCategories(
-            @PathVariable UUID userID
+            @PathVariable UUID userID,
+            @Valid @RequestBody CategoryDTO categoryDTO
     ){
-        List<CategoryResponse> allCategories = categoryService.getAllCategories(userID);
-        return new ResponseEntity<>(allCategories, HttpStatus.OK);
+        CategoryResponse categoryResponse = categoryService.createCategory(userID,categoryDTO);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/categoryById/{categoryID}")
@@ -40,8 +33,8 @@ public class CategoryController {
             @PathVariable UUID userID,
             @PathVariable UUID categoryID
     ){
-        CategoryResponse categoryResponse = categoryService.getCategoryById(userID,categoryID);
-        return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.OK);
+        CategoryResponse categoryResponse = categoryService.getCategory(userID,categoryID);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @GetMapping("/categoryByName/{categoryName}")
@@ -50,16 +43,39 @@ public class CategoryController {
             @PathVariable String categoryName
     ){
         CategoryResponse categoryResponse = categoryService.getCategoryByName(userID,categoryName);
-        return new ResponseEntity<CategoryResponse>(categoryResponse, HttpStatus.OK);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/{categoryID}")
-    public ResponseEntity<CategoryResponse> updateCategory(){
+    @GetMapping("/getAllCategories")
+    public ResponseEntity<List<CategoryResponse>> getAllCategories(
+            @PathVariable UUID userID
+    ){
+        List<CategoryResponse> categoryResponse = categoryService.getAllCategories(userID);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/update/{categoryID}")
+    public ResponseEntity<CategoryResponse> updateCategory(
+           @Valid @RequestBody CategoryDTO categoryDTO
+    ){
+        return null;
+    }
+
+    @PutMapping("/image/{categoryID}")
+    public ResponseEntity<CategoryResponse> updateImage(){
+        return null;
+    }
+
+    @PutMapping("/color/{categoryID}")
+    public ResponseEntity<CategoryResponse> updateColor(){
         return null;
     }
 
     @DeleteMapping("/{categoryID}")
-    public ResponseEntity<CategoryResponse> deleteCategory(){
+    public ResponseEntity<CategoryResponse> deleteCategory(
+            @PathVariable UUID userID,
+            @PathVariable UUID categoryID
+    ){
         return null;
     }
 
