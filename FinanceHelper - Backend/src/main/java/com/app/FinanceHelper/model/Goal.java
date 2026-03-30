@@ -29,6 +29,9 @@ public class Goal {
     String icon;
     String color;
 
+    String type;
+    String status;
+
     @NotNull(message = "Limit amount cannot be empty!")
     @Column(nullable = false)
     BigDecimal limitAmount;
@@ -39,14 +42,12 @@ public class Goal {
     @ManyToOne
     @JoinColumn(name = "category_id")
     @NotNull(message = "Category cannot be empty!")
-    @Column(nullable = false)
     Category category;
 
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull(message = "Category cannot be empty!")
-    @Column(nullable = false)
     UserProfile userProfile;
 
 

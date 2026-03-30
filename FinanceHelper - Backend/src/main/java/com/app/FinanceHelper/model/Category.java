@@ -28,7 +28,6 @@ public class Category {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull(message = "UserProfile cannot be empty!")
-    @Column(nullable = false)
     UserProfile userProfile;
 
     @OneToMany(mappedBy = "category")
