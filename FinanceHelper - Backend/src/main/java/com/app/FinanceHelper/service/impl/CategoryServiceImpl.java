@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -59,7 +61,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryResponse> getAllCategories(UUID userID) {
+    public Set<CategoryResponse> getAllCategories(UUID userID) {
         if(!userProfileRepository.existsById(userID)){
             throw new ResourceNotFoundException("UserProfile","userID", userID);
         }
@@ -67,7 +69,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAllByUserProfile_Id(userID)
                 .stream()
                 .map(category -> modelMapper.map(category, CategoryResponse.class))
-                .toList();
+                .collect(Collectors.toSet());
     }
 
 

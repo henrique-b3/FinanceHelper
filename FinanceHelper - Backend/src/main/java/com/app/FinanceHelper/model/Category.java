@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -31,7 +32,7 @@ public class Category {
     UserProfile userProfile;
 
     @OneToMany(mappedBy = "category")
-    List<Transaction> transactions;
+    Set<Transaction> transactions = new HashSet<>();
 
     @PrePersist
     public void defaultValues() {

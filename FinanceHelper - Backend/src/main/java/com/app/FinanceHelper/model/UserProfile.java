@@ -5,7 +5,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -37,15 +39,15 @@ public class UserProfile {
     String password;
 
     @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Category> categoryList;
+    Set<Category> categoryList = new HashSet<>();
 
     @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Transaction> transactions;
+    Set<Transaction> transactions = new HashSet<>();
 
-    @OneToMany(mappedBy = "userProfile")
-    List<Company> companies;
+    @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<Company> companies = new HashSet<>();
 
-    @OneToMany(mappedBy = "userProfile")
-    List<Goal> goals;
+    @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<Goal> goals = new HashSet<>();
 
 }

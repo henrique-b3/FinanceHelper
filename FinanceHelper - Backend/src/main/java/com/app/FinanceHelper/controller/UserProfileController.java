@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -44,10 +45,10 @@ public class UserProfileController {
     }
 
     @GetMapping("/allUsers")
-    public ResponseEntity<List<UserProfileResponse>> getAllUsers(
+    public ResponseEntity<Set<UserProfileResponse>> getAllUsers(
             @PathVariable UUID userID
     ){
-        List<UserProfileResponse> userProfileResponse = userProfileService.getAllUsers();
+        Set<UserProfileResponse> userProfileResponse = userProfileService.getAllUsers();
         return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);
     }
 
