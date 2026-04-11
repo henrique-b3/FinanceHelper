@@ -17,6 +17,7 @@ public class GoalResponse {
     String icon;
     String color;
 
+    String type;
     String status;
 
     LocalDate startDate;
@@ -24,5 +25,5 @@ public class GoalResponse {
 
     BigDecimal limitAmount;
     BigDecimal spendAmount;
-    BigDecimal remainingAmount;
+    BigDecimal remainingAmount; //TODO calcular
 }

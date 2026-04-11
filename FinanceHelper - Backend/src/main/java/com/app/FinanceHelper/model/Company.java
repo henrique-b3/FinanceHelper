@@ -26,7 +26,6 @@ public class Company {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull(message = "User profile cannot be empty!")
-    @Column(nullable = false)
     UserProfile userProfile;
 
     @ManyToOne

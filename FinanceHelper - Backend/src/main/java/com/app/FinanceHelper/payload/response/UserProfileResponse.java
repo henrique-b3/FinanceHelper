@@ -13,4 +13,5 @@ public class UserProfileResponse {
     UUID id;
     String name;
     String lastName;
+    String email;
 }

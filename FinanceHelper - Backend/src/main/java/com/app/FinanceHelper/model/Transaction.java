@@ -21,29 +21,26 @@ public class Transaction {
     UUID id;
     String description;
 
-    @NotBlank(message = "Amount cannot be empty!")
+    @NotNull(message = "Amount cannot be empty!")
     @Column(nullable = false)
     BigDecimal amount;
 
-    @NotBlank(message = "Transaction date cannot be empty!")
+    @NotNull(message = "Transaction date cannot be empty!")
     @Column(nullable = false)
     LocalDate transaction_date;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotBlank(message = "UserProfile cannot be empty!")
-    @Column(nullable = false)
+    @NotNull(message = "UserProfile cannot be empty!")
     UserProfile userProfile;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
-    @NotBlank(message = "Company cannot be empty!")
-    @Column(nullable = false)
+    @NotNull(message = "Company cannot be empty!")
     Company company;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @NotBlank(message = "Category cannot be empty!")
-    @Column(nullable = false)
+    @NotNull(message = "Category cannot be empty!")
     Category category;
 }

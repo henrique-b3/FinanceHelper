@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -47,10 +48,10 @@ public class CategoryController {
     }
 
     @GetMapping("/getAllCategories")
-    public ResponseEntity<List<CategoryResponse>> getAllCategories(
+    public ResponseEntity<Set<CategoryResponse>> getAllCategories(
             @PathVariable UUID userID
     ){
-        List<CategoryResponse> categoryResponse = categoryService.getAllCategories(userID);
+        Set<CategoryResponse> categoryResponse = categoryService.getAllCategories(userID);
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 

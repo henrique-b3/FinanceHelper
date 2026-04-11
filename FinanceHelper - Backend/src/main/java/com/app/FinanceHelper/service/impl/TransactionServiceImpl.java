@@ -15,18 +15,23 @@ import com.app.FinanceHelper.repository.UserProfileRepository;
 import com.app.FinanceHelper.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
 
+    @Autowired
     TransactionRepository transactionRepository;
+    @Autowired
     UserProfileRepository userProfileRepository;
+    @Autowired
     CategoryRepository categoryRepository;
+    @Autowired
     CompanyRepository companyRepository;
+    @Autowired
     ModelMapper modelMapper;
 
 
@@ -34,25 +39,29 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionResponse createTransaction(UUID userID, TransactionDTO transactionDTO) {
 
 
-        Transaction transaction = modelMapper.map(transactionDTO, Transaction.class);
-
         UserProfile user = userProfileRepository.findById(userID)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userID));
 
-        Category category = categoryRepository.findByIdAndUserProfile_Id(transaction.getCategory().getId(), userID)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", transaction.getCategory().getId()));
+        Category category = categoryRepository.findByIdAndUserProfile_Id(transactionDTO.getCategoryID(), userID)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", transactionDTO.getCategoryID()));
 
 
-        Company company = companyRepository.findByIdAndUserProfile_Id(transaction.getCompany().getId(), userID)
-                .orElseThrow(() -> new ResourceNotFoundException("Company", "id", transaction.getCompany().getId()));
+        Company company = companyRepository.findByIdAndUserProfile_Id(transactionDTO.getCompanyID(), userID)
+                .orElseThrow(() -> new ResourceNotFoundException("Company", "id", transactionDTO.getCompanyID()));
 
+        Transaction transaction = modelMapper.map(transactionDTO, Transaction.class);
         transaction.setUserProfile(user);
         transaction.setCategory(category);
         transaction.setCompany(company);
 
         Transaction savedTransaction = transactionRepository.save(transaction);
 
-        return modelMapper.map(savedTransaction, TransactionResponse.class);
+        TransactionResponse transactionResponse = modelMapper.map(savedTransaction, TransactionResponse.class);
+        transactionResponse.setUserID(savedTransaction.getUserProfile().getId());
+        transactionResponse.setCompanyID(savedTransaction.getCompany().getId());
+        transactionResponse.setCategoryID(savedTransaction.getCategory().getId());
+
+        return transactionResponse;
     }
 
     @Override
@@ -63,7 +72,12 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction foundTransaction = transactionRepository.findByIdAndUserProfile_Id(transactionID, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", transactionID));
 
-        return modelMapper.map(foundTransaction, TransactionResponse.class);
+        TransactionResponse transactionResponse = modelMapper.map(foundTransaction, TransactionResponse.class);
+        transactionResponse.setUserID(foundTransaction.getUserProfile().getId());
+        transactionResponse.setCompanyID(foundTransaction.getCompany().getId());
+        transactionResponse.setCategoryID(foundTransaction.getCategory().getId());
+
+        return transactionResponse;
     }
 
     @Override
@@ -76,6 +90,11 @@ public class TransactionServiceImpl implements TransactionService {
 
         transactionRepository.delete(foundTransaction);
 
-        return modelMapper.map(foundTransaction, TransactionResponse.class);
+        TransactionResponse transactionResponse = modelMapper.map(foundTransaction, TransactionResponse.class);
+        transactionResponse.setUserID(foundTransaction.getUserProfile().getId());
+        transactionResponse.setCompanyID(foundTransaction.getCompany().getId());
+        transactionResponse.setCategoryID(foundTransaction.getCategory().getId());
+
+        return transactionResponse;
     }
 }
