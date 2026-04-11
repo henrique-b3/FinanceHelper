@@ -1,6 +1,8 @@
 package com.app.FinanceHelper.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,21 +20,30 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
     String description;
-    @Column(name = "amount")
-    BigDecimal value;
 
-    @Column(name = "transaction_date")
-    LocalDate date;
+    @NotBlank(message = "Amount cannot be empty!")
+    @Column(nullable = false)
+    BigDecimal amount;
+
+    @NotBlank(message = "Transaction date cannot be empty!")
+    @Column(nullable = false)
+    LocalDate transaction_date;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @NotBlank(message = "UserProfile cannot be empty!")
+    @Column(nullable = false)
     UserProfile userProfile;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @NotBlank(message = "Company cannot be empty!")
+    @Column(nullable = false)
     Company company;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @NotBlank(message = "Category cannot be empty!")
+    @Column(nullable = false)
     Category category;
 }

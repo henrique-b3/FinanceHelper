@@ -30,8 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
         UserProfile user = userProfileRepository.findById(userID)
                 .orElseThrow(() -> new ResourceNotFoundException("UserProfile", "userID", userID));
 
-
-        if(categoryRepository.existsByName(categoryDTO.getName())){
+        if(categoryRepository.existsByNameAndUserProfile_Id(categoryDTO.getName(), userID)){
             throw new APIexception("Category already exists with name: " + categoryDTO.getName());
         }
 
@@ -41,6 +40,19 @@ public class CategoryServiceImpl implements CategoryService {
         Category createdCategory = categoryRepository.save(categoryToCreate);
 
         return modelMapper.map(createdCategory, CategoryResponse.class);
+    }
+
+    @Override
+    public CategoryResponse getCategory(UUID userID, UUID categoryID) {
+        if (!userProfileRepository.existsById(userID)) {
+            throw new ResourceNotFoundException("UserProfile", "userID", userID);
+        }
+
+        Category category = categoryRepository
+                .findByIdAndUserProfile_Id(categoryID, userID)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", categoryID));
+
+        return modelMapper.map(category, CategoryResponse.class);
     }
 
     @Override
@@ -55,18 +67,6 @@ public class CategoryServiceImpl implements CategoryService {
                 .toList();
     }
 
-    @Override
-    public CategoryResponse getCategoryById(UUID userID, UUID categoryID) {
-        if (!userProfileRepository.existsById(userID)) {
-            throw new ResourceNotFoundException("UserProfile", "userID", userID);
-        }
-
-        Category category = categoryRepository
-                .findByIdAndUserProfile_Id(categoryID, userID)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", categoryID));
-
-        return modelMapper.map(category, CategoryResponse.class);
-    }
 
     @Override
     public CategoryResponse getCategoryByName(UUID userID, String categoryName) {
