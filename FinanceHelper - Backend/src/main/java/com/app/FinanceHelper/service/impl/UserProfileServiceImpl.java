@@ -24,18 +24,9 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Autowired
     UserProfileRepository userProfileRepository;
+
     @Autowired
     ModelMapper modelMapper;
-
-    @Override
-    public UserProfileResponse createUser(UserProfileDTO userProfileDTO) {
-
-        UserProfile userToSave = modelMapper.map(userProfileDTO, UserProfile.class);
-
-        UserProfile savedUser = userProfileRepository.save(userToSave);
-
-        return modelMapper.map(savedUser, UserProfileResponse.class);
-    }
 
     @Override
     public UserProfileResponse getUser(UUID userID) {

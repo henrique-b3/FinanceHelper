@@ -1,5 +1,6 @@
 package com.app.FinanceHelper.controller;
 
+import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.dto.GoalDTO;
 import com.app.FinanceHelper.payload.response.GoalResponse;
 import com.app.FinanceHelper.service.GoalService;
@@ -7,13 +8,14 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/goal/{userID}")
+@RequestMapping("/goal")
 public class GoalController {
 
     @Autowired
@@ -21,25 +23,25 @@ public class GoalController {
 
     @PostMapping
     public ResponseEntity<GoalResponse> createGoal(
-            @PathVariable UUID userID,
+            @AuthenticationPrincipal UserProfile user,
             @Valid @RequestBody GoalDTO goalDTO
     ){
-        GoalResponse goalResponse = goalService.createGoal(userID,goalDTO);
+        GoalResponse goalResponse = goalService.createGoal(user.getId(),goalDTO);
         return new ResponseEntity<>(goalResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/{goalID}")
     public ResponseEntity<GoalResponse> getGoal(
-            @PathVariable UUID userID,
+            @AuthenticationPrincipal UserProfile user,
             @PathVariable UUID goalID
     ){
-        GoalResponse goalResponse = goalService.getGoal(userID,goalID);
+        GoalResponse goalResponse = goalService.getGoal(user.getId(),goalID);
         return new ResponseEntity<>(goalResponse, HttpStatus.OK);
     }
 
     @PutMapping("/{goalID}")
     public ResponseEntity<GoalResponse> updateGoal(
-            @PathVariable UUID userID,
+            @AuthenticationPrincipal UserProfile user,
             @PathVariable UUID goalID,
             @Valid @RequestBody GoalDTO goalDTO
     ){
@@ -48,7 +50,7 @@ public class GoalController {
 
     @PutMapping("/limitAmount/{goalID}")
     public ResponseEntity<GoalResponse> updateGoalLimitAmount(
-            @PathVariable UUID userID,
+            @AuthenticationPrincipal UserProfile user,
             @PathVariable UUID goalID,
             @RequestParam BigDecimal amount
             ){
@@ -57,7 +59,7 @@ public class GoalController {
 
     @PutMapping("/name/{goalID}")
     public ResponseEntity<GoalResponse> updateGoalName(
-            @PathVariable UUID userID,
+            @AuthenticationPrincipal UserProfile user,
             @PathVariable UUID goalID,
             @RequestParam String name
     ){
@@ -66,10 +68,10 @@ public class GoalController {
 
     @DeleteMapping("/{goalID}")
     public ResponseEntity<GoalResponse> deleteGoal(
-            @PathVariable UUID userID,
+            @AuthenticationPrincipal UserProfile user,
             @PathVariable UUID goalID
     ){
-        GoalResponse goalResponse = goalService.deleteGoal(userID,goalID);
+        GoalResponse goalResponse = goalService.deleteGoal(user.getId(),goalID);
         return new ResponseEntity<>(goalResponse, HttpStatus.OK);
     }
 }
