@@ -42,7 +42,7 @@ public class UserProfileController {
         return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);
     }
 
-    @PatchMapping("/name")
+    @PutMapping("/name")
     public ResponseEntity<UserProfileResponse> updateName(
             @AuthenticationPrincipal UserProfile user,
             @RequestParam String newName

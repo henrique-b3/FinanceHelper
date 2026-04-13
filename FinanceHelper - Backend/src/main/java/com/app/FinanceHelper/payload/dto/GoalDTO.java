@@ -1,6 +1,7 @@
 package com.app.FinanceHelper.payload.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,7 +28,7 @@ public class GoalDTO {
 
     String status;
 
-    @NotBlank(message = "Limit amount cannot be empty!")
+    @NotNull(message = "Limit amount cannot be empty!")
     BigDecimal limitAmount;
 
     LocalDate startDate;
