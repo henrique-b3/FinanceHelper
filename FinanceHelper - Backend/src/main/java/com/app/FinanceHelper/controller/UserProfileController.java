@@ -42,19 +42,10 @@ public class UserProfileController {
         return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/name")
-    public ResponseEntity<UserProfileResponse> updateName(
-            @AuthenticationPrincipal UserProfile user,
-            @RequestParam String newName
-    ) {
-        UserProfileResponse userProfileResponse = userProfileService.updateName(user.getId(), newName);
-        return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);
-    }
 
-
-    @DeleteMapping()
+    @DeleteMapping("/delete")
     public ResponseEntity<UserProfileResponse> deleteUser(
-            @PathVariable UUID userID
+            @RequestParam UUID userID
     ){
         UserProfileResponse userProfileResponse = userProfileService.deleteUserById(userID);
         return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);

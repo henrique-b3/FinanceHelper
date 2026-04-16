@@ -1,72 +1,83 @@
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import api from '../../services/api';
-import './Login.css';
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import api from "../../services/api";
+import "./Login.css";
 import { images } from "../../svg";
+import * as pages from "..";
 
-function Login(){
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [erro, setErro] = useState('');
-    
-    const navigate = useNavigate();
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [erro, setErro] = useState("");
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        setErro('');
+  const navigate = useNavigate();
 
-        try{
-            const resposta = await api.post('/auth/login', {
-                email: email,
-                password: password
-            });
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setErro("");
 
-            const token = resposta.data.token;
-            console.log("Authenticated: " + token);
+    try {
+      const resposta = await api.post("/auth/login", {
+        email: email,
+        password: password,
+      });
 
-            localStorage.setItem('token', token);
-            navigate('/dashboard');
-        }catch(error){
-            setErro("Error");
-            console.error(error);
-        }
-    };
+      const token = resposta.data.token;
+      console.log("Authenticated: " + token);
 
-    return (
-        <div className="login-container">
-            <img className='logo' src={images.logo} alt={images.logo} />
-            <div className="login-card">
-                <h2>Login</h2>
-                {erro && <div className="login-error">{erro}</div>}
+      localStorage.setItem("token", token);
+      navigate("/dashboard");
+    } catch (error) {
+      setErro("Error");
+      console.error(error);
+    }
+  };
 
-                <form onSubmit={handleLogin} className="login-form">
-                    <div className="input-group">
-                        <label>Email</label>
-                        <input 
-                            type="email" 
-                            placeholder="O seu Email" 
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    
-                    <div className="input-group">
-                        <label>Password</label>
-                        <input 
-                            type="password" 
-                            placeholder="A sua Password" 
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    
-                    <button type="submit" className="login-button">Entrar</button>
-                </form>
-            </div>
+  return (
+    <div className="login-container">
+      <pages.Register
+        isOpen={isRegisterModalOpen}
+        onClose={() => setIsRegisterModalOpen(false)}
+      />
+      <img className="logo" src={images.logo} alt={images.logo} />
+      <div className="login-card">
+        <h2>Login</h2>
+        {erro && <div className="login-error">{erro}</div>}
+
+        <form onSubmit={handleLogin} className="login-form">
+          <div className="input-group">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="O seu Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="A sua Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <button type="submit" className="login-button">
+            Entrar
+          </button>
+        </form>
+        <div className="createAccButton" onClick={() => setIsRegisterModalOpen(true)}>
+          <p>Criar conta</p>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default Login;

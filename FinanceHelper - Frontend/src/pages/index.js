@@ -1,4 +1,5 @@
 export { default as Login } from "./Login/Login";
+export { default as Register } from "./Register/Register.component";
 export { default as Dashboard } from "./Dashboard/Dashboard";
 export { default as NewCategory } from "./Dashboard/Category/NewCategory.component";
 export { default as NewGoal } from "./Dashboard/Goal/NewGoal.component";
