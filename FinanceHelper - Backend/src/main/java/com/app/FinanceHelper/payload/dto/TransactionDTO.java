@@ -15,14 +15,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class TransactionDTO {
-
     String description;
 
     @NotNull(message = "Transaction amount cannot be empty!")
     BigDecimal amount;
 
     @NotNull(message = "Transaction date cannot be empty!")
-    LocalDate transaction_date;
+    LocalDate transactionDate;
 
     @NotNull(message = "Company ID cannot be empty!")
     UUID companyID;

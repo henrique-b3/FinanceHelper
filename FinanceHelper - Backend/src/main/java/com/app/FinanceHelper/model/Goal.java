@@ -1,5 +1,6 @@
 package com.app.FinanceHelper.model;
 
+import com.app.FinanceHelper.enums.GoalStatus;
 import com.app.FinanceHelper.exceptions.APIexception;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -26,18 +27,50 @@ public class Goal {
     @Column(nullable = false)
     String name;
 
+    String description;
+
     String icon;
     String color;
 
-    String type;
-    String status;
+    @Transient
+    public GoalStatus getStatus() {
+        boolean isExceeded = spendAmount != null && limitAmount != null && spendAmount.compareTo(limitAmount) > 0;
+
+        if (isExceeded) {
+            return GoalStatus.EXCEEDED;
+        }
+
+        LocalDate today = LocalDate.now();
+
+        if (startDate != null && startDate.isAfter(today)) {
+            return GoalStatus.UPCOMING;
+        }
+
+        if (endDate != null && endDate.isBefore(today)) {
+            return GoalStatus.FINISHED;
+        }
+
+        return GoalStatus.ACTIVE;
+    }
 
     @NotNull(message = "Limit amount cannot be empty!")
     @Column(nullable = false)
     BigDecimal limitAmount;
 
+    @Transient
+    BigDecimal spendAmount;
+
+    @Transient
+    public BigDecimal getRemainingAmount() {
+        if (limitAmount == null || spendAmount == null) {
+            return BigDecimal.ZERO;
+        }
+        return limitAmount.subtract(spendAmount);
+    }
+
     LocalDate startDate;
     LocalDate endDate;
+
 
     @ManyToOne
     @JoinColumn(name = "category_id")

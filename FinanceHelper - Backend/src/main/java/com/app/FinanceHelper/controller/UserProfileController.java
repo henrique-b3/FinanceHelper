@@ -1,38 +1,30 @@
 package com.app.FinanceHelper.controller;
 
-import com.app.FinanceHelper.payload.dto.UserProfileDTO;
+import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.response.UserProfileResponse;
 import com.app.FinanceHelper.service.UserProfileService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/public/social")
+@RequestMapping("/user")
 public class UserProfileController {
 
     @Autowired
     UserProfileService userProfileService;
 
-    @PostMapping("/user")
-    public ResponseEntity<UserProfileResponse> createUser(
-            @Valid @RequestBody UserProfileDTO userProfileDTO
-    ){
-        UserProfileResponse userProfileResponse = userProfileService.createUser(userProfileDTO);
-        return new ResponseEntity<>(userProfileResponse, HttpStatus.CREATED);
-    }
 
-    @GetMapping("/users/{userID}")
+    @GetMapping()
     public ResponseEntity<UserProfileResponse> getUser(
-            @PathVariable UUID userID
+            @AuthenticationPrincipal UserProfile user
     ){
-        UserProfileResponse userProfileResponse = userProfileService.getUser(userID);
+        UserProfileResponse userProfileResponse = userProfileService.getUser(user.getId());
         return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);
     }
 
@@ -45,24 +37,22 @@ public class UserProfileController {
     }
 
     @GetMapping("/allUsers")
-    public ResponseEntity<Set<UserProfileResponse>> getAllUsers(
-            @PathVariable UUID userID
-    ){
+    public ResponseEntity<Set<UserProfileResponse>> getAllUsers(){
         Set<UserProfileResponse> userProfileResponse = userProfileService.getAllUsers();
         return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);
     }
 
-    @PatchMapping("/users/{userID}/name")
+    @PutMapping("/name")
     public ResponseEntity<UserProfileResponse> updateName(
-            @PathVariable UUID userID,
+            @AuthenticationPrincipal UserProfile user,
             @RequestParam String newName
     ) {
-        UserProfileResponse userProfileResponse = userProfileService.updateName(userID, newName);
+        UserProfileResponse userProfileResponse = userProfileService.updateName(user.getId(), newName);
         return new ResponseEntity<>(userProfileResponse, HttpStatus.OK);
     }
 
 
-    @DeleteMapping("/users/{userID}")
+    @DeleteMapping()
     public ResponseEntity<UserProfileResponse> deleteUser(
             @PathVariable UUID userID
     ){

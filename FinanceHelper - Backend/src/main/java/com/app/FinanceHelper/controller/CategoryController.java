@@ -1,5 +1,6 @@
 package com.app.FinanceHelper.controller;
 
+import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.dto.CategoryDTO;
 import com.app.FinanceHelper.payload.response.CategoryResponse;
 import com.app.FinanceHelper.service.CategoryService;
@@ -7,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/category/{userID}")
+@RequestMapping("/category")
 public class CategoryController {
 
     @Autowired
@@ -22,36 +24,36 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(
-            @PathVariable UUID userID,
+            @AuthenticationPrincipal UserProfile user,
             @Valid @RequestBody CategoryDTO categoryDTO
     ){
-        CategoryResponse categoryResponse = categoryService.createCategory(userID,categoryDTO);
+        CategoryResponse categoryResponse = categoryService.createCategory(user.getId(),categoryDTO);
         return new ResponseEntity<>(categoryResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/categoryById/{categoryID}")
+    @GetMapping("/id/{categoryID}")
     public ResponseEntity<CategoryResponse> getCategoryById(
-            @PathVariable UUID userID,
+            @AuthenticationPrincipal UserProfile user,
             @PathVariable UUID categoryID
     ){
-        CategoryResponse categoryResponse = categoryService.getCategory(userID,categoryID);
+        CategoryResponse categoryResponse = categoryService.getCategory(user.getId(),categoryID);
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/categoryByName/{categoryName}")
+    @GetMapping("/name/{categoryName}")
     public ResponseEntity<CategoryResponse> getCategoryByName(
-            @PathVariable UUID userID,
+            @AuthenticationPrincipal UserProfile user,
             @PathVariable String categoryName
     ){
-        CategoryResponse categoryResponse = categoryService.getCategoryByName(userID,categoryName);
+        CategoryResponse categoryResponse = categoryService.getCategoryByName(user.getId(),categoryName);
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/getAllCategories")
+    @GetMapping("/all")
     public ResponseEntity<Set<CategoryResponse>> getAllCategories(
-            @PathVariable UUID userID
+            @AuthenticationPrincipal UserProfile user
     ){
-        Set<CategoryResponse> categoryResponse = categoryService.getAllCategories(userID);
+        Set<CategoryResponse> categoryResponse = categoryService.getAllCategories(user.getId());
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
@@ -74,7 +76,7 @@ public class CategoryController {
 
     @DeleteMapping("/{categoryID}")
     public ResponseEntity<CategoryResponse> deleteCategory(
-            @PathVariable UUID userID,
+            @AuthenticationPrincipal UserProfile user,
             @PathVariable UUID categoryID
     ){
         return null;
