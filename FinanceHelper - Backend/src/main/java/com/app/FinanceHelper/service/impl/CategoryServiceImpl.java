@@ -9,19 +9,23 @@ import com.app.FinanceHelper.payload.response.CategoryResponse;
 import com.app.FinanceHelper.repository.CategoryRepository;
 import com.app.FinanceHelper.repository.UserProfileRepository;
 import com.app.FinanceHelper.service.CategoryService;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
+    @Autowired
     CategoryRepository categoryRepository;
+    @Autowired
     UserProfileRepository userProfileRepository;
+    @Autowired
     ModelMapper modelMapper;
 
     @Override
@@ -56,7 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryResponse> getAllCategories(UUID userID) {
+    public Set<CategoryResponse> getAllCategories(UUID userID) {
         if(!userProfileRepository.existsById(userID)){
             throw new ResourceNotFoundException("UserProfile","userID", userID);
         }
@@ -64,7 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAllByUserProfile_Id(userID)
                 .stream()
                 .map(category -> modelMapper.map(category, CategoryResponse.class))
-                .toList();
+                .collect(Collectors.toSet());
     }
 
 

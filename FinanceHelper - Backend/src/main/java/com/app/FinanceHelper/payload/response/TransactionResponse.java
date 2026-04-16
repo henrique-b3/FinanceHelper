@@ -12,13 +12,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class TransactionResponse {
-
     UUID id;
     String description;
     BigDecimal amount;
-    LocalDate transaction_date;
+    LocalDate transactionDate;
 
-    UUID userID;
     UUID companyID;
     UUID categoryID;
+
+    String companyName;
+    String categoryName;
+    String categoryColor;
 }

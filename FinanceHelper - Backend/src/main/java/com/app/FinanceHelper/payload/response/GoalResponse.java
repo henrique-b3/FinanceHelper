@@ -1,5 +1,6 @@
 package com.app.FinanceHelper.payload.response;
 
+import com.app.FinanceHelper.enums.GoalStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,10 +15,12 @@ import java.util.UUID;
 public class GoalResponse {
     UUID id;
     String name;
+    String description;
     String icon;
     String color;
 
-    String status;
+    /*String type;*/
+    GoalStatus status;
 
     LocalDate startDate;
     LocalDate endDate;

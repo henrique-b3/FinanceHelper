@@ -1,12 +1,13 @@
 package com.app.FinanceHelper.service;
 
-import com.app.FinanceHelper.model.Transaction;
 import com.app.FinanceHelper.payload.dto.TransactionDTO;
-import com.app.FinanceHelper.payload.response.CompanyResponse;
+import com.app.FinanceHelper.payload.response.CategoryExpenseResponse;
 import com.app.FinanceHelper.payload.response.TransactionResponse;
 import jakarta.validation.Valid;
-import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -16,4 +17,12 @@ public interface TransactionService {
     TransactionResponse getTransaction(UUID userID, UUID transactionID);
 
     TransactionResponse deleteTransaction(UUID userID, UUID transactionID);
+
+    List<TransactionResponse> getAllTransactions(UUID userID, Integer limit);
+
+    List<CategoryExpenseResponse> getExpensesByCategoryByMonth(UUID userID);
+
+    BigDecimal getTotalSpentByMonth(UUID userID);
+
+    TransactionResponse updateTransaction(UUID userID, UUID transactionID, TransactionDTO transactionDTO);
 }

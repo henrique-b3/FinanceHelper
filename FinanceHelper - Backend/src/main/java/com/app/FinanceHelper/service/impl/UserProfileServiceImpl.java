@@ -9,29 +9,24 @@ import com.app.FinanceHelper.repository.UserProfileRepository;
 import com.app.FinanceHelper.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
 
+    @Autowired
     UserProfileRepository userProfileRepository;
+
+    @Autowired
     ModelMapper modelMapper;
-
-    @Override
-    public UserProfileResponse createUser(UserProfileDTO userProfileDTO) {
-
-        UserProfile userToSave = modelMapper.map(userProfileDTO, UserProfile.class);
-
-        UserProfile savedUser = userProfileRepository.save(userToSave);
-
-        return modelMapper.map(savedUser, UserProfileResponse.class);
-    }
 
     @Override
     public UserProfileResponse getUser(UUID userID) {
@@ -53,11 +48,11 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public List<UserProfileResponse> getAllUsers() {
+    public Set<UserProfileResponse> getAllUsers() {
         return userProfileRepository.findAll()
                 .stream()
                 .map(userProfile -> modelMapper.map(userProfile, UserProfileResponse.class))
-                .toList();
+                .collect(Collectors.toSet());
     }
 
     @Override
