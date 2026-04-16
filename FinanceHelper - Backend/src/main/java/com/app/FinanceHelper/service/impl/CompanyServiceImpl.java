@@ -15,7 +15,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -60,6 +63,11 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public CompanyResponse getCompany(UUID userID, UUID companyID) {
+
+        if(!userProfileRepository.existsById(userID)){
+            throw new ResourceNotFoundException("UserProfile","userID", userID);
+        }
+
         Company company = companyRepository.findByIdAndUserProfile_Id(companyID, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Company", "companyID", companyID));
 
@@ -68,6 +76,18 @@ public class CompanyServiceImpl implements CompanyService {
         companyResponse.setUserID(company.getUserProfile().getId());
 
         return companyResponse;
+    }
+
+    @Override
+    public Set<CompanyResponse> getAllCompanies(UUID userID) {
+        if(!userProfileRepository.existsById(userID)){
+            throw new ResourceNotFoundException("UserProfile","userID", userID);
+        }
+
+        return companyRepository.findAllByUserProfile_Id(userID)
+                .stream()
+                .map(company -> modelMapper.map(company, CompanyResponse.class))
+                .collect(Collectors.toSet());
     }
 
     @Override

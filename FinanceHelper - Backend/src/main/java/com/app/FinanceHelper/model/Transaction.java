@@ -27,7 +27,7 @@ public class Transaction {
 
     @NotNull(message = "Transaction date cannot be empty!")
     @Column(nullable = false)
-    LocalDate transaction_date;
+    LocalDate transactionDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

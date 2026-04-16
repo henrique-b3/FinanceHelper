@@ -20,17 +20,20 @@ public class GoalDTO {
     @Size(min = 3, max = 50, message = "The name must has more than {min} and less than {max} characters")
     String name;
 
+    String description;
+
     String icon;
     String color;
 
-    @NotBlank(message = "Goal Name cannot be empty!")
-    String type;
-
-    String status;
+    /*@NotBlank(message = "Goal Name cannot be empty!")
+    String type;*/ //Desabilitado temporariamente
 
     @NotNull(message = "Limit amount cannot be empty!")
     BigDecimal limitAmount;
 
     LocalDate startDate;
     LocalDate endDate;
+
+    @NotNull(message = "Category ID cannot be empty!")
+    UUID categoryID;
 }

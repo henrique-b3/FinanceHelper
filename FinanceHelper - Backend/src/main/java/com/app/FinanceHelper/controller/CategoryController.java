@@ -49,7 +49,7 @@ public class CategoryController {
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/getAllCategories")
+    @GetMapping("/all")
     public ResponseEntity<Set<CategoryResponse>> getAllCategories(
             @AuthenticationPrincipal UserProfile user
     ){

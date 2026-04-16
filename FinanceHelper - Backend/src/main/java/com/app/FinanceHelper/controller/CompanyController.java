@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -35,6 +36,14 @@ public class CompanyController {
             @PathVariable UUID companyID
     ){
         CompanyResponse companyResponse = companyService.getCompany(user.getId(), companyID);
+        return new ResponseEntity<>(companyResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Set<CompanyResponse>> getAllCompanies(
+            @AuthenticationPrincipal UserProfile user
+    ){
+        Set<CompanyResponse> companyResponse = companyService.getAllCompanies(user.getId());
         return new ResponseEntity<>(companyResponse, HttpStatus.OK);
     }
 

@@ -2,6 +2,7 @@ package com.app.FinanceHelper.controller;
 
 import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.dto.TransactionDTO;
+import com.app.FinanceHelper.payload.response.CategoryExpenseResponse;
 import com.app.FinanceHelper.payload.response.TransactionResponse;
 import com.app.FinanceHelper.service.TransactionService;
 import jakarta.validation.Valid;
@@ -11,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -29,19 +33,54 @@ public class TransactionController {
         return new ResponseEntity<>(transactionResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{transactionID}")
+    @GetMapping("/get")
     public ResponseEntity<TransactionResponse> getTransaction(
             @AuthenticationPrincipal UserProfile user,
-            @PathVariable UUID transactionID
+            @RequestParam UUID transactionID
     ){
         TransactionResponse transactionResponse = transactionService.getTransaction(user.getId(),transactionID);
         return new ResponseEntity<>(transactionResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{transactionID}")
+    @GetMapping("/totalMonth")
+    public ResponseEntity<BigDecimal> getTotalSpentThisMonth(
+            @AuthenticationPrincipal UserProfile user
+    ){
+        BigDecimal total = transactionService.getTotalSpentByMonth(user.getId());
+        return new ResponseEntity<>(total, HttpStatus.OK);
+    }
+
+    @GetMapping("/chartData")
+    public ResponseEntity<List<CategoryExpenseResponse>> getExpensesByCategoryThisMonth(
+            @AuthenticationPrincipal UserProfile user
+    ){
+        List<CategoryExpenseResponse> chartData = transactionService.getExpensesByCategoryByMonth(user.getId());
+        return new ResponseEntity<>(chartData, HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<TransactionResponse>> getAllTransactions(
+            @AuthenticationPrincipal UserProfile user,
+            @RequestParam Integer limit
+    ){
+        List<TransactionResponse> transactionResponse = transactionService.getAllTransactions(user.getId(), limit);
+        return new ResponseEntity<>(transactionResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<TransactionResponse> updateTransaction(
+            @AuthenticationPrincipal UserProfile user,
+            @RequestParam UUID transactionID,
+            @Valid @RequestBody TransactionDTO transactionDTO
+    ){
+        TransactionResponse transactionResponse = transactionService.updateTransaction(user.getId(), transactionID, transactionDTO);
+        return new ResponseEntity<>(transactionResponse, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete")
     public ResponseEntity<TransactionResponse> deleteTransaction(
             @AuthenticationPrincipal UserProfile user,
-            @PathVariable UUID transactionID
+            @RequestParam UUID transactionID
     ){
         TransactionResponse transactionResponse = transactionService.deleteTransaction(user.getId(), transactionID);
         return new ResponseEntity<>(transactionResponse, HttpStatus.OK);

@@ -9,7 +9,6 @@ import com.app.FinanceHelper.payload.response.CategoryResponse;
 import com.app.FinanceHelper.repository.CategoryRepository;
 import com.app.FinanceHelper.repository.UserProfileRepository;
 import com.app.FinanceHelper.service.CategoryService;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

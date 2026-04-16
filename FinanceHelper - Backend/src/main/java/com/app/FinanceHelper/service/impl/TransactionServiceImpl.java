@@ -6,19 +6,25 @@ import com.app.FinanceHelper.model.Company;
 import com.app.FinanceHelper.model.Transaction;
 import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.dto.TransactionDTO;
-import com.app.FinanceHelper.payload.response.CompanyResponse;
+import com.app.FinanceHelper.payload.response.CategoryExpenseResponse;
 import com.app.FinanceHelper.payload.response.TransactionResponse;
 import com.app.FinanceHelper.repository.CategoryRepository;
 import com.app.FinanceHelper.repository.CompanyRepository;
 import com.app.FinanceHelper.repository.TransactionRepository;
 import com.app.FinanceHelper.repository.UserProfileRepository;
 import com.app.FinanceHelper.service.TransactionService;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -38,7 +44,6 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionResponse createTransaction(UUID userID, TransactionDTO transactionDTO) {
 
-
         UserProfile user = userProfileRepository.findById(userID)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userID));
 
@@ -57,43 +62,129 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction savedTransaction = transactionRepository.save(transaction);
 
         TransactionResponse transactionResponse = modelMapper.map(savedTransaction, TransactionResponse.class);
-        transactionResponse.setUserID(savedTransaction.getUserProfile().getId());
-        transactionResponse.setCompanyID(savedTransaction.getCompany().getId());
+        transactionResponse.setCompanyName(savedTransaction.getCompany().getName());
+        transactionResponse.setCategoryName(savedTransaction.getCategory().getName());
         transactionResponse.setCategoryID(savedTransaction.getCategory().getId());
+        transactionResponse.setCompanyID(savedTransaction.getCompany().getId());
 
         return transactionResponse;
     }
 
     @Override
     public TransactionResponse getTransaction(UUID userID, UUID transactionID) {
-        UserProfile user = userProfileRepository.findById(userID)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userID));
 
         Transaction foundTransaction = transactionRepository.findByIdAndUserProfile_Id(transactionID, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", transactionID));
 
         TransactionResponse transactionResponse = modelMapper.map(foundTransaction, TransactionResponse.class);
-        transactionResponse.setUserID(foundTransaction.getUserProfile().getId());
-        transactionResponse.setCompanyID(foundTransaction.getCompany().getId());
+        transactionResponse.setCompanyName(foundTransaction.getCompany().getName());
+        transactionResponse.setCategoryName(foundTransaction.getCategory().getName());
         transactionResponse.setCategoryID(foundTransaction.getCategory().getId());
+        transactionResponse.setCompanyID(foundTransaction.getCompany().getId());
 
         return transactionResponse;
     }
 
     @Override
-    public TransactionResponse deleteTransaction(UUID userID, UUID transactionID) {
-        UserProfile user = userProfileRepository.findById(userID)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userID));
+    public List<TransactionResponse> getAllTransactions(UUID userID, Integer limit) {
+
+        List<Transaction> transactions;
+
+        if (limit == null || limit == 0) {
+            transactions = transactionRepository.findAllByUserProfile_Id(userID);
+        } else {
+            Pageable pageable = PageRequest.of(0, limit);
+            transactions = transactionRepository.findByUserProfileIdOrderByTransactionDateDesc(userID, pageable).getContent();
+        }
+
+        return transactions.stream()
+                .map(transaction -> {
+                    TransactionResponse response = modelMapper.map(transaction, TransactionResponse.class);
+                    response.setCompanyName(transaction.getCompany().getName());
+                    response.setCategoryName(transaction.getCategory().getName());
+                    response.setCategoryColor(transaction.getCategory().getColor());
+                    response.setCategoryID(transaction.getCategory().getId());
+                    response.setCompanyID(transaction.getCompany().getId());
+                    return response;
+                }).collect(Collectors.toList());
+    }
+
+
+    @Override
+    public BigDecimal getTotalSpentByMonth(UUID userID) {
+        if(!userProfileRepository.existsById(userID)){
+            throw new ResourceNotFoundException("UserProfile","userID", userID);
+        }
+
+        LocalDate startDate = LocalDate.now().withDayOfMonth(1);
+        LocalDate endDate = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+
+        return transactionRepository.getTotalSpentByMonth(userID, startDate, endDate);
+    }
+
+    @Override
+    public TransactionResponse updateTransaction(UUID userID, UUID transactionID, TransactionDTO transactionDTO) {
 
         Transaction foundTransaction = transactionRepository.findByIdAndUserProfile_Id(transactionID, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", transactionID));
 
-        transactionRepository.delete(foundTransaction);
+        if (transactionDTO.getTransactionDate() != null && !transactionDTO.getTransactionDate().equals(foundTransaction.getTransactionDate())) {
+            foundTransaction.setTransactionDate(transactionDTO.getTransactionDate());
+        }
+
+        if (transactionDTO.getAmount() != null && transactionDTO.getAmount().compareTo(foundTransaction.getAmount()) != 0) {
+            foundTransaction.setAmount(transactionDTO.getAmount());
+        }
+
+        if (transactionDTO.getCategoryID() != null && !transactionDTO.getCategoryID().equals(foundTransaction.getCategory().getId())) {
+            Category category = categoryRepository.findByIdAndUserProfile_Id(transactionDTO.getCategoryID(), userID)
+                    .orElseThrow(() -> new ResourceNotFoundException("Category", "id", transactionDTO.getCategoryID()));
+            foundTransaction.setCategory(category);
+        }
+
+        if (transactionDTO.getCompanyID() != null && !transactionDTO.getCompanyID().equals(foundTransaction.getCompany().getId())) {
+            Company company = companyRepository.findByIdAndUserProfile_Id(transactionDTO.getCompanyID(), userID)
+                    .orElseThrow(() -> new ResourceNotFoundException("Company", "id", transactionDTO.getCompanyID()));
+            foundTransaction.setCompany(company);
+        }
+
+        Transaction updatedTransaction = transactionRepository.save(foundTransaction);
+
+        TransactionResponse transactionResponse = modelMapper.map(updatedTransaction, TransactionResponse.class);
+        transactionResponse.setCategoryName(updatedTransaction.getCategory().getName());
+        transactionResponse.setCategoryColor(updatedTransaction.getCategory().getColor());
+        transactionResponse.setCategoryID(updatedTransaction.getCategory().getId());
+        transactionResponse.setCompanyID(updatedTransaction.getCompany().getId());
+
+        return transactionResponse;
+    }
+
+
+    @Override
+    public List<CategoryExpenseResponse> getExpensesByCategoryByMonth(UUID userID) {
+        if(!userProfileRepository.existsById(userID)){
+            throw new ResourceNotFoundException("UserProfile","userID", userID);
+        }
+
+        LocalDate startDate = LocalDate.now().withDayOfMonth(1);
+        LocalDate endDate = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+
+        return transactionRepository.getExpensesByCategory(userID, startDate, endDate);
+    }
+
+    @Override
+    public TransactionResponse deleteTransaction(UUID userID, UUID transactionID) {
+
+        Transaction foundTransaction = transactionRepository.findByIdAndUserProfile_Id(transactionID, userID)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", transactionID));
 
         TransactionResponse transactionResponse = modelMapper.map(foundTransaction, TransactionResponse.class);
-        transactionResponse.setUserID(foundTransaction.getUserProfile().getId());
-        transactionResponse.setCompanyID(foundTransaction.getCompany().getId());
+        transactionResponse.setCategoryName(foundTransaction.getCategory().getName());
+        transactionResponse.setCategoryColor(foundTransaction.getCategory().getColor());
         transactionResponse.setCategoryID(foundTransaction.getCategory().getId());
+        transactionResponse.setCompanyID(foundTransaction.getCompany().getId());
+
+        transactionRepository.delete(foundTransaction);
 
         return transactionResponse;
     }

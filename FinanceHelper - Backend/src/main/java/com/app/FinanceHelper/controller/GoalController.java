@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -39,37 +40,29 @@ public class GoalController {
         return new ResponseEntity<>(goalResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<Set<GoalResponse>> getAllGoals(
+            @AuthenticationPrincipal UserProfile user
+    ){
+        Set<GoalResponse> goalResponses = goalService.getAllGoals(user.getId());
+        return new ResponseEntity<>(goalResponses, HttpStatus.OK);
+    }
+
     @PutMapping("/{goalID}")
     public ResponseEntity<GoalResponse> updateGoal(
             @AuthenticationPrincipal UserProfile user,
-            @PathVariable UUID goalID,
+            @RequestParam UUID goalID,
             @Valid @RequestBody GoalDTO goalDTO
     ){
-        return null;
+        GoalResponse goalResponse = goalService.updateGoal(user.getId(),goalID, goalDTO);
+        return new ResponseEntity<>(goalResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/limitAmount/{goalID}")
-    public ResponseEntity<GoalResponse> updateGoalLimitAmount(
-            @AuthenticationPrincipal UserProfile user,
-            @PathVariable UUID goalID,
-            @RequestParam BigDecimal amount
-            ){
-        return null;
-    }
 
-    @PutMapping("/name/{goalID}")
-    public ResponseEntity<GoalResponse> updateGoalName(
-            @AuthenticationPrincipal UserProfile user,
-            @PathVariable UUID goalID,
-            @RequestParam String name
-    ){
-        return null;
-    }
-
-    @DeleteMapping("/{goalID}")
+    @DeleteMapping("/delete")
     public ResponseEntity<GoalResponse> deleteGoal(
             @AuthenticationPrincipal UserProfile user,
-            @PathVariable UUID goalID
+            @RequestParam UUID goalID
     ){
         GoalResponse goalResponse = goalService.deleteGoal(user.getId(),goalID);
         return new ResponseEntity<>(goalResponse, HttpStatus.OK);

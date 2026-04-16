@@ -5,6 +5,7 @@ import com.app.FinanceHelper.payload.response.GoalResponse;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -14,4 +15,8 @@ public interface GoalService {
     GoalResponse getGoal(UUID userID, UUID goalID);
 
     GoalResponse deleteGoal(UUID userID, UUID goalID);
+
+    Set<GoalResponse> getAllGoals(UUID userID);
+
+    GoalResponse updateGoal(UUID userID, UUID goalID, GoalDTO goalDTO);
 }
