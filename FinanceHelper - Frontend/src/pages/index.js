@@ -8,3 +8,4 @@ export { default as NewTransaction } from "./Dashboard/Transaction/NewTransactio
 export { default as AllTransactions } from "./Dashboard/Transaction/GetAllTransactions.component";
 export { default as Menu } from "./Dashboard/Menu/Menu.component";
 export { default as GoalBarChart } from "./Dashboard/Chart/GoalChart/GoalBar.Chart.Component";
+export { default as NavMenu } from "./Dashboard/NavMenu/NavMenu.component";

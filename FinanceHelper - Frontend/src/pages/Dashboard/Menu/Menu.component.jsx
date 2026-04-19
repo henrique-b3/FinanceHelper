@@ -10,6 +10,10 @@ function Menu({ onTransactionCreated }) {
   const [isCompanyModalOpen, setIsCompanyModalOpen] = useState(false);
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+  const [showAmount, setShowAmount] = useState(true);
+  const [erro, setErro] = useState("");
+  
+  const displayedAmount = showAmount ? totalAmount : "**";
 
   useEffect(() => {
     api
@@ -21,7 +25,7 @@ function Menu({ onTransactionCreated }) {
         console.error("Erro ao buscar categorias", erro);
         setErro("Não foi possível carregar as suas categorias.");
       });
-  });
+  },[]);
 
   return(
     <div className="menu">
@@ -45,11 +49,14 @@ function Menu({ onTransactionCreated }) {
       <header className="menuTop">
         <div className="balanceText">
           <h1>Total gasto este mês</h1>
-          <p>€ {totalAmount}</p>
+          <p>€ {displayedAmount}</p>
         </div>
 
-        <button className="menuBalanceButton">
-          <img src={images.eyeShow} alt="mostrar saldo" />
+        <button className="menuBalanceButton" onClick={() => setShowAmount((prev) => !prev)}>
+          <img
+            src={showAmount ? images.eyeShow : images.eyeOff}
+            alt={showAmount ? "ocultar saldo" : "mostrar saldo"}
+          />
         </button>
       </header>
 

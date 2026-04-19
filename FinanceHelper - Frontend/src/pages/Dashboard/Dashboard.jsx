@@ -9,6 +9,7 @@ function Dashboard() {
   const [saudacao, setSaudacao] = useState("");
   const navigate = useNavigate();
   const [updateTrigger, setUpdateTrigger] = useState(0);
+  const [erro, setErro] = useState("");
   const refreshData = () => setUpdateTrigger((prev) => prev + 1);
 
   useEffect(() => {
@@ -36,6 +37,7 @@ function Dashboard() {
 
   return (
     <div className="mainDiv">
+      <pages.NavMenu/>
       <header className="welcome">
         <div>
           <p>{saudacao},</p>
