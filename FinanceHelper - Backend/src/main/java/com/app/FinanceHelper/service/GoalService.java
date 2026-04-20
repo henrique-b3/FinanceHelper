@@ -2,6 +2,7 @@ package com.app.FinanceHelper.service;
 
 import com.app.FinanceHelper.payload.dto.GoalDTO;
 import com.app.FinanceHelper.payload.response.GoalResponse;
+import com.app.FinanceHelper.payload.response.GoalStatusResponse;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
@@ -19,4 +20,6 @@ public interface GoalService {
     Set<GoalResponse> getAllGoals(UUID userID);
 
     GoalResponse updateGoal(UUID userID, UUID goalID, GoalDTO goalDTO);
+
+    GoalStatusResponse getGoalsStatus(UUID userID);
 }

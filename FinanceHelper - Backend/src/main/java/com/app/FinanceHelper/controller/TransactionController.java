@@ -67,6 +67,14 @@ public class TransactionController {
         return new ResponseEntity<>(transactionResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Integer> countTransactions(
+            @AuthenticationPrincipal UserProfile user
+    ){
+        Integer countTransactions = transactionService.countTransactions(user.getId());
+        return new ResponseEntity<>(countTransactions, HttpStatus.OK);
+    }
+
     @PutMapping("/update")
     public ResponseEntity<TransactionResponse> updateTransaction(
             @AuthenticationPrincipal UserProfile user,

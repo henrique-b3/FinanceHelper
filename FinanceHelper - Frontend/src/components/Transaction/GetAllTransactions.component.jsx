@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../../services/api";
+import api from "../../services/api";
 import { createPortal } from "react-dom";
 import "./GetAllTransactions.css";
 import NewTransaction from "./NewTransaction.component";
@@ -48,10 +48,9 @@ function GetAllTransaction({ onTransactionUpdate }) {
   };
 
   return (
-    <div className="transactions-container">
+    <div className="transactions-container glass-card">
       <div className="transactions-header">
         <h3 className="section-title">Transações Recentes</h3>
-        <span className="btn-view-all">Ver todas</span>
       </div>
 
       {erro && <div className="error-message">{erro}</div>}

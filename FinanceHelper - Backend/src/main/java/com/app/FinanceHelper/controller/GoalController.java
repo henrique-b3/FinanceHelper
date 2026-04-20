@@ -3,6 +3,7 @@ package com.app.FinanceHelper.controller;
 import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.dto.GoalDTO;
 import com.app.FinanceHelper.payload.response.GoalResponse;
+import com.app.FinanceHelper.payload.response.GoalStatusResponse;
 import com.app.FinanceHelper.service.GoalService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,14 @@ public class GoalController {
     ){
         Set<GoalResponse> goalResponses = goalService.getAllGoals(user.getId());
         return new ResponseEntity<>(goalResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<GoalStatusResponse> getGoalsStatus(
+            @AuthenticationPrincipal UserProfile user
+    ){
+        GoalStatusResponse goalStatusResponses = goalService.getGoalsStatus(user.getId());
+        return new ResponseEntity<>(goalStatusResponses, HttpStatus.OK);
     }
 
     @PutMapping("/{goalID}")

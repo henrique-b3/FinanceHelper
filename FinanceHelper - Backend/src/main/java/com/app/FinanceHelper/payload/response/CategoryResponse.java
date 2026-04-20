@@ -16,4 +16,5 @@ public class CategoryResponse {
     String description;
     String image;
     String color;
+    Integer transactionsCount;
 }

@@ -78,72 +78,19 @@
   font-weight: 500;
 }
 
-/* Inputs adaptados ao tema escuro */
-.textInput {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 12px 14px;
-  color: white;
-  font-size: 1rem;
-  font-family: inherit;
-  outline: none;
-  transition: all 0.3s ease;
-}
-
-.textInput::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.textInput:focus {
-  border-color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
-}
-
-/* Ajuste específico para as opções dos Selects não ficarem invisíveis */
-select.textInput option {
+select.form-input option {
   background-color: #000428;
   color: white;
 }
-
-/* Ajuste para o input de cor */
-.textInput[type="color"] {
+.form-input[type="color"] {
   padding: 2px;
   height: 45px;
   width: 100%;
   cursor: pointer;
   border-radius: 12px;
 }
-
-.textInput[type="color"]::-webkit-color-swatch-wrapper {
-  padding: 0;
-}
-
-.textInput[type="color"]::-webkit-color-swatch {
-  border: none;
-  border-radius: 10px;
-}
-
-/* Botão de Submeter */
-.submitButton {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 10px;
-}
-
-.submitButton:hover {
-  background: #0056b3;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
-}
+.form-input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.form-input[type="color"]::-webkit-color-swatch { border: none; border-radius: 10px; }
 
 .createAccButton{
   cursor: pointer;

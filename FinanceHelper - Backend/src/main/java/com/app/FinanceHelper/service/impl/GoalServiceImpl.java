@@ -2,6 +2,7 @@ package com.app.FinanceHelper.service.impl;
 
 import ch.qos.logback.core.model.Model;
 import com.app.FinanceHelper.controller.GoalController;
+import com.app.FinanceHelper.enums.GoalStatus;
 import com.app.FinanceHelper.exceptions.APIexception;
 import com.app.FinanceHelper.exceptions.ResourceNotFoundException;
 import com.app.FinanceHelper.model.Category;
@@ -9,6 +10,7 @@ import com.app.FinanceHelper.model.Goal;
 import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.dto.GoalDTO;
 import com.app.FinanceHelper.payload.response.GoalResponse;
+import com.app.FinanceHelper.payload.response.GoalStatusResponse;
 import com.app.FinanceHelper.repository.CategoryRepository;
 import com.app.FinanceHelper.repository.GoalRepository;
 import com.app.FinanceHelper.repository.TransactionRepository;
@@ -57,7 +59,11 @@ public class GoalServiceImpl implements GoalService {
 
         Goal savedGoal = goalRepository.save(goal);
 
-        return modelMapper.map(savedGoal, GoalResponse.class);
+        GoalResponse goalResponse = modelMapper.map(savedGoal, GoalResponse.class);
+
+        goalResponse.setCategoryID(category.getId());
+
+        return goalResponse;
     }
 
     @Override
@@ -75,7 +81,11 @@ public class GoalServiceImpl implements GoalService {
 
         foundGoal.setSpendAmount(spent);
 
-        return modelMapper.map(foundGoal, GoalResponse.class);
+        GoalResponse goalResponse = modelMapper.map(foundGoal, GoalResponse.class);
+
+        goalResponse.setCategoryID(foundGoal.getCategory().getId());
+
+        return goalResponse;
     }
 
     @Override
@@ -94,7 +104,11 @@ public class GoalServiceImpl implements GoalService {
 
                     goal.setSpendAmount(spent);
 
-                    return modelMapper.map(goal, GoalResponse.class);
+                    GoalResponse goalResponse = modelMapper.map(goal, GoalResponse.class);
+
+                    goalResponse.setCategoryID(goal.getCategory().getId());
+
+                    return goalResponse;
                 }).collect(Collectors.toSet());
     }
 
@@ -154,9 +168,39 @@ public class GoalServiceImpl implements GoalService {
                 savedGoal.getStartDate(),
                 savedGoal.getEndDate()
         );
+
         savedGoal.setSpendAmount(spent);
 
-        return modelMapper.map(savedGoal, GoalResponse.class);
+        GoalResponse goalResponse = modelMapper.map(savedGoal, GoalResponse.class);
+
+        goalResponse.setCategoryID(savedGoal.getCategory().getId());
+
+        return goalResponse;
+    }
+
+    @Override
+    public GoalStatusResponse getGoalsStatus(UUID userID) {
+        List<Goal> userGoals = goalRepository.findAllByUserProfile_Id(userID);
+
+        userGoals.forEach(goal -> {
+            BigDecimal spent = transactionRepository.getTotalSpentByCategoryAndDate(
+                    userID,
+                    goal.getCategory().getId(),
+                    goal.getStartDate(),
+                    goal.getEndDate()
+            );
+            goal.setSpendAmount(spent);
+        });
+
+        long finished = userGoals.stream()
+                .filter(goal -> goal.getStatus() == GoalStatus.FINISHED)
+                .count();
+
+        long current = userGoals.stream()
+                .filter(goal -> goal.getStatus() != GoalStatus.FINISHED)
+                .count();
+
+        return new GoalStatusResponse(current, finished, current + finished);
     }
 
 

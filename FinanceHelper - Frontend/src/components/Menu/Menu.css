@@ -1,0 +1,122 @@
+.menu-container {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.menu-header-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.toggle-amount-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.toggle-amount-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.toggle-amount-btn img {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+}
+
+/* Layout em Grid para os cartões (MUITO mais responsivo que flex) */
+.menuTop {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+/* Estilo individual de cada Cartão */
+.insight-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 1.8rem;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
+    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.insight-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+}
+
+/* O cartão principal ganha um destaque subtil */
+.highlight-card {
+    background: linear-gradient(135deg, rgba(0, 123, 255, 0.15), rgba(255, 255, 255, 0.05));
+    border: 1px solid rgba(0, 123, 255, 0.3);
+}
+
+.insight-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.insight-header h3 {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 1px;
+}
+
+.icon-wrapper {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon-wrapper img {
+    width: 24px;
+    height: 24px;
+    opacity: 0.9;
+}
+
+.insight-value {
+    margin: 0;
+    font-size: 2.0rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.insight-valueView{
+    flex-direction: row;
+    display: flex;
+    gap: 20px;
+}
+
+/* Responsividade para ecrãs menores */
+@media (max-width: 768px) {
+    .menuTop {
+        grid-template-columns: 1fr; /* Coloca os cartões em coluna no telemóvel */
+    }
+}

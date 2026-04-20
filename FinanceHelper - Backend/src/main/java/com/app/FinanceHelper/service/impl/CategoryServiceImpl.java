@@ -7,6 +7,7 @@ import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.dto.CategoryDTO;
 import com.app.FinanceHelper.payload.response.CategoryResponse;
 import com.app.FinanceHelper.repository.CategoryRepository;
+import com.app.FinanceHelper.repository.TransactionRepository;
 import com.app.FinanceHelper.repository.UserProfileRepository;
 import com.app.FinanceHelper.service.CategoryService;
 import org.modelmapper.ModelMapper;
@@ -25,6 +26,8 @@ public class CategoryServiceImpl implements CategoryService {
     CategoryRepository categoryRepository;
     @Autowired
     UserProfileRepository userProfileRepository;
+    @Autowired
+    TransactionRepository transactionRepository;
     @Autowired
     ModelMapper modelMapper;
 
@@ -48,39 +51,61 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse getCategory(UUID userID, UUID categoryID) {
-        if (!userProfileRepository.existsById(userID)) {
-            throw new ResourceNotFoundException("UserProfile", "userID", userID);
-        }
 
         Category category = categoryRepository
                 .findByIdAndUserProfile_Id(categoryID, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", categoryID));
 
-        return modelMapper.map(category, CategoryResponse.class);
+        Integer count = transactionRepository.countByUserProfile_IdAndCategoryId(userID, category.getId());
+
+        CategoryResponse categoryResponse = modelMapper.map(category, CategoryResponse.class);
+
+        categoryResponse.setTransactionsCount(count != null ? count : 0);
+
+        return categoryResponse;
     }
 
     @Override
     public Set<CategoryResponse> getAllCategories(UUID userID) {
-        if(!userProfileRepository.existsById(userID)){
-            throw new ResourceNotFoundException("UserProfile","userID", userID);
-        }
 
         return categoryRepository.findAllByUserProfile_Id(userID)
                 .stream()
-                .map(category -> modelMapper.map(category, CategoryResponse.class))
+                .map(category -> {
+                    CategoryResponse response = modelMapper.map(category, CategoryResponse.class);
+
+                    Integer count = transactionRepository.countByUserProfile_IdAndCategoryId(userID, category.getId());
+
+                    response.setTransactionsCount(count != null ? count : 0);
+
+                    return response;
+                })
                 .collect(Collectors.toSet());
     }
 
 
     @Override
     public CategoryResponse getCategoryByName(UUID userID, String categoryName) {
-        if (!userProfileRepository.existsById(userID)) {
-            throw new ResourceNotFoundException("UserProfile", "userID", userID);
-        }
 
         Category category = categoryRepository
                 .findByNameAndUserProfile_Id(categoryName, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "name", categoryName));
+
+        Integer count = transactionRepository.countByUserProfile_IdAndCategoryId(userID, category.getId());
+
+        CategoryResponse categoryResponse = modelMapper.map(category, CategoryResponse.class);
+
+        categoryResponse.setTransactionsCount(count != null ? count : 0);
+
+        return categoryResponse;
+    }
+
+    @Override
+    public CategoryResponse deleteCategory(UUID userID, UUID categoryID) {
+        Category category = categoryRepository
+                .findByIdAndUserProfile_Id(categoryID, userID)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", categoryID));
+
+        categoryRepository.deleteById(categoryID);
 
         return modelMapper.map(category, CategoryResponse.class);
     }

@@ -2,8 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import api from "../../services/api";
 import "./Login.css";
+import "../../App.css";
 import { images } from "../../svg";
 import * as pages from "..";
+import * as components from "../../components";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -36,7 +38,7 @@ function Login() {
 
   return (
     <div className="login-container">
-      <pages.Register
+      <components.Register
         isOpen={isRegisterModalOpen}
         onClose={() => setIsRegisterModalOpen(false)}
       />
@@ -49,6 +51,7 @@ function Login() {
           <div className="input-group">
             <label>Email</label>
             <input
+              className="form-input"
               type="email"
               placeholder="O seu Email"
               value={email}
@@ -60,6 +63,7 @@ function Login() {
           <div className="input-group">
             <label>Password</label>
             <input
+              className="form-input"
               type="password"
               placeholder="A sua Password"
               value={password}
@@ -68,11 +72,14 @@ function Login() {
             />
           </div>
 
-          <button type="submit" className="login-button">
+          <button type="submit" className="btn-primary">
             Entrar
           </button>
         </form>
-        <div className="createAccButton" onClick={() => setIsRegisterModalOpen(true)}>
+        <div
+          className="createAccButton"
+          onClick={() => setIsRegisterModalOpen(true)}
+        >
           <p>Criar conta</p>
         </div>
       </div>

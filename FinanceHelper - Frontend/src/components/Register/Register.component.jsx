@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { useState } from "react";
 import api from "../../services/api";
-import "../Dashboard/NewModal.css";
+import "../Modal/NewModal.css";
 
 function Register({ isOpen, onClose }) {
   const [name, setName] = useState("");
@@ -56,7 +56,7 @@ function Register({ isOpen, onClose }) {
           <label className="textLabel">
             Nome:
             <input
-              className="textInput"
+              className="form-input"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -67,7 +67,7 @@ function Register({ isOpen, onClose }) {
           <label className="textLabel">
             Sobrenome:
             <input
-              className="textInput"
+              className="form-input"
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
@@ -78,7 +78,7 @@ function Register({ isOpen, onClose }) {
           <label className="textLabel">
             Email:
             <input
-              className="textInput"
+              className="form-input"
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -89,7 +89,7 @@ function Register({ isOpen, onClose }) {
           <label className="textLabel">
             Senha:
             <input
-              className="textInput"
+              className="form-input"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -100,7 +100,7 @@ function Register({ isOpen, onClose }) {
           <label className="textLabel">
             Confirmar senha:
             <input
-              className="textInput"
+              className="form-input"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -108,7 +108,7 @@ function Register({ isOpen, onClose }) {
             />
           </label>
 
-          <button className="submitButton" type="submit">
+          <button className="btn-primary" type="submit">
             Criar conta
           </button>
         </form>

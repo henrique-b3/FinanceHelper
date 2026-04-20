@@ -25,4 +25,6 @@ public interface TransactionService {
     BigDecimal getTotalSpentByMonth(UUID userID);
 
     TransactionResponse updateTransaction(UUID userID, UUID transactionID, TransactionDTO transactionDTO);
+
+    Integer countTransactions(UUID userID);
 }

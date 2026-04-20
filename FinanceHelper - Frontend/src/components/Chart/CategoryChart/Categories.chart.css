@@ -1,13 +1,5 @@
-/* src/pages/Dashboard/Graph/GoalGraph/GoalBar.Graph.css */
-
-.goal-card-container {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 28px;
+.categories-card-container {
     padding: 2rem;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     margin-top: 2rem;
 }
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import api from "../../../../services/api";
+import api from "../../../services/api";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-import "./GoalBar.Chart.css";
+import "./Categories.chart.css";
 
 function GoalBar() {
   const [dadosGrafico, setDadosGrafico] = useState([]);
@@ -23,7 +23,7 @@ function GoalBar() {
   }, []);
 
   return (
-    <div className="goal-card-container">
+    <div className="categories-card-container glass-card">
       <h3 className="section-title">Gastos mensal</h3>
       
       {dadosGrafico.length === 0 ? (

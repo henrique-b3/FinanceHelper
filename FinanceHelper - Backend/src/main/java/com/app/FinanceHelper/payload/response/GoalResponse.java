@@ -28,4 +28,6 @@ public class GoalResponse {
     BigDecimal limitAmount;
     BigDecimal spendAmount;
     BigDecimal remainingAmount;
+
+    UUID categoryID;
 }

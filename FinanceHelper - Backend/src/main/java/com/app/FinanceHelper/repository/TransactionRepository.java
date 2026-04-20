@@ -59,4 +59,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
             @Param("endDate") LocalDate endDate
     );
 
+    Integer countByUserProfile_Id(UUID userID);
+
+    Integer countByUserProfile_IdAndCategoryId(UUID userID, UUID id);
 }

@@ -1,11 +1,3 @@
 export { default as Login } from "./Login/Login";
-export { default as Register } from "./Register/Register.component";
 export { default as Dashboard } from "./Dashboard/Dashboard";
-export { default as NewCategory } from "./Dashboard/Category/NewCategory.component";
-export { default as NewGoal } from "./Dashboard/Goal/NewGoal.component";
-export { default as NewCompany } from "./Dashboard/Company/NewCompany.component";
-export { default as NewTransaction } from "./Dashboard/Transaction/NewTransaction.component";
-export { default as AllTransactions } from "./Dashboard/Transaction/GetAllTransactions.component";
-export { default as Menu } from "./Dashboard/Menu/Menu.component";
-export { default as GoalBarChart } from "./Dashboard/Chart/GoalChart/GoalBar.Chart.Component";
-export { default as NavMenu } from "./Dashboard/NavMenu/NavMenu.component";
+export { default as Category } from "./Category/Category";

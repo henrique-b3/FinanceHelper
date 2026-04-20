@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import "./Dashboard.css";
-import * as pages from "..";
+import * as components from "../../components";
 
 function Dashboard() {
   const [perfil, setPerfil] = useState(null);
@@ -37,7 +37,7 @@ function Dashboard() {
 
   return (
     <div className="mainDiv">
-      <pages.NavMenu/>
+      <components.NavMenu/>
       <header className="welcome">
         <div>
           <p>{saudacao},</p>
@@ -49,9 +49,12 @@ function Dashboard() {
           Sair
         </button>
       </header>
-      <pages.Menu onTransactionCreated={refreshData} />
-      <pages.GoalBarChart key={`graph-${updateTrigger}`} />
-      <pages.AllTransactions
+      <components.Menu onTransactionCreated={refreshData} />
+      <div className="chartDiv">
+        <components.GoalBarChart key={`graphGoals-${updateTrigger}`}/>
+        <components.CategoriesChart key={`graph-${updateTrigger}`} />
+      </div>
+      <components.AllTransactions
         key={`list-${updateTrigger}`}
         onTransactionUpdate={refreshData}
       />

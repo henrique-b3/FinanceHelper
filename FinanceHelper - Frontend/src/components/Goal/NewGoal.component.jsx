@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom"
-import api from "../../../services/api";
-import "../NewModal.css";
+import api from "../../services/api";
+import "../Modal/NewModal.css";
 
-function NewCompany({ isOpen, onClose }) {
+function NewCompany({ isOpen, onClose, onSuccess, goal = null }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [icon, setIcon] = useState("");
@@ -17,7 +17,7 @@ function NewCompany({ isOpen, onClose }) {
 
   useEffect(() => {
     if (isOpen) {
-      api
+        api
         .get("/category/all")
         .then((resposta) => {
           setCategoriasLista(resposta.data);
@@ -28,6 +28,20 @@ function NewCompany({ isOpen, onClose }) {
         });
     }
   }, [isOpen]);
+
+
+  useEffect(() => {
+    if (isOpen && goal) {
+        setName(goal.name || "");
+        setDescription(goal.description || "");
+        setIcon(goal.icon || "");
+        setColor(goal.color || "");
+        setLimitAmount(goal.limitAmount || "");
+        setStartDate(goal.startDate || "");
+        setEndDate(goal.endDate || "");
+        setCategoryID(goal.categoryID || "");
+    }
+  }, [isOpen, goal]);
 
   if (!isOpen) return null;
 
@@ -53,6 +67,7 @@ function NewCompany({ isOpen, onClose }) {
         });
 
         alert('Objetivo criado com sucesso! 🎯');
+        if (onSuccess) onSuccess();
 
         setName("");
         setDescription("");
@@ -83,7 +98,7 @@ function NewCompany({ isOpen, onClose }) {
           <label className="textLabel">
             Nome do objetivo:
             <input
-              className="textInput"
+              className="form-input"
               type="text"
               placeholder="Ex: Gastos com mercados..."
               value={name}
@@ -95,7 +110,7 @@ function NewCompany({ isOpen, onClose }) {
           <label className="textLabel">
             Descrição:
             <input
-              className="textInput"
+              className="form-input"
               type="text"
               placeholder="Ex: Gastar no máximo 200€..."
               value={description}
@@ -106,7 +121,7 @@ function NewCompany({ isOpen, onClose }) {
           <label className="textLabel">
             Valor:
             <input
-              className="textInput"
+              className="form-input"
               type="number"
               placeholder="200€"
               value={limitAmount}
@@ -118,7 +133,7 @@ function NewCompany({ isOpen, onClose }) {
           <label className="textLabel">
             Data inicio:
             <input
-              className="textInput"
+              className="form-input"
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
@@ -128,7 +143,7 @@ function NewCompany({ isOpen, onClose }) {
           <label className="textLabel">
             Data Fim:
             <input
-              className="textInput"
+              className="form-input"
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
@@ -138,7 +153,7 @@ function NewCompany({ isOpen, onClose }) {
           <label className="textLabel">
           Categoria Associada:
           <select 
-            className="textInput"
+            className="form-input"
             value={categoryID} 
             onChange={(e) => setCategoryID(e.target.value)}
             required
@@ -155,14 +170,14 @@ function NewCompany({ isOpen, onClose }) {
           <label className="textLabel">
             Cor:
             <input 
-              className="textInput"
+              className="form-input"
               type="color" 
               value={color}
               onChange={(e) => setColor(e.target.value)}
             />
           </label>
 
-          <button className="submitButton" type="submit">
+          <button className="btn-primary" type="submit">
               Guardar Objetivo
           </button>
         </form>

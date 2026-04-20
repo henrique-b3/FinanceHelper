@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import api from "../../../services/api";
-import "../NewModal.css";
+import api from "../../services/api";
+import "../Modal/NewModal.css";
 
 function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
   const [description, setDescription] = useState("");
@@ -146,7 +146,7 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
           <label className="textLabel">
             Descrição:
             <input
-              className="textInput"
+              className="form-input"
               type="text"
               placeholder="Ex: Compra de suplementos"
               value={description}
@@ -158,7 +158,7 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
           <label className="textLabel">
             Valor:
             <input
-              className="textInput"
+              className="form-input"
               type="number"
               placeholder="20€"
               value={amount}
@@ -170,7 +170,7 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
           <label className="textLabel">
             Data:
             <input
-              className="textInput"
+              className="form-input"
               type="date"
               value={transactionDate}
               onChange={(e) => setTransactionDate(e.target.value)}
@@ -180,7 +180,7 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
           <label className="textLabel">
             Categoria Associada:
             <select
-              className="textInput"
+              className="form-input"
               value={categoryID}
               onChange={(e) => setCategoryID(e.target.value)}
               required
@@ -199,7 +199,7 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
           <label className="textLabel">
             Empresa Associada:
             <select
-              className="textInput"
+              className="form-input"
               value={companyID}
               onChange={(e) => setCompanyID(e.target.value)}
             >
@@ -215,12 +215,12 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
           </label>
 
           <div style={{ display: "flex", gap: "10px" }}>
-            <button className="submitButton" type="submit" style={{ flex: 1 }}>
+            <button className="btn-primary" type="submit" style={{ flex: 1 }}>
               {transaction ? "Guardar Alterações" : "Guardar Transação"}
             </button>
             
             {transaction && (
-              <button type="button" onClick={handleDelete} className="submitButton" style={{ backgroundColor: "#ff4d4f", flex: 1 }}>
+              <button type="button" onClick={handleDelete} className="btn-primary" style={{ backgroundColor: "#ff4d4f", flex: 1 }}>
                 Apagar
               </button>
             )}

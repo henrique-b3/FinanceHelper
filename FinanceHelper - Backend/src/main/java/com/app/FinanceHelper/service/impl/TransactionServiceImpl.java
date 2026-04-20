@@ -159,6 +159,11 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionResponse;
     }
 
+    @Override
+    public Integer countTransactions(UUID userID) {
+        return transactionRepository.countByUserProfile_Id(userID);
+    }
+
 
     @Override
     public List<CategoryExpenseResponse> getExpensesByCategoryByMonth(UUID userID) {

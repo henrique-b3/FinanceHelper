@@ -1,15 +1,27 @@
-import { useState } from "react";
-import { createPortal } from "react-dom"
-import api from "../../../services/api";
-import "../NewModal.css";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import api from "../../services/api";
+import "../Modal/NewModal.css";
 
-function NewCategory({ isOpen, onClose }) {
+function NewCategory({ isOpen, onClose, onSuccess, category = null }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [color, setColor] = useState("#007bff");
   const [erro, setErro] = useState("");
 
-  
+  useEffect(() => {
+    if (isOpen && category) {
+      setName(category.name || "");
+      setDescription(category.description || "");
+      setColor(category.color || "");
+    } else if (isOpen && !category) {
+      setName("");
+      setDescription("");
+      setColor("#007bff");
+      setErro("");
+    }
+  }, [isOpen, category]);
+
   if (!isOpen) return null;
 
   const handleCreateCategory = async (e) => {
@@ -17,19 +29,34 @@ function NewCategory({ isOpen, onClose }) {
     setErro("");
 
     try {
-      await api.post("/category", {
-        name: name,
-        description: description,
-        color: color,
-        image: "icone.png",
-      });
+      if (!category) {
+        await api.post("/category", {
+          name: name,
+          description: description,
+          color: color,
+          image: "icone.png",
+        });
 
-      alert("Categoria criada com sucesso! 🎉");
+        alert("Categoria criada com sucesso! 🎉");
+      }else {
+        await api.put("/category/update", {
+          name: name,
+          description: description,
+          color: color,
+          image: "icone.png",
+        }, {
+          params: { categoryID: category.id }
+        });
+
+        alert("Categoria atualizada com sucesso! ✅");
+      }
+
+      if (onSuccess) onSuccess();
 
       setName("");
       setDescription("");
       setColor("#007bff");
-      onClose(); 
+      onClose();
     } catch (error) {
       console.error(error);
       setErro("Erro ao criar categoria. Verifique se o nome já existe.");
@@ -42,15 +69,15 @@ function NewCategory({ isOpen, onClose }) {
         <button className="closeButton" onClick={onClose}>
           ✕
         </button>
-        
-        <h2 style={{marginTop: 0, color: "#333"}}>Criar nova categoria</h2>
+
+        <h2 style={{ marginTop: 0, color: "#333" }}>Criar nova categoria</h2>
         {erro && <p style={{ color: "red" }}>{erro}</p>}
 
         <form className="formModel" onSubmit={handleCreateCategory}>
           <label className="textLabel">
             Nome da Categoria:
             <input
-              className="textInput"
+              className="form-input"
               type="text"
               placeholder="Ex: Alimentação, Transporte..."
               value={name}
@@ -62,9 +89,9 @@ function NewCategory({ isOpen, onClose }) {
           <label className="textLabel">
             Descrição:
             <input
-              className="textInput"
-              type="text" 
-              placeholder="Ex: Gastos com supermercado" 
+              className="form-input"
+              type="text"
+              placeholder="Ex: Gastos com supermercado"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
@@ -72,21 +99,21 @@ function NewCategory({ isOpen, onClose }) {
 
           <label className="textLabel">
             Cor:
-            <input 
-              className="textInput"
-              type="color" 
+            <input
+              className="form-input"
+              type="color"
               value={color}
               onChange={(e) => setColor(e.target.value)}
             />
           </label>
 
-          <button className="submitButton" type="submit">
-              Guardar Categoria
+          <button className="btn-primary" type="submit">
+            Guardar Categoria
           </button>
         </form>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 

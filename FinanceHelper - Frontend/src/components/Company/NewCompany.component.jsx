@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom"
-import api from "../../../services/api";
-import "../NewModal.css";
+import api from "../../services/api";
+import "../Modal/NewModal.css";
 
 function NewCompany({ isOpen, onClose }) {
   const [name, setName] = useState("");
@@ -69,7 +69,7 @@ function NewCompany({ isOpen, onClose }) {
           <label className="textLabel">
             Nome da empresa:
             <input
-              className="textInput"
+              className="form-input"
               type="text"
               placeholder="Ex: Continente, Galp, EDP..."
               value={name}
@@ -81,7 +81,7 @@ function NewCompany({ isOpen, onClose }) {
           <label className="textLabel">
           Categoria Associada:
           <select 
-            className="textInput"
+            className="form-input"
             value={categoryID} 
             onChange={(e) => setCategoryID(e.target.value)}
             required
@@ -98,14 +98,14 @@ function NewCompany({ isOpen, onClose }) {
           <label className="textLabel">
             Cor:
             <input 
-              className="textInput"
+              className="form-input"
               type="color" 
               value={color}
               onChange={(e) => setColor(e.target.value)}
             />
           </label>
 
-          <button className="submitButton" type="submit">
+          <button className="btn-primary" type="submit">
               Guardar Empresa
           </button>
         </form>

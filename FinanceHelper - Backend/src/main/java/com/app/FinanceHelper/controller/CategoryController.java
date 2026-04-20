@@ -59,6 +59,7 @@ public class CategoryController {
 
     @PutMapping("/update/{categoryID}")
     public ResponseEntity<CategoryResponse> updateCategory(
+            @AuthenticationPrincipal UserProfile user,
            @Valid @RequestBody CategoryDTO categoryDTO
     ){
         return null;
@@ -74,12 +75,13 @@ public class CategoryController {
         return null;
     }
 
-    @DeleteMapping("/{categoryID}")
+    @DeleteMapping("/delete")
     public ResponseEntity<CategoryResponse> deleteCategory(
             @AuthenticationPrincipal UserProfile user,
-            @PathVariable UUID categoryID
+            @RequestParam UUID categoryID
     ){
-        return null;
+        CategoryResponse categoryResponse = categoryService.deleteCategory(user.getId(), categoryID);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteAllCategories")

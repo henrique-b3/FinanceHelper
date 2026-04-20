@@ -1,5 +1,6 @@
 package com.app.FinanceHelper.repository;
 
+import com.app.FinanceHelper.enums.GoalStatus;
 import com.app.FinanceHelper.model.Goal;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
