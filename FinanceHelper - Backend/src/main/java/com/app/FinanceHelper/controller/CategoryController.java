@@ -49,11 +49,21 @@ public class CategoryController {
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
+
     @GetMapping("/all")
     public ResponseEntity<Set<CategoryResponse>> getAllCategories(
             @AuthenticationPrincipal UserProfile user
     ){
         Set<CategoryResponse> categoryResponse = categoryService.getAllCategories(user.getId());
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/all/byName")
+    public ResponseEntity<List<CategoryResponse>> getCategoriesByName(
+            @AuthenticationPrincipal UserProfile user,
+            @RequestParam String categoryName
+    ){
+        List<CategoryResponse> categoryResponse = categoryService.getCategoriesByName(user.getId(),categoryName);
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 

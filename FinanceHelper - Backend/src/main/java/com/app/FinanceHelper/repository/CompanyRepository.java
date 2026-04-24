@@ -16,4 +16,6 @@ public interface CompanyRepository extends JpaRepository<Company, UUID> {
     Optional<Company> findByIdAndUserProfile_Id(UUID companyID, UUID userID);
 
     Set<Company> findAllByUserProfile_Id(UUID userID);
+
+    List<Company> findByNameStartingWithIgnoreCaseAndUserProfile_Id(String companyName, UUID userID);
 }

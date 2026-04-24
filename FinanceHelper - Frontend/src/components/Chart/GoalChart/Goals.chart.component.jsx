@@ -23,8 +23,8 @@ function GoalBarChart() {
   useEffect(() => {
     api
       .get("/goal/all")
-      .then((resposta) => {
-        setGoals(resposta.data);
+      .then((answer) => {
+        setGoals(answer.data);
       })
       .catch((erro) => console.error("Erro ao carregar gráfico", erro));
   }, []);

@@ -4,7 +4,7 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import "./Categories.chart.css";
 
 function GoalBar() {
-  const [dadosGrafico, setDadosGrafico] = useState([]);
+  const [chartData, setChartData] = useState([]);
   
   const formatarDinheiro = (valor) => {
     return new Intl.NumberFormat('pt-PT', {
@@ -16,8 +16,8 @@ function GoalBar() {
   useEffect(() => {
     api
       .get("/transaction/chartData")
-      .then((resposta) => {
-        setDadosGrafico(resposta.data);
+      .then((answer) => {
+        setChartData(answer.data);
       })
       .catch((erro) => console.error("Erro ao carregar gráfico", erro));
   }, []);
@@ -26,7 +26,7 @@ function GoalBar() {
     <div className="categories-card-container glass-card">
       <h3 className="section-title">Gastos mensal</h3>
       
-      {dadosGrafico.length === 0 ? (
+      {chartData.length === 0 ? (
         <p className="empty-graph-message">Sem dados este mês.</p>
       ) : (
         <div className="content-wrapper">
@@ -42,7 +42,7 @@ function GoalBar() {
                   paddingAngle={5} 
                   dataKey="value"
                 >
-                  {dadosGrafico.map((entry, index) => (
+                  {chartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color || '#cccccc'} />
                   ))}
                 </Pie>
@@ -55,7 +55,7 @@ function GoalBar() {
           </div>
 
           <div className="legend-container">
-            {dadosGrafico.map((cat, idx) => (
+            {chartData.map((cat, idx) => (
               <div key={idx} className="legend-item">
                 <div className="legend-label-group">
                   <div 

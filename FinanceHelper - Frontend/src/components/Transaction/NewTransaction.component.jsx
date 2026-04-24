@@ -17,8 +17,8 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
     if (isOpen) {
       api
         .get("/category/all")
-        .then((resposta) => {
-          setcategoriesList(resposta.data);
+        .then((answer) => {
+          setcategoriesList(answer.data);
         })
         .catch((erro) => {
           console.error("Erro ao buscar categorias", erro);
@@ -27,8 +27,8 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
 
       api
         .get("/company/all")
-        .then((resposta) => {
-          setcompaniesList(resposta.data);
+        .then((answer) => {
+          setcompaniesList(answer.data);
         })
         .catch((erro) => {
           console.error("Erro ao buscar categorias", erro);

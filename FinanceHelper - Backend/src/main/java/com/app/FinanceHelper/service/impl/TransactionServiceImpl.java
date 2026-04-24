@@ -1,11 +1,13 @@
 package com.app.FinanceHelper.service.impl;
 
+import com.app.FinanceHelper.Filter.TransactionFilter;
 import com.app.FinanceHelper.exceptions.ResourceNotFoundException;
 import com.app.FinanceHelper.model.Category;
 import com.app.FinanceHelper.model.Company;
 import com.app.FinanceHelper.model.Transaction;
 import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.dto.TransactionDTO;
+import com.app.FinanceHelper.payload.dto.TransactionFilterDTO;
 import com.app.FinanceHelper.payload.response.CategoryExpenseResponse;
 import com.app.FinanceHelper.payload.response.TransactionResponse;
 import com.app.FinanceHelper.repository.CategoryRepository;
@@ -15,8 +17,11 @@ import com.app.FinanceHelper.repository.UserProfileRepository;
 import com.app.FinanceHelper.service.TransactionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -164,7 +169,37 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.countByUserProfile_Id(userID);
     }
 
+    @Override
+    public Page<TransactionResponse> getTransactionsWithFilters(UUID userID, TransactionFilterDTO filter, Pageable pageable) {
+        if(filter.orderBy() != null && !filter.orderBy().isBlank()) {
+            Sort.Direction direction = (filter.direction() != null && filter.direction().equalsIgnoreCase("desc"))
+                    ? Sort.Direction.DESC
+                    : Sort.Direction.ASC;
 
+
+            String sortBy = filter.orderBy();
+
+            if (sortBy.equalsIgnoreCase("data")) sortBy = "transactionDate";
+            if (sortBy.equalsIgnoreCase("valor")) sortBy = "amount";
+
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortBy));
+        }
+
+        Specification <Transaction> spec = TransactionFilter.filter(userID, filter);
+
+        Page<Transaction> transactionPage = transactionRepository.findAll(spec, pageable);
+
+
+        return transactionPage.map(transaction -> {
+            TransactionResponse response = modelMapper.map(transaction, TransactionResponse.class);
+            response.setCompanyName(transaction.getCompany().getName());
+            response.setCategoryName(transaction.getCategory().getName());
+            response.setCategoryColor(transaction.getCategory().getColor());
+            response.setCategoryID(transaction.getCategory().getId());
+            response.setCompanyID(transaction.getCompany().getId());
+            return response;
+        });
+    }
     @Override
     public List<CategoryExpenseResponse> getExpensesByCategoryByMonth(UUID userID) {
         if(!userProfileRepository.existsById(userID)){

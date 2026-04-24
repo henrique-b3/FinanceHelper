@@ -13,13 +13,13 @@ function NavMenu(){
             <button className="optionButton" onClick={() => navigate("/dashboard")}>
                 <p>Dashboard</p>
             </button>
-            <button className="optionButton" onClick={handler}>
+            <button className="optionButton" onClick={() => navigate("/transaction")}>
                 <p>Transações</p>
             </button>
             <button className="optionButton" onClick={() => navigate("/category")}>
                 <p>Categorias</p>
             </button>
-            <button className="optionButton" onClick={handler}>
+            <button className="optionButton" onClick={() => navigate("/company")}>
                 <p>Empresas</p>
             </button>
             <button className="optionButton" onClick={handler}>

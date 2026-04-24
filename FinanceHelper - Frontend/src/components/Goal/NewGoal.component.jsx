@@ -12,15 +12,15 @@ function NewCompany({ isOpen, onClose, onSuccess, goal = null }) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [categoryID, setCategoryID] = useState("");
-  const [categoriasLista, setCategoriasLista] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
   const [erro, setErro] = useState("");
 
   useEffect(() => {
     if (isOpen) {
         api
         .get("/category/all")
-        .then((resposta) => {
-          setCategoriasLista(resposta.data);
+        .then((answer) => {
+          setCategoriesList(answer.data);
         })
         .catch((erro) => {
           console.error("Erro ao buscar categorias", erro);
@@ -159,7 +159,7 @@ function NewCompany({ isOpen, onClose, onSuccess, goal = null }) {
             required
           >
             <option value="" disabled>Selecione uma categoria...</option>
-            {categoriasLista.map(categoria => (
+            {categoriesList.map(categoria => (
               <option key={categoria.id} value={categoria.id}>
                 {categoria.name}
               </option>

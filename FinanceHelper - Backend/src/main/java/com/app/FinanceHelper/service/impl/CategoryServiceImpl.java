@@ -100,6 +100,22 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<CategoryResponse> getCategoriesByName(UUID id, String categoryName) {
+        List<Category> categories = categoryRepository.findByNameStartingWithIgnoreCaseAndUserProfile_Id(categoryName, id);
+
+        return categories.stream()
+                .map(category -> {
+                    CategoryResponse response = modelMapper.map(category, CategoryResponse.class);
+
+                    Integer count = transactionRepository.countByUserProfile_IdAndCategoryId(id, category.getId());
+                    response.setTransactionsCount(count != null ? count : 0);
+
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public CategoryResponse deleteCategory(UUID userID, UUID categoryID) {
         Category category = categoryRepository
                 .findByIdAndUserProfile_Id(categoryID, userID)
@@ -109,4 +125,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         return modelMapper.map(category, CategoryResponse.class);
     }
+
+
 }

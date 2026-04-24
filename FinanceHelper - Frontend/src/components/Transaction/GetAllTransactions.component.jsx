@@ -19,8 +19,8 @@ function GetAllTransaction({ onTransactionUpdate }) {
           limit: limitAmount,
         }
       })
-      .then((resposta) => {
-        setTransactionsList(resposta.data);
+      .then((answer) => {
+        setTransactionsList(answer.data);
       })
       .catch((erro) => {
         console.error("Erro ao buscar transações", erro);

@@ -55,7 +55,6 @@ public class CompanyServiceImpl implements CompanyService {
 
         CompanyResponse companyResponse = modelMapper.map(companyToCreate, CompanyResponse.class);
         companyResponse.setCategoryID(category.getId());
-        companyResponse.setUserID(userProfile.getId());
 
         return companyResponse;
     }
@@ -64,30 +63,66 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyResponse getCompany(UUID userID, UUID companyID) {
 
-        if(!userProfileRepository.existsById(userID)){
-            throw new ResourceNotFoundException("UserProfile","userID", userID);
-        }
-
         Company company = companyRepository.findByIdAndUserProfile_Id(companyID, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Company", "companyID", companyID));
 
         CompanyResponse companyResponse = modelMapper.map(company, CompanyResponse.class);
         companyResponse.setCategoryID(company.getCategory().getId());
-        companyResponse.setUserID(company.getUserProfile().getId());
 
         return companyResponse;
     }
 
     @Override
     public Set<CompanyResponse> getAllCompanies(UUID userID) {
-        if(!userProfileRepository.existsById(userID)){
-            throw new ResourceNotFoundException("UserProfile","userID", userID);
-        }
 
         return companyRepository.findAllByUserProfile_Id(userID)
                 .stream()
-                .map(company -> modelMapper.map(company, CompanyResponse.class))
+                .map(company -> {
+                    CompanyResponse companyResponse = modelMapper.map(company, CompanyResponse.class);
+                    companyResponse.setCategoryID(company.getCategory().getId());
+                    return companyResponse;
+                })
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public List<CompanyResponse> getAllCompaniesByName(UUID userID, String companyName) {
+        return companyRepository.findByNameStartingWithIgnoreCaseAndUserProfile_Id(companyName, userID)
+                .stream()
+                .map(company -> {
+                    CompanyResponse companyResponse = modelMapper.map(company, CompanyResponse.class);
+                    companyResponse.setCategoryID(company.getCategory().getId());
+                    return companyResponse;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public CompanyResponse updateCompany(UUID userID,UUID companyID, CompanyDTO companyDTO) {
+        Company company = companyRepository.findByIdAndUserProfile_Id(companyID, userID)
+                .orElseThrow(() -> new ResourceNotFoundException("Company", "companyID", companyID));
+
+        if(companyDTO.getName() != null && !companyDTO.getName().equals(company.getName())){
+            company.setName(company.getName());
+        }
+
+        if(companyDTO.getColor() != null && !companyDTO.getColor().equals(company.getColor())){
+            company.setColor(company.getColor());
+        }
+
+        if(companyDTO.getCategoryID() != null && !companyDTO.getCategoryID().equals(company.getCategory().getId())){
+            Category category = categoryRepository.findByIdAndUserProfile_Id(companyDTO.getCategoryID(), userID)
+                    .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", companyDTO.getCategoryID()));
+
+            company.setCategory(category);
+        }
+
+        Company savedCompany = companyRepository.save(company);
+
+        CompanyResponse companyResponse = modelMapper.map(savedCompany, CompanyResponse.class);
+        companyResponse.setCategoryID(company.getCategory().getId());
+
+        return companyResponse;
     }
 
     @Override
@@ -99,7 +134,6 @@ public class CompanyServiceImpl implements CompanyService {
 
         CompanyResponse companyResponse = modelMapper.map(company, CompanyResponse.class);
         companyResponse.setCategoryID(company.getCategory().getId());
-        companyResponse.setUserID(company.getUserProfile().getId());
 
         return companyResponse;
     }

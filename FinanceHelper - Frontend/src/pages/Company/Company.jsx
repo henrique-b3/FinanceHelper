@@ -3,24 +3,24 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import * as components from "../../components";
 import { images } from "../../svg";
-import "./Category.css";
+import "../Category/Category.css";
 
-function Category() {
-  const [categoriesList, setCategoriesList] = useState([]);
-  const [searchCategory, setSearchCategory] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+function Company() {
+  const [companiesList, setCompaniesList] = useState([]);
+  const [searchCompany, setSearchCompany] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [erro, setErro] = useState("");
 
   useEffect(() => {
-    fetchCategories();
+    fetchCompanies();
   }, []);
 
-  const fetchCategories = () => {
+  const fetchCompanies = () => {
     api
-      .get("category/all")
+      .get("company/all")
       .then((answer) => {
-        setCategoriesList(answer.data);
+        setCompaniesList(answer.data);
       })
       .catch((erro) => {
         console.error("Erro ao buscar transações", erro);
@@ -29,13 +29,13 @@ function Category() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Deseja mesmo apagar esta categoria?")) {
+    if (window.confirm("Deseja mesmo apagar esta empresa?")) {
       api
-        .delete("category/delete", {
-          params: { categoryID: id },
+        .delete("company/delete", {
+          params: { companyID: id },
         })
         .then(() => {
-          fetchCategories();
+          fetchCompanies();
           if (onCategoryUpdate) onCategoryUpdate();
         })
         .catch((erro) => console.error("Erro ao apagar categoria", erro));
@@ -45,40 +45,42 @@ function Category() {
   const handleSearchCategories = (e) => {
     e.preventDefault();
 
-    if (searchCategory.trim() === "") {
-      fetchCategories();
+    if (searchCompany.trim() === "") {
+      fetchCompanies();
       return;
     }
 
     api
-      .get("category/all/byName", {
-        params: { categoryName: searchCategory },
+      .get("company/all/byName", {
+        params: { companyName: searchCompany },
       })
       .then((answer) => {
-        setCategoriesList(answer.data);
+        setCompaniesList(answer.data);
       })
       .catch((erro) => console.error("Erro ao pesquisar categoria", erro));
   };
 
-  const handleOpenModal = (categorie) => {
-    setSelectedCategory(categorie);
+  const handleOpenModal = (company) => {
+    setSelectedCompany(company);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setSelectedCategory(null);
+    setSelectedCompany(null);
     setIsModalOpen(false);
   };
 
-  return (
+
+
+return (
     <div className="categoryContainer">
       <div className="category-header">
-        <h2 className="section-title">As Minhas Categorias</h2>
+        <h2 className="section-title">As Minhas Empresas</h2>
         <button
           onClick={() => handleOpenModal(null)}
           className="new-category-btn"
         >
-          + Nova Categoria
+          + Nova Empresa
         </button>
       </div>
 
@@ -86,26 +88,26 @@ function Category() {
         <form onSubmit={handleSearchCategories}>
           <input
             type="text"
-            value={searchCategory}
+            value={searchCompany}
             className="search-input"
             placeholder="Pesquisar categoria..."
             onChange={(e) => {
-              setSearchCategory(e.target.value);
+              setSearchCompany(e.target.value);
               if (e.target.value.trim() === "") {
-                fetchCategories();
+                fetchCompanies();
               }
             }}
           />
         </form>
       </nav>
 
-      {categoriesList.length === 0 ? (
+      {companiesList.length === 0 ? (
         <div className="empty-state">
-          <p>Sem categorias criadas</p>
+          <p>Sem empresas criadas</p>
         </div>
       ) : (
         <ul className="categories-list">
-          {categoriesList.map((t) => (
+          {companiesList.map((t) => (
             <li key={t.id} className="category-item">
               <div className="category-info-left">
                 <div className="category-icon-bg">
@@ -117,9 +119,6 @@ function Category() {
 
                 <div className="category-details">
                   <span className="category-name">{t.name}</span>
-                  <span className="transactions-associated">
-                    {t.transactionsCount || 0} despesas
-                  </span>
                 </div>
               </div>
 
@@ -143,12 +142,12 @@ function Category() {
           ))}
         </ul>
       )}
-      <components.NewCategory
+      <components.NewCompany
         isOpen={isModalOpen}
-        category={selectedCategory}
+        company={selectedCompany}
         onClose={() => setIsModalOpen(false)}
         onSuccess={() => {
-          fetchCategories();
+          fetchCompanies();
           //if (onCategoryUpdate) onCategoryUpdate();
         }}
       />
@@ -156,4 +155,4 @@ function Category() {
   );
 }
 
-export default Category;
+export default Company;

@@ -19,4 +19,6 @@ public interface CategoryService {
     CategoryResponse getCategoryByName( UUID userID,String categoryName);
 
     CategoryResponse deleteCategory(UUID userID, UUID categoryID);
+
+    List<CategoryResponse> getCategoriesByName(UUID id, String categoryName);
 }

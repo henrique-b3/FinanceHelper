@@ -12,12 +12,11 @@ function Menu({ onTransactionCreated }) {
 
   const displayedAmount = showAmount ? totalAmount.toFixed(2) : "****";
 
-
   useEffect(() => {
     api
       .get("/transaction/totalMonth")
-      .then((resposta) => {
-        setTotalAmount(resposta.data);
+      .then((answer) => {
+        setTotalAmount(answer.data);
       })
       .catch((erro) => {
         console.error("Erro ao buscar total", erro);
@@ -25,8 +24,8 @@ function Menu({ onTransactionCreated }) {
 
     api
       .get("/transaction/count")
-      .then((resposta) => {
-        setTransactions(resposta.data);
+      .then((answer) => {
+        setTransactions(answer.data);
       })
       .catch((erro) => {
         console.error("Erro ao buscar total", erro);
@@ -36,8 +35,8 @@ function Menu({ onTransactionCreated }) {
   useEffect(() => {
     api
       .get("/goal/status")
-      .then((resposta) => {
-        setGoals(resposta.data);
+      .then((answer) => {
+        setGoals(answer.data);
       })
       .catch((erro) => {
         console.error("Erro ao buscar total", erro);

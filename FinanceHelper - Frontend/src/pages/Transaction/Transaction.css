@@ -1,0 +1,145 @@
+/* Container Principal */
+.categoryContainer {
+  max-width: 1000px; /* Um pouco mais largo que as categorias para acomodar os filtros */
+  margin: 0 auto;
+  padding: 2rem 0;
+  color: white;
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Cabeçalho com Título e Botão */
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.new-category-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+}
+
+.new-category-btn:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+/* Barra de Pesquisa e Filtros */
+.search-nav {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* O form tem display flex inline no JSX, mas definimos o alinhamento aqui */
+.search-nav form {
+  align-items: flex-end; /* Alinha os botões e o input com os selects que têm labels */
+}
+
+/* Inputs e Selects na barra de pesquisa */
+.search-input {
+  flex: 1;
+  min-width: 200px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: white;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.3s ease;
+  height: 48px; /* Altura fixa para alinhar com selects e botões */
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+/* Labels e Selects */
+.textLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  min-width: 150px;
+}
+
+.form-input {
+  height: 48px; /* Garante que os selects têm a mesma altura do input de pesquisa */
+  cursor: pointer;
+}
+
+.form-input option {
+  background-color: #000428; /* Fundo escuro para o dropdown */
+  color: white;
+}
+
+/* Botões da barra de pesquisa */
+.search-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0 24px;
+  height: 48px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* Botão Limpar */
+button[type="button"] {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 0 24px;
+  height: 48px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button[type="button"]:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Responsividade para a barra de filtros */
+@media (max-width: 768px) {
+  .search-nav form {
+    flex-direction: column;
+    align-items: stretch; /* Estica tudo em ecrãs pequenos */
+  }
+  
+  .search-input, .textLabel, .search-btn, button[type="button"] {
+    width: 100%;
+  }
+}

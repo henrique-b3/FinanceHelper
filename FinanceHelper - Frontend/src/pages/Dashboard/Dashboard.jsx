@@ -5,22 +5,23 @@ import "./Dashboard.css";
 import * as components from "../../components";
 
 function Dashboard() {
-  const [perfil, setPerfil] = useState(null);
-  const [saudacao, setSaudacao] = useState("");
-  const navigate = useNavigate();
+  const [profile, setProfile] = useState(null);
+  const [greeting, setGreeting] = useState("");
   const [updateTrigger, setUpdateTrigger] = useState(0);
   const [erro, setErro] = useState("");
+
   const refreshData = () => setUpdateTrigger((prev) => prev + 1);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const hora = new Date().getHours();
-    if (hora >= 5 && hora < 12) setSaudacao("Bom dia");
-    else if (hora >= 12 && hora < 18) setSaudacao("Boa tarde");
-    else setSaudacao("Boa noite");
+    if (hora >= 5 && hora < 12) setGreeting("Bom dia");
+    else if (hora >= 12 && hora < 18) setGreeting("Boa tarde");
+    else setGreeting("Boa noite");
 
     api
       .get("/user")
-      .then((resposta) => setPerfil(resposta.data))
+      .then((answer) => setProfile(answer.data))
       .catch(() => {
         localStorage.removeItem("token");
         navigate("/");
@@ -32,17 +33,17 @@ function Dashboard() {
     navigate("/");
   };
 
-  if (!perfil)
+  if (!profile)
     return <div className="loadingState">A carregar a sua carteira...</div>;
 
   return (
     <div className="mainDiv">
-      <components.NavMenu/>
+      <components.NavMenu />
       <header className="welcome">
         <div>
-          <p>{saudacao},</p>
+          <p>{greeting},</p>
           <h2>
-            {perfil.name} {perfil.lastName}
+            {profile.name} {profile.lastName}
           </h2>
         </div>
         <button className="logoutBtn" onClick={handleLogout}>
@@ -51,7 +52,7 @@ function Dashboard() {
       </header>
       <components.Menu onTransactionCreated={refreshData} />
       <div className="chartDiv">
-        <components.GoalBarChart key={`graphGoals-${updateTrigger}`}/>
+        <components.GoalBarChart key={`graphGoals-${updateTrigger}`} />
         <components.CategoriesChart key={`graph-${updateTrigger}`} />
       </div>
       <components.AllTransactions

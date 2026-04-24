@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Login, Dashboard, Category } from "./pages";
+import { Login, Dashboard, Category, Company, Transaction } from "./pages";
 import Layout from "./components/Layout/Layout";
 
 function App() {
@@ -12,6 +12,8 @@ function App() {
       <Route element={<Layout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/category" element={<Category />} />
+        <Route path="/company" element={<Company />} />
+        <Route path="/transaction" element={<Transaction />} />
       </Route>
       </Routes>
     </BrowserRouter>
