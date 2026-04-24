@@ -48,8 +48,8 @@
 }
 
 .optionButton.active {
-    background-color: #007bff;
-    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+    box-shadow: 0 4px 15px rgba(247, 247, 247, 0.342);
+    background-color: transparent;
 }
 
 .optionButton.active p {

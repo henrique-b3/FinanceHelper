@@ -10,6 +10,8 @@ function Transaction() {
   const [companiesList, setCompaniesList] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
 
+   const [selectedTransaction, setSelectedTransaction] = useState([]);
+
   const [searchTransaction, setSearchTransaction] = useState("");
   const [categoryID, setCategoryID] = useState("");
   const [companyID, setCompanyID] = useState("");
@@ -71,11 +73,21 @@ function Transaction() {
     fetchFilteredTransactions();
   };
 
+  const handleOpenModal = (transaction) => {
+    setSelectedTransaction(transaction);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedTransaction(null);
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="categoryContainer">
       <div className="category-header">
         <h2 className="section-title">As Minhas Transações</h2>
-        <button onClick={() => setIsModalOpen(true)} className="new-category-btn">
+        <button onClick={() => handleOpenModal(null)} className="new-category-btn">
           + Nova Transação
         </button>
       </div>
@@ -199,6 +211,7 @@ function Transaction() {
       )}
       <components.NewTransaction 
         isOpen={isModalOpen}
+        transaction={selectedTransaction}
         onClose={() => setIsModalOpen(false)}
         onSuccess={() => {
           fetchTransactions();

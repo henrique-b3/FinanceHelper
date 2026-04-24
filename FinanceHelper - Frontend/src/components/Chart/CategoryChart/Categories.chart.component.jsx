@@ -34,7 +34,7 @@ function GoalBar() {
             <ResponsiveContainer width="100%" height="100%" minHeight={220}>
               <PieChart>
                 <Pie 
-                  data={dadosGrafico} 
+                  data={chartData} 
                   cx="50%" 
                   cy="50%" 
                   innerRadius={60} 

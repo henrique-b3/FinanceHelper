@@ -69,7 +69,7 @@ function Menu({ onTransactionCreated }) {
           </div>
         </div>
 
-        <div className="insight-card">
+        <div className="insight-card highlight-card">
           <div className="insight-header">
             <h3>DESPESAS</h3>
             <div className="icon-wrapper">
@@ -79,7 +79,7 @@ function Menu({ onTransactionCreated }) {
           <p className="insight-value">{transactions}</p>
         </div>
 
-        <div className="insight-card">
+        <div className="insight-card highlight-card">
           <div className="insight-header">
             <h3>OBJETIVOS</h3>
             <div className="icon-wrapper">

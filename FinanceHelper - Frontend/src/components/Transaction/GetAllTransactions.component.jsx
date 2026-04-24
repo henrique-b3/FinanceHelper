@@ -9,9 +9,6 @@ function GetAllTransaction({ onTransactionUpdate }) {
   const [erro, setErro] = useState("");
   const [limitAmount, setLimitAmount] = useState(5);
 
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const fetchTransactions = () => {
     api
       .get("/transaction/all", {
@@ -32,21 +29,6 @@ function GetAllTransaction({ onTransactionUpdate }) {
     fetchTransactions();
   }, [limitAmount]);
 
-  const handleOpenModal = (transaction) => {
-    setSelectedTransaction(transaction);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedTransaction(null);
-    setIsModalOpen(false);
-  };
-
-  const handleSuccess = () => {
-    fetchTransactions(); 
-    handleCloseModal();
-  };
-
   return (
     <div className="transactions-container glass-card">
       <div className="transactions-header">
@@ -62,7 +44,7 @@ function GetAllTransaction({ onTransactionUpdate }) {
       ) : (
         <ul className="transaction-list">
           {transactionsList.map((t) => (
-            <li key={t.id} className="transaction-item" onClick={() => handleOpenModal(t)}>
+            <li key={t.id} className="transaction-item">
               <div className="transaction-info">
                 <div
                   className="transaction-icon"
@@ -91,15 +73,6 @@ function GetAllTransaction({ onTransactionUpdate }) {
           ))}
         </ul>
       )}
-      <NewTransaction 
-        isOpen={isModalOpen}
-        transaction={selectedTransaction} 
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={() => {
-          fetchTransactions();
-          if (onTransactionUpdate) onTransactionUpdate();
-        }}
-      />
     </div>
   );
 }
