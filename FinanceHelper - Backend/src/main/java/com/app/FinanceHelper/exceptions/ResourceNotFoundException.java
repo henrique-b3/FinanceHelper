@@ -14,14 +14,14 @@ public class ResourceNotFoundException extends RuntimeException{
     UUID fieldId;
 
     public ResourceNotFoundException(String resourceName, String field, String fieldName){
-        super(String.format("%s not found with %s: %s", resourceName, field, fieldName));
+        super(String.format("%s não foi encontrado %s: %s", resourceName, field, fieldName));
         this.resourceName = resourceName;
         this.field = field;
         this.fieldName = fieldName;
     }
 
     public ResourceNotFoundException(String resourceName, String field, UUID fieldId){
-        super(String.format("%s not found with %s: %s", resourceName, field, fieldId));
+        super(String.format("%s não foi encontrado %s: %s", resourceName, field, fieldId));
         this.resourceName = resourceName;
         this.field = field;
         this.fieldId = fieldId;

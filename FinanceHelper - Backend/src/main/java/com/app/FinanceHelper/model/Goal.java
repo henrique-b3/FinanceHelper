@@ -80,7 +80,7 @@ public class Goal {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotNull(message = "Category cannot be empty!")
+    @NotNull(message = "User cannot be empty!")
     UserProfile userProfile;
 
 
@@ -99,13 +99,13 @@ public class Goal {
         }
 
         if(this.startDate != null && this.endDate == null){
-            throw new APIexception("End date cannot be null");
+            throw new APIexception("A data final não pode ser nula");
         } else if (this.startDate == null && this.endDate != null) {
-            throw new APIexception("Start date cannot be null");
+            throw new APIexception("A data inicial não pode ser nula");
         }
 
         if(this.startDate != null && this.endDate != null && (this.startDate.isAfter(endDate) || this.startDate.isEqual(endDate))){
-            throw new APIexception("Start date cannot be after end date");
+            throw new APIexception("A data de inicio não pode ser após a data final");
         }
     }
 }

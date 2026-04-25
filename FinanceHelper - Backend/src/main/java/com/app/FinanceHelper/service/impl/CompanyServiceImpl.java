@@ -43,7 +43,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", companyDTO.getCategoryID()));
 
         if (companyRepository.existsByNameAndUserProfile_Id(companyDTO.getName(), userID)) {
-            throw new APIexception("Company already exists with name: " + companyDTO.getName());
+            throw new APIexception("Já existe uma empresa com esse nome");
         }
 
         Company companyToCreate = modelMapper.map(companyDTO, Company.class);

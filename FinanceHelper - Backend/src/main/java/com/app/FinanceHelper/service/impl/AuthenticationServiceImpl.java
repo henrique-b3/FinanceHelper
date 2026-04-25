@@ -24,7 +24,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public UserProfileResponse createUser(UserProfileDTO userProfileDTO) {
         if (userProfileRepository.findByEmail(userProfileDTO.getEmail()) != null) {
-            throw new APIexception("User already exists with that email: " + userProfileDTO.getEmail());
+            throw new APIexception("Esse email já está em uso");
         }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(userProfileDTO.getPassword());

@@ -47,7 +47,7 @@ public class GoalServiceImpl implements GoalService {
                 .orElseThrow(() -> new ResourceNotFoundException("UserProfile", "userID", userID));
 
         if(goalRepository.existsByNameAndUserProfile_Id(goalDTO.getName(), userID)){
-            throw new APIexception("Goal already exists with name: " + goalDTO.getName());
+            throw new APIexception("Já existe um objetivo com esse nome");
         }
 
         Category category = categoryRepository.findByIdAndUserProfile_Id(goalDTO.getCategoryID(),userID)

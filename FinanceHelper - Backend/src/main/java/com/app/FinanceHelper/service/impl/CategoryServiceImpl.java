@@ -38,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("UserProfile", "userID", userID));
 
         if(categoryRepository.existsByNameAndUserProfile_Id(categoryDTO.getName(), userID)){
-            throw new APIexception("Category already exists with name: " + categoryDTO.getName());
+            throw new APIexception("Já existe uma categoria com esse nome");
         }
 
         Category categoryToCreate = modelMapper.map(categoryDTO, Category.class);
@@ -102,6 +102,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryResponse> getCategoriesByName(UUID id, String categoryName) {
         List<Category> categories = categoryRepository.findByNameStartingWithIgnoreCaseAndUserProfile_Id(categoryName, id);
+
+        if(categories.isEmpty()){
+            throw new ResourceNotFoundException("Category", "name", categoryName);
+        }
 
         return categories.stream()
                 .map(category -> {
