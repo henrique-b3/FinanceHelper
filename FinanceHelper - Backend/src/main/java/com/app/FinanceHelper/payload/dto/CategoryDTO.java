@@ -21,12 +21,10 @@ public class CategoryDTO {
     @Size(min = 3, max = 50, message = "The name must has more than {min} and less than {max} characters")
     String name;
 
-    @Size(min = 3, max = 50, message = "The description must has more than {min} and less than {max} characters")
     String description;
 
     @Size(min = 3, max = 50, message = "The image path must has more than {min} and less than {max} characters")
     String image;
 
-    //@Size(min = 7,max = 7, message = "The Color must has less than {max} characters")
     String color;
 }

@@ -10,11 +10,56 @@ function Category() {
   const [searchCategory, setSearchCategory] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [erro, setErro] = useState("");
+
+  const [analyticsCategory, setAnalyticsCategory] = useState(null);
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
+
+  const handleOpenAnalytics = (category) => {
+    setAnalyticsCategory(category);
+    setIsAnalyticsOpen(true);
+  };
+
+  const [confirmConfig, setConfirmConfig] = useState({
+    isOpen: false,
+    idToDelete: null,
+  });
+
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    message: "",
+    type: "error",
+  });
 
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  const handleError = (error) => {
+    let errorMessage = "Ocorreu um erro inesperado.";
+
+    if (typeof error === "string") {
+      errorMessage = error;
+    } else if (error.response && error.response.data) {
+      const data = error.response.data;
+
+      if (data.message) {
+        errorMessage = data.message;
+      } else if (typeof data === "object") {
+        const errors = Object.values(data);
+        if (errors.length > 0) errorMessage = errors[0];
+      } else if (typeof data === "string") {
+        errorMessage = data;
+      }
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    setAlertConfig({ isOpen: true, message: errorMessage, type: "error" });
+  };
+
+  const handleSuccess = (successMessage) => {
+    setAlertConfig({ isOpen: true, message: successMessage, type: "success" });
+  };
 
   const fetchCategories = () => {
     api
@@ -22,23 +67,27 @@ function Category() {
       .then((answer) => {
         setCategoriesList(answer.data);
       })
-      .catch((erro) => {
-        console.error("Erro ao buscar transações", erro);
-        setErro("Não foi possível carregar as suas transações.");
+      .catch((error) => {
+        handleError(error);
       });
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Deseja mesmo apagar esta categoria?")) {
-      api
-        .delete("category/delete", {
-          params: { categoryID: id },
-        })
-        .then(() => {
-          fetchCategories();
-          if (onCategoryUpdate) onCategoryUpdate();
-        })
-        .catch((erro) => console.error("Erro ao apagar categoria", erro));
+  const confirmDelete = (id) => {
+    setConfirmConfig({ isOpen: true, idToDelete: id });
+  };
+
+  const executeDelete = async () => {
+    try {
+      await api.delete("category/delete", {
+        params: { categoryID: confirmConfig.idToDelete },
+      });
+      setConfirmConfig({ isOpen: false, idToDelete: null });
+      fetchCategories();
+      handleSuccess("Categoria apagada com sucesso");
+    } catch (error) {
+      setConfirmConfig({ isOpen: false, idToDelete: null });
+      console.error("Erro ao apagar categoria", error);
+      handleError(error);
     }
   };
 
@@ -57,7 +106,9 @@ function Category() {
       .then((answer) => {
         setCategoriesList(answer.data);
       })
-      .catch((erro) => console.error("Erro ao pesquisar categoria", erro));
+      .catch((error) => {
+        handleError(error);
+      });
   };
 
   const handleOpenModal = (categorie) => {
@@ -106,7 +157,7 @@ function Category() {
       ) : (
         <ul className="categories-list">
           {categoriesList.map((t) => (
-            <li key={t.id} className="category-item">
+            <li key={t.id} className="category-item" onClick={() => handleOpenAnalytics(t)} title="Estatísticas">
               <div className="category-info-left">
                 <div className="category-icon-bg">
                   <div
@@ -132,7 +183,7 @@ function Category() {
                   <img src={images.edit} alt="Editar" />
                 </button>
                 <button
-                  onClick={() => handleDelete(t.id)}
+                  onClick={() => confirmDelete(t.id)}
                   className="action-btn delete-btn"
                   title="Apagar"
                 >
@@ -143,14 +194,38 @@ function Category() {
           ))}
         </ul>
       )}
+
+      <components.ConfirmModel
+        isOpen={confirmConfig.isOpen}
+        title="Apagar Categoria"
+        message="Tem a certeza que deseja apagar esta categoria? Esta ação não pode ser desfeita."
+        onConfirm={executeDelete}
+        onClose={() => setConfirmConfig({ isOpen: false, idToDelete: null })}
+      />
+
+      <components.AlertModel
+        isOpen={alertConfig.isOpen}
+        title={alertConfig.type === "error" ? "Erro" : "Sucesso"}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onClose={() => setAlertConfig({ isOpen: false, message: "" })}
+      />
+
       <components.NewCategory
         isOpen={isModalOpen}
         category={selectedCategory}
         onClose={() => setIsModalOpen(false)}
         onSuccess={() => {
           fetchCategories();
-          //if (onCategoryUpdate) onCategoryUpdate();
+          handleSuccess("Operação realizada com sucesso!");
         }}
+      />
+
+      <components.AnalyticsModal
+        isOpen={isAnalyticsOpen}
+        onClose={() => setIsAnalyticsOpen(false)}
+        entity={analyticsCategory}
+        type="category"
       />
     </div>
   );

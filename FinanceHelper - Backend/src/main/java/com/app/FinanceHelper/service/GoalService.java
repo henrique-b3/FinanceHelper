@@ -1,11 +1,14 @@
 package com.app.FinanceHelper.service;
 
 import com.app.FinanceHelper.payload.dto.GoalDTO;
+import com.app.FinanceHelper.payload.dto.GoalFilterDTO;
 import com.app.FinanceHelper.payload.response.GoalResponse;
 import com.app.FinanceHelper.payload.response.GoalStatusResponse;
 import jakarta.validation.Valid;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,5 +24,9 @@ public interface GoalService {
 
     GoalResponse updateGoal(UUID userID, UUID goalID, GoalDTO goalDTO);
 
-    GoalStatusResponse getGoalsStatus(UUID userID);
+    GoalStatusResponse getGoalsStats(UUID userID);
+
+    List<String> getGoalsStatus(UUID userID);
+
+    Page<GoalResponse> getGoalsWithFilters(UUID userID, GoalFilterDTO filter, Pageable pageable);
 }

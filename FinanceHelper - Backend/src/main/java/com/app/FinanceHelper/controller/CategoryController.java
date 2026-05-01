@@ -67,12 +67,14 @@ public class CategoryController {
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{categoryID}")
+    @PutMapping("/update")
     public ResponseEntity<CategoryResponse> updateCategory(
             @AuthenticationPrincipal UserProfile user,
+            @RequestParam UUID categoryID,
            @Valid @RequestBody CategoryDTO categoryDTO
     ){
-        return null;
+        CategoryResponse response = categoryService.updateCategory(user.getId(), categoryID, categoryDTO);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/image/{categoryID}")

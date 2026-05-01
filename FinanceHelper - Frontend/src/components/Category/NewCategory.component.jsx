@@ -2,31 +2,60 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import api from "../../services/api";
 import "../Modal/NewModal.css";
+import * as components from "../../components";
 
 function NewCategory({ isOpen, onClose, onSuccess, category = null }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [color, setColor] = useState("#007bff");
-  const [erro, setErro] = useState("");
+
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    message: "",
+    type: "error",
+  });
 
   useEffect(() => {
     if (isOpen && category) {
       setName(category.name || "");
       setDescription(category.description || "");
       setColor(category.color || "");
+      setAlertConfig({ isOpen: false, message: "", type: "error" });
     } else if (isOpen && !category) {
       setName("");
       setDescription("");
       setColor("#007bff");
-      setErro("");
+      setAlertConfig({ isOpen: false, message: "", type: "error" });
     }
   }, [isOpen, category]);
 
   if (!isOpen) return null;
 
+  const handleError = (error) => {
+    let errorMessage = "Ocorreu um erro inesperado.";
+
+    if (typeof error === "string") {
+      errorMessage = error;
+    } else if (error.response && error.response.data) {
+      const data = error.response.data;
+
+      if (data.message) {
+        errorMessage = data.message;
+      } else if (typeof data === "object") {
+        const errors = Object.values(data);
+        if (errors.length > 0) errorMessage = errors[0];
+      } else if (typeof data === "string") {
+        errorMessage = data;
+      }
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    setAlertConfig({ isOpen: true, message: errorMessage, type: "error" });
+  };
+
   const handleCreateCategory = async (e) => {
     e.preventDefault();
-    setErro("");
 
     try {
       if (!category) {
@@ -36,19 +65,19 @@ function NewCategory({ isOpen, onClose, onSuccess, category = null }) {
           color: color,
           image: "icone.png",
         });
-
-        alert("Categoria criada com sucesso! 🎉");
-      }else {
-        await api.put("/category/update", {
-          name: name,
-          description: description,
-          color: color,
-          image: "icone.png",
-        }, {
-          params: { categoryID: category.id }
-        });
-
-        alert("Categoria atualizada com sucesso! ✅");
+      } else {
+        await api.put(
+          "/category/update",
+          {
+            name: name,
+            description: description,
+            color: color,
+            image: "icone.png",
+          },
+          {
+            params: { categoryID: category.id },
+          },
+        );
       }
 
       if (onSuccess) onSuccess();
@@ -58,8 +87,7 @@ function NewCategory({ isOpen, onClose, onSuccess, category = null }) {
       setColor("#007bff");
       onClose();
     } catch (error) {
-      console.error(error);
-      setErro("Erro ao criar categoria. Verifique se o nome já existe.");
+      handleError(error);
     }
   };
 
@@ -71,7 +99,6 @@ function NewCategory({ isOpen, onClose, onSuccess, category = null }) {
         </button>
 
         <h2 style={{ marginTop: 0, color: "#333" }}>Criar nova categoria</h2>
-        {erro && <p style={{ color: "red" }}>{erro}</p>}
 
         <form className="formModel" onSubmit={handleCreateCategory}>
           <label className="textLabel">
@@ -112,6 +139,13 @@ function NewCategory({ isOpen, onClose, onSuccess, category = null }) {
           </button>
         </form>
       </div>
+      <components.AlertModel
+        isOpen={alertConfig.isOpen}
+        title={alertConfig.type === "error" ? "Erro" : "Sucesso"}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onClose={() => setAlertConfig({ isOpen: false, message: "", type: "error" })}
+      />
     </div>,
     document.body,
   );

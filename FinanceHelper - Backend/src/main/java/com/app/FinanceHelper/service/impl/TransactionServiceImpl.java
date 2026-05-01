@@ -56,21 +56,28 @@ public class TransactionServiceImpl implements TransactionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", transactionDTO.getCategoryID()));
 
 
-        Company company = companyRepository.findByIdAndUserProfile_Id(transactionDTO.getCompanyID(), userID)
-                .orElseThrow(() -> new ResourceNotFoundException("Company", "id", transactionDTO.getCompanyID()));
-
         Transaction transaction = modelMapper.map(transactionDTO, Transaction.class);
         transaction.setUserProfile(user);
         transaction.setCategory(category);
-        transaction.setCompany(company);
+
+
+        if(transactionDTO.getCompanyID() != null){
+            Company company = companyRepository.findByIdAndUserProfile_Id(transactionDTO.getCompanyID(), userID)
+                    .orElseThrow(() -> new ResourceNotFoundException("Company", "id", transactionDTO.getCompanyID()));
+
+            transaction.setCompany(company);
+        }
 
         Transaction savedTransaction = transactionRepository.save(transaction);
 
         TransactionResponse transactionResponse = modelMapper.map(savedTransaction, TransactionResponse.class);
-        transactionResponse.setCompanyName(savedTransaction.getCompany().getName());
         transactionResponse.setCategoryName(savedTransaction.getCategory().getName());
         transactionResponse.setCategoryID(savedTransaction.getCategory().getId());
-        transactionResponse.setCompanyID(savedTransaction.getCompany().getId());
+
+        if (savedTransaction.getCompany() != null) {
+            transactionResponse.setCompanyName(savedTransaction.getCompany().getName());
+            transactionResponse.setCompanyID(savedTransaction.getCompany().getId());
+        }
 
         return transactionResponse;
     }
@@ -82,10 +89,13 @@ public class TransactionServiceImpl implements TransactionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", transactionID));
 
         TransactionResponse transactionResponse = modelMapper.map(foundTransaction, TransactionResponse.class);
-        transactionResponse.setCompanyName(foundTransaction.getCompany().getName());
         transactionResponse.setCategoryName(foundTransaction.getCategory().getName());
         transactionResponse.setCategoryID(foundTransaction.getCategory().getId());
-        transactionResponse.setCompanyID(foundTransaction.getCompany().getId());
+
+        if (foundTransaction.getCompany() != null) {
+            transactionResponse.setCompanyName(foundTransaction.getCompany().getName());
+            transactionResponse.setCompanyID(foundTransaction.getCompany().getId());
+        }
 
         return transactionResponse;
     }
@@ -105,15 +115,18 @@ public class TransactionServiceImpl implements TransactionService {
         return transactions.stream()
                 .map(transaction -> {
                     TransactionResponse response = modelMapper.map(transaction, TransactionResponse.class);
-                    response.setCompanyName(transaction.getCompany().getName());
                     response.setCategoryName(transaction.getCategory().getName());
                     response.setCategoryColor(transaction.getCategory().getColor());
                     response.setCategoryID(transaction.getCategory().getId());
-                    response.setCompanyID(transaction.getCompany().getId());
+
+                    if (transaction.getCompany() != null) {
+                        response.setCompanyName(transaction.getCompany().getName());
+                        response.setCompanyID(transaction.getCompany().getId());
+                    }
+
                     return response;
                 }).collect(Collectors.toList());
     }
-
 
     @Override
     public BigDecimal getTotalSpentByMonth(UUID userID) {
@@ -159,7 +172,11 @@ public class TransactionServiceImpl implements TransactionService {
         transactionResponse.setCategoryName(updatedTransaction.getCategory().getName());
         transactionResponse.setCategoryColor(updatedTransaction.getCategory().getColor());
         transactionResponse.setCategoryID(updatedTransaction.getCategory().getId());
-        transactionResponse.setCompanyID(updatedTransaction.getCompany().getId());
+
+        if (updatedTransaction.getCompany() != null) {
+            transactionResponse.setCompanyName(updatedTransaction.getCompany().getName());
+            transactionResponse.setCompanyID(updatedTransaction.getCompany().getId());
+        }
 
         return transactionResponse;
     }
@@ -171,6 +188,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Page<TransactionResponse> getTransactionsWithFilters(UUID userID, TransactionFilterDTO filter, Pageable pageable) {
+
         if(filter.orderBy() != null && !filter.orderBy().isBlank()) {
             Sort.Direction direction = (filter.direction() != null && filter.direction().equalsIgnoreCase("desc"))
                     ? Sort.Direction.DESC
@@ -192,14 +210,18 @@ public class TransactionServiceImpl implements TransactionService {
 
         return transactionPage.map(transaction -> {
             TransactionResponse response = modelMapper.map(transaction, TransactionResponse.class);
-            response.setCompanyName(transaction.getCompany().getName());
             response.setCategoryName(transaction.getCategory().getName());
             response.setCategoryColor(transaction.getCategory().getColor());
             response.setCategoryID(transaction.getCategory().getId());
-            response.setCompanyID(transaction.getCompany().getId());
+
+            if (transaction.getCompany() != null) {
+                response.setCompanyName(transaction.getCompany().getName());
+                response.setCompanyID(transaction.getCompany().getId());
+            }
             return response;
         });
     }
+
     @Override
     public List<CategoryExpenseResponse> getExpensesByCategoryByMonth(UUID userID) {
         if(!userProfileRepository.existsById(userID)){
@@ -222,7 +244,11 @@ public class TransactionServiceImpl implements TransactionService {
         transactionResponse.setCategoryName(foundTransaction.getCategory().getName());
         transactionResponse.setCategoryColor(foundTransaction.getCategory().getColor());
         transactionResponse.setCategoryID(foundTransaction.getCategory().getId());
-        transactionResponse.setCompanyID(foundTransaction.getCompany().getId());
+
+        if (foundTransaction.getCompany() != null) {
+            transactionResponse.setCompanyName(foundTransaction.getCompany().getName());
+            transactionResponse.setCompanyID(foundTransaction.getCompany().getId());
+        }
 
         transactionRepository.delete(foundTransaction);
 

@@ -74,9 +74,11 @@ public class Goal {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @NotNull(message = "Category cannot be empty!")
     Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    Company company;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

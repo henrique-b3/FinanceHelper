@@ -2,6 +2,8 @@ package com.app.FinanceHelper.service;
 
 import com.app.FinanceHelper.payload.dto.CategoryDTO;
 import com.app.FinanceHelper.payload.response.CategoryResponse;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Set;
@@ -21,4 +23,6 @@ public interface CategoryService {
     CategoryResponse deleteCategory(UUID userID, UUID categoryID);
 
     List<CategoryResponse> getCategoriesByName(UUID id, String categoryName);
+
+    CategoryResponse updateCategory(UUID userID, UUID categoryID, CategoryDTO categoryDTO);
 }

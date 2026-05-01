@@ -7,6 +7,7 @@ import { images } from "../../svg";
 import * as pages from "..";
 import * as components from "../../components";
 
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +33,6 @@ function Login() {
       navigate("/dashboard");
     } catch (error) {
       setErro("Error");
-      console.error(error);
     }
   };
 

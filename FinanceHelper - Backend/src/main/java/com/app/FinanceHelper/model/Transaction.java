@@ -36,7 +36,6 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
-    @NotNull(message = "Company cannot be empty!")
     Company company;
 
     @ManyToOne

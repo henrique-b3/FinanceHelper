@@ -34,7 +34,7 @@ function Menu({ onTransactionCreated }) {
 
   useEffect(() => {
     api
-      .get("/goal/status")
+      .get("/goal/stats")
       .then((answer) => {
         setGoals(answer.data);
       })

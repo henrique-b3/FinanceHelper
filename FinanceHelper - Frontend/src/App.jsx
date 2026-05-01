@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Login, Dashboard, Category, Company, Transaction } from "./pages";
+import { Login, Dashboard, Category, Company, Transaction, Goal } from "./pages";
 import Layout from "./components/Layout/Layout";
 
 function App() {
@@ -14,6 +14,7 @@ function App() {
         <Route path="/category" element={<Category />} />
         <Route path="/company" element={<Company />} />
         <Route path="/transaction" element={<Transaction />} />
+        <Route path="/goal" element={<Goal />} />
       </Route>
       </Routes>
     </BrowserRouter>

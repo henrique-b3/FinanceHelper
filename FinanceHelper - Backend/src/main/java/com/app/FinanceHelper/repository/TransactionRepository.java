@@ -42,6 +42,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
 
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t " +
             "WHERE t.userProfile.id = :userID " +
+            "AND t.company.id = :companyID " +
+            "AND (CAST(:startDate AS java.time.LocalDate) IS NULL OR t.transactionDate >= :startDate) " +
+            "AND (CAST(:endDate AS java.time.LocalDate) IS NULL OR t.transactionDate <= :endDate)")
+    BigDecimal getTotalSpentByCompanyAndDate(
+            @Param("userID") UUID userID,
+            @Param("companyID") UUID companyID,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t " +
+            "WHERE t.userProfile.id = :userID " +
             "AND t.transactionDate >= :startDate " +
             "AND t.transactionDate <= :endDate")
     BigDecimal getTotalSpentByMonth(

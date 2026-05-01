@@ -12,7 +12,9 @@ import com.app.FinanceHelper.repository.UserProfileRepository;
 import com.app.FinanceHelper.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Set;
@@ -120,15 +122,41 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public CategoryResponse updateCategory(UUID userID, UUID categoryID, CategoryDTO categoryDTO) {
+        Category category = categoryRepository
+                .findByIdAndUserProfile_Id(categoryID, userID)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", categoryID));
+
+        if(categoryDTO.getName() != null && !category.getName().isBlank() && !categoryDTO.getName().equalsIgnoreCase(category.getName())){
+            category.setName(categoryDTO.getName());
+        }
+
+        if(categoryDTO.getColor() != null && !category.getColor().isBlank() && !categoryDTO.getColor().equalsIgnoreCase(category.getColor())){
+            category.setColor(categoryDTO.getColor());
+        }
+
+        if(categoryDTO.getDescription() != null && !category.getDescription().isBlank() && !categoryDTO.getDescription().equalsIgnoreCase(category.getDescription())){
+            category.setDescription(categoryDTO.getDescription());
+        }
+
+        Category savedCategory = categoryRepository.save(category);
+
+        return modelMapper.map(savedCategory, CategoryResponse.class);
+    }
+
+    @Override
     public CategoryResponse deleteCategory(UUID userID, UUID categoryID) {
         Category category = categoryRepository
                 .findByIdAndUserProfile_Id(categoryID, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", categoryID));
 
-        categoryRepository.deleteById(categoryID);
+        try {
+            categoryRepository.deleteById(categoryID);
+            categoryRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new com.app.FinanceHelper.exceptions.DataIntegrityViolationException(category.getName(), "Category");
+        }
 
         return modelMapper.map(category, CategoryResponse.class);
     }
-
-
 }

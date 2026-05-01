@@ -34,6 +34,6 @@ public class GoalDTO {
     LocalDate startDate;
     LocalDate endDate;
 
-    @NotNull(message = "Category ID cannot be empty!")
     UUID categoryID;
+    UUID companyID;
 }

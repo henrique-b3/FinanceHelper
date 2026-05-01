@@ -33,8 +33,8 @@ function NavMenu(){
                 <p>Empresas</p>
             </button>
             <button 
-            className="optionButton" 
-            onClick={handler}>
+            className={`optionButton ${isActive("/goal") ? "active" : ""}`}
+            onClick={() => navigate("/goal")}>
                 <p>Objetivos</p>
             </button>
         </nav>

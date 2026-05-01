@@ -1,27 +1,34 @@
 package com.app.FinanceHelper.service.impl;
 
 import ch.qos.logback.core.model.Model;
+import com.app.FinanceHelper.Filter.GoalFilter;
 import com.app.FinanceHelper.controller.GoalController;
 import com.app.FinanceHelper.enums.GoalStatus;
 import com.app.FinanceHelper.exceptions.APIexception;
 import com.app.FinanceHelper.exceptions.ResourceNotFoundException;
 import com.app.FinanceHelper.model.Category;
+import com.app.FinanceHelper.model.Company;
 import com.app.FinanceHelper.model.Goal;
 import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.dto.GoalDTO;
+import com.app.FinanceHelper.payload.dto.GoalFilterDTO;
 import com.app.FinanceHelper.payload.response.GoalResponse;
 import com.app.FinanceHelper.payload.response.GoalStatusResponse;
-import com.app.FinanceHelper.repository.CategoryRepository;
-import com.app.FinanceHelper.repository.GoalRepository;
-import com.app.FinanceHelper.repository.TransactionRepository;
-import com.app.FinanceHelper.repository.UserProfileRepository;
+import com.app.FinanceHelper.repository.*;
 import com.app.FinanceHelper.service.GoalService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -39,6 +46,8 @@ public class GoalServiceImpl implements GoalService {
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
+    CompanyRepository companyRepository;
+    @Autowired
     ModelMapper modelMapper;
 
     @Override
@@ -50,18 +59,31 @@ public class GoalServiceImpl implements GoalService {
             throw new APIexception("Já existe um objetivo com esse nome");
         }
 
-        Category category = categoryRepository.findByIdAndUserProfile_Id(goalDTO.getCategoryID(),userID)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", userID));
-
         Goal goal = modelMapper.map(goalDTO, Goal.class);
         goal.setUserProfile(user);
-        goal.setCategory(category);
+
+        if(goalDTO.getCategoryID() != null){
+            Category category = categoryRepository.findByIdAndUserProfile_Id(goalDTO.getCategoryID(),userID)
+                    .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", userID));
+
+            goal.setCategory(category);
+
+        }else if(goalDTO.getCompanyID() != null){
+            Company company = companyRepository.findByIdAndUserProfile_Id(goalDTO.getCompanyID(),userID)
+                    .orElseThrow(() -> new ResourceNotFoundException("Company", "CompanyID", userID));
+
+            goal.setCompany(company);
+        }
 
         Goal savedGoal = goalRepository.save(goal);
 
         GoalResponse goalResponse = modelMapper.map(savedGoal, GoalResponse.class);
 
-        goalResponse.setCategoryID(category.getId());
+        if(savedGoal.getCategory() != null){
+            goalResponse.setCategoryID(savedGoal.getCategory().getId());
+        } else{
+            goalResponse.setCompanyID(savedGoal.getCompany().getId());
+        }
 
         return goalResponse;
     }
@@ -72,18 +94,21 @@ public class GoalServiceImpl implements GoalService {
         Goal foundGoal =  goalRepository.findByIdAndUserProfile_Id(goalID, userID)
                .orElseThrow(() -> new ResourceNotFoundException("Goal", "goalID", userID));
 
-        BigDecimal spent = transactionRepository.getTotalSpentByCategoryAndDate(
-                userID,
-                foundGoal.getCategory().getId(),
-                foundGoal.getStartDate(),
-                foundGoal.getEndDate()
-        );
-
+        BigDecimal spent = BigDecimal.ZERO;
+        if (foundGoal.getCategory() != null) {
+            spent = transactionRepository.getTotalSpentByCategoryAndDate(userID, foundGoal.getCategory().getId(), foundGoal.getStartDate(), foundGoal.getEndDate());
+        } else if (foundGoal.getCompany() != null) {
+            spent = transactionRepository.getTotalSpentByCompanyAndDate(userID, foundGoal.getCompany().getId(), foundGoal.getStartDate(), foundGoal.getEndDate());
+        }
         foundGoal.setSpendAmount(spent);
 
         GoalResponse goalResponse = modelMapper.map(foundGoal, GoalResponse.class);
 
-        goalResponse.setCategoryID(foundGoal.getCategory().getId());
+        if(foundGoal.getCategory() != null){
+            goalResponse.setCategoryID(foundGoal.getCategory().getId());
+        } else{
+            goalResponse.setCompanyID(foundGoal.getCompany().getId());
+        }
 
         return goalResponse;
     }
@@ -95,18 +120,21 @@ public class GoalServiceImpl implements GoalService {
 
         return goals.stream().map(
                 goal -> {
-                    BigDecimal spent = transactionRepository.getTotalSpentByCategoryAndDate(
-                            userID,
-                            goal.getCategory().getId(),
-                            goal.getStartDate(),
-                            goal.getEndDate()
-                    );
-
+                    BigDecimal spent = BigDecimal.ZERO;
+                    if (goal.getCategory() != null) {
+                        spent = transactionRepository.getTotalSpentByCategoryAndDate(userID, goal.getCategory().getId(), goal.getStartDate(), goal.getEndDate());
+                    } else if (goal.getCompany() != null) {
+                        spent = transactionRepository.getTotalSpentByCompanyAndDate(userID, goal.getCompany().getId(), goal.getStartDate(), goal.getEndDate());
+                    }
                     goal.setSpendAmount(spent);
 
                     GoalResponse goalResponse = modelMapper.map(goal, GoalResponse.class);
 
-                    goalResponse.setCategoryID(goal.getCategory().getId());
+                    if(goal.getCategory() != null){
+                        goalResponse.setCategoryID(goal.getCategory().getId());
+                    } else{
+                        goalResponse.setCompanyID(goal.getCompany().getId());
+                    }
 
                     return goalResponse;
                 }).collect(Collectors.toSet());
@@ -158,6 +186,15 @@ public class GoalServiceImpl implements GoalService {
                     .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", userID));
 
             foundGoal.setCategory(category);
+            foundGoal.setCompany(null);
+        }
+
+        if(goalDTO.getCompanyID() != null && !goalDTO.getCompanyID().equals(foundGoal.getCompany().getId())) {
+            Company company = companyRepository.findByIdAndUserProfile_Id(goalDTO.getCompanyID(),userID)
+                    .orElseThrow(() -> new ResourceNotFoundException("Company", "CompanyID", userID));
+
+            foundGoal.setCompany(company);
+            foundGoal.setCategory(null);
         }
 
         Goal savedGoal = goalRepository.save(foundGoal);
@@ -173,22 +210,26 @@ public class GoalServiceImpl implements GoalService {
 
         GoalResponse goalResponse = modelMapper.map(savedGoal, GoalResponse.class);
 
-        goalResponse.setCategoryID(savedGoal.getCategory().getId());
+        if(savedGoal.getCategory() != null){
+            goalResponse.setCategoryID(savedGoal.getCategory().getId());
+        } else{
+            goalResponse.setCompanyID(savedGoal.getCompany().getId());
+        }
 
         return goalResponse;
     }
 
     @Override
-    public GoalStatusResponse getGoalsStatus(UUID userID) {
+    public GoalStatusResponse getGoalsStats(UUID userID) {
         List<Goal> userGoals = goalRepository.findAllByUserProfile_Id(userID);
 
         userGoals.forEach(goal -> {
-            BigDecimal spent = transactionRepository.getTotalSpentByCategoryAndDate(
-                    userID,
-                    goal.getCategory().getId(),
-                    goal.getStartDate(),
-                    goal.getEndDate()
-            );
+            BigDecimal spent = BigDecimal.ZERO;
+            if (goal.getCategory() != null) {
+                spent = transactionRepository.getTotalSpentByCategoryAndDate(userID, goal.getCategory().getId(), goal.getStartDate(), goal.getEndDate());
+            } else if (goal.getCompany() != null) {
+                spent = transactionRepository.getTotalSpentByCompanyAndDate(userID, goal.getCompany().getId(), goal.getStartDate(), goal.getEndDate());
+            }
             goal.setSpendAmount(spent);
         });
 
@@ -201,6 +242,56 @@ public class GoalServiceImpl implements GoalService {
                 .count();
 
         return new GoalStatusResponse(current, finished, current + finished);
+    }
+
+    @Override
+    public List<String> getGoalsStatus(UUID userID) {
+
+        return Arrays.stream(GoalStatus.values())
+                .map(GoalStatus::getValue)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<GoalResponse> getGoalsWithFilters(UUID userID, GoalFilterDTO filter, Pageable pageable) {
+        if(filter.orderBy() != null && !filter.orderBy().isBlank()) {
+            Sort.Direction direction = (filter.direction() != null && filter.direction().equalsIgnoreCase("desc"))
+                    ? Sort.Direction.DESC
+                    : Sort.Direction.ASC;
+
+
+            String sortBy = filter.orderBy();
+
+            if (sortBy.equalsIgnoreCase("data")) sortBy = "transactionDate";
+            if (sortBy.equalsIgnoreCase("valor")) sortBy = "amount";
+
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortBy));
+        }
+
+        Specification<Goal> spec = GoalFilter.filter(userID, filter);
+
+        Page<Goal> goalPage = goalRepository.findAll(spec, pageable);
+
+        return goalPage.map(
+                goal -> {
+                    BigDecimal spent = BigDecimal.ZERO;
+                    if (goal.getCategory() != null) {
+                        spent = transactionRepository.getTotalSpentByCategoryAndDate(userID, goal.getCategory().getId(), goal.getStartDate(), goal.getEndDate());
+                    } else if (goal.getCompany() != null) {
+                        spent = transactionRepository.getTotalSpentByCompanyAndDate(userID, goal.getCompany().getId(), goal.getStartDate(), goal.getEndDate());
+                    }
+                    goal.setSpendAmount(spent);
+
+                    GoalResponse goalResponse = modelMapper.map(goal, GoalResponse.class);
+
+                    if(goal.getCategory() != null){
+                        goalResponse.setCategoryID(goal.getCategory().getId());
+                    } else{
+                        goalResponse.setCompanyID(goal.getCompany().getId());
+                    }
+
+                    return goalResponse;
+                });
     }
 
 

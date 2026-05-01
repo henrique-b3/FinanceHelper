@@ -30,4 +30,5 @@ public class GoalResponse {
     BigDecimal remainingAmount;
 
     UUID categoryID;
+    UUID companyID;
 }

@@ -13,6 +13,7 @@ import com.app.FinanceHelper.repository.UserProfileRepository;
 import com.app.FinanceHelper.service.CompanyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -102,12 +103,12 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = companyRepository.findByIdAndUserProfile_Id(companyID, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Company", "companyID", companyID));
 
-        if(companyDTO.getName() != null && !companyDTO.getName().equals(company.getName())){
-            company.setName(company.getName());
+        if(companyDTO.getName() != null && !companyDTO.getName().isBlank() && !companyDTO.getName().equals(company.getName())){
+            company.setName(companyDTO.getName());
         }
 
-        if(companyDTO.getColor() != null && !companyDTO.getColor().equals(company.getColor())){
-            company.setColor(company.getColor());
+        if(companyDTO.getColor() != null && !companyDTO.getColor().isBlank() &&!companyDTO.getColor().equals(company.getColor())){
+            company.setColor(companyDTO.getColor());
         }
 
         if(companyDTO.getCategoryID() != null && !companyDTO.getCategoryID().equals(company.getCategory().getId())){
@@ -125,12 +126,18 @@ public class CompanyServiceImpl implements CompanyService {
         return companyResponse;
     }
 
+
     @Override
     public CompanyResponse deleteCompany(UUID userID, UUID companyID) {
         Company company = companyRepository.findByIdAndUserProfile_Id(companyID, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Company", "companyID", companyID));
 
-        companyRepository.delete(company);
+        try {
+            companyRepository.delete(company);
+            companyRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new com.app.FinanceHelper.exceptions.DataIntegrityViolationException(company.getName(), "Company");
+        }
 
         CompanyResponse companyResponse = modelMapper.map(company, CompanyResponse.class);
         companyResponse.setCategoryID(company.getCategory().getId());

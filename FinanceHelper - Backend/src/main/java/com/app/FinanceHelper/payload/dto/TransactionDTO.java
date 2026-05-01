@@ -23,7 +23,6 @@ public class TransactionDTO {
     @NotNull(message = "Transaction date cannot be empty!")
     LocalDate transactionDate;
 
-    @NotNull(message = "Company ID cannot be empty!")
     UUID companyID;
 
     @NotNull(message = "Category ID cannot be empty!")

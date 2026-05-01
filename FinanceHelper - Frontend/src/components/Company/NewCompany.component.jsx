@@ -2,13 +2,34 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import api from "../../services/api";
 import "../Modal/NewModal.css";
+import * as components from "../../components";
 
 function NewCompany({ isOpen, onClose, onSuccess, company = null }) {
   const [name, setName] = useState("");
   const [color, setColor] = useState("#007bff");
   const [categoryID, setCategoryID] = useState("");
   const [categoriesList, setCategoriesList] = useState([]);
-  const [erro, setErro] = useState("");
+
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    message: "",
+    type: "error",
+  });
+
+  useEffect(() => {
+    if (isOpen && company) {
+      setName(company.name || "");
+      setColor(company.color || "");
+      setCategoryID(company.categoryID || "");
+      setAlertConfig({ isOpen: false, message: "", type: "error" });
+    } else if (isOpen && !company) {
+      setName("");
+      setColor("#007bff");
+      setCategoryID("");
+      setAlertConfig({ isOpen: false, message: "", type: "error" });
+    }
+  }, [isOpen, company]);
+
 
   useEffect(() => {
     if (isOpen) {
@@ -17,31 +38,43 @@ function NewCompany({ isOpen, onClose, onSuccess, company = null }) {
         .then((answer) => {
           setCategoriesList(answer.data);
         })
-        .catch((erro) => {
-          console.error("Erro ao buscar categorias", erro);
-          setErro("Não foi possível carregar as suas categorias.");
+        .catch((error) => {
+          handleError(error);
         });
     }
   }, [isOpen]);
 
-    useEffect(() => {
-    if (isOpen && company) {
-      setName(company.name || "");
-      setColor(company.color || "");
-      setCategoryID(company.categoryID || "");
-    } else if (isOpen && !company) {
-      setName("");
-      setColor("#007bff");
-      setCategoryID("");
-      setErro("");
-    }
-  }, [isOpen, company]);
-
   if (!isOpen) return null;
+
+  const handleError = (error) => {
+    let errorMessage = "Ocorreu um erro inesperado.";
+
+    if (typeof error === "string") {
+      errorMessage = error;
+    } else if (error.response && error.response.data) {
+      const data = error.response.data;
+
+      if (data.message) {
+        errorMessage = data.message;
+      } else if (typeof data === "object") {
+        const errors = Object.values(data);
+        if (errors.length > 0) errorMessage = errors[0];
+      } else if (typeof data === "string") {
+        errorMessage = data;
+      }
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    setAlertConfig({ isOpen: true, message: errorMessage, type: "error" });
+  };
+
+  const handleSuccess = (successMessage) => {
+    setAlertConfig({ isOpen: true, message: successMessage, type: "success" });
+  };
 
   const handleCreateCompany = async (e) => {
     e.preventDefault();
-    setErro("");
 
     if (!categoryID) {
       setErro("Por favor, selecione uma Categoria para esta Empresa.");
@@ -56,17 +89,18 @@ function NewCompany({ isOpen, onClose, onSuccess, company = null }) {
           categoryID: categoryID,
         });
 
-        alert("Objetivo criado com sucesso! 🏢");
-      }else{
-        await api.put("/company/update", {
-          name: name,
-          color: color,
-          categoryID: categoryID,
-        },{
-          params: {companyID: company.id}
-        });
-
-        alert("Objetivo atualizado com sucesso! 🏢");
+      } else {
+        await api.put(
+          "/company/update",
+          {
+            name: name,
+            color: color,
+            categoryID: categoryID,
+          },
+          {
+            params: { companyID: company.id },
+          },
+        );
       }
 
       if (onSuccess) onSuccess();
@@ -76,8 +110,7 @@ function NewCompany({ isOpen, onClose, onSuccess, company = null }) {
       setCategoryID("");
       onClose();
     } catch (error) {
-      console.error(error);
-      setErro("Erro ao criar empresa. Verifique se o nome já existe.");
+      handleError(error);
     }
   };
 
@@ -89,7 +122,6 @@ function NewCompany({ isOpen, onClose, onSuccess, company = null }) {
         </button>
 
         <h2 style={{ marginTop: 0, color: "#333" }}>Criar nova empresa</h2>
-        {erro && <p style={{ color: "red" }}>{erro}</p>}
 
         <form className="formModel" onSubmit={handleCreateCompany}>
           <label className="textLabel">
@@ -112,7 +144,10 @@ function NewCompany({ isOpen, onClose, onSuccess, company = null }) {
               onChange={(e) => setCategoryID(e.target.value)}
               required
             >
-              <option value="" disabled> Selecione uma categoria...</option>
+              <option value="" disabled>
+                {" "}
+                Selecione uma categoria...
+              </option>
               {categoriesList.map((categoria) => (
                 <option key={categoria.id} value={categoria.id}>
                   {categoria.name}
@@ -138,6 +173,14 @@ function NewCompany({ isOpen, onClose, onSuccess, company = null }) {
       </div>
     </div>,
     document.body,
+
+    <components.AlertModel
+      isOpen={alertConfig.isOpen}
+      title={alertConfig.type === "error" ? "Erro" : "Sucesso"}
+      message={alertConfig.message}
+      type={alertConfig.type}
+      onClose={() => setAlertConfig({ isOpen: false, message: "" })}
+    />,
   );
 }
 

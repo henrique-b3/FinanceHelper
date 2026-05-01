@@ -19,7 +19,8 @@ function Transaction() {
   const [sortOption, setSortOption] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [erro, setErro] = useState("");
+
+  const [alertConfig, setAlertConfig] = useState({ isOpen: false, message: "", type: "error" });
 
   const ORDERBY_OPTIONS = [
     { value: "data-asc", label: "Data (antigo)" },
@@ -28,14 +29,31 @@ function Transaction() {
     { value: "valor-asc", label: "Valor (mais baixo)" },
   ];
 
+  const handleError = (error) => {
+    let errorMessage = "Ocorreu um erro inesperado.";
+    if (typeof error === "string") {
+      errorMessage = error;
+    } else if (error.response && error.response.data) {
+      const data = error.response.data;
+      if (data.message) errorMessage = data.message;
+      else if (typeof data === "object") {
+        const errors = Object.values(data);
+        if (errors.length > 0) errorMessage = errors[0];
+      } else if (typeof data === "string") errorMessage = data;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    setAlertConfig({ isOpen: true, message: errorMessage, type: "error" });
+  };
+
   useEffect(() => {
     api.get("/category/all")
       .then((answer) => setCategoriesList(answer.data))
-      .catch(() => setErro("Não foi possível carregar as categorias."));
+      .catch((error) => handleError(error));
 
     api.get("/company/all")
       .then((answer) => setCompaniesList(answer.data))
-      .catch(() => setErro("Não foi possível carregar as empresas."));
+      .catch((error) => handleError(error));
       
     fetchFilteredTransactions();
   }, []);
@@ -62,8 +80,7 @@ function Transaction() {
         setTransactionsList(answer.data.content);
       })
       .catch((erro) => {
-        console.error("Erro ao buscar transações", erro);
-        setErro("Não foi possível carregar as suas transações.");
+        handleError(error);
       });
   };
 
@@ -171,8 +188,6 @@ function Transaction() {
         <h3 className="section-title">Transações Recentes</h3>
       </div>
 
-      {erro && <div className="error-message">{erro}</div>}
-
       {transactionsList.length === 0 ? (
         <div className="empty-state">
           <p>Ainda não registou nada este mês. 🧊</p>
@@ -214,9 +229,17 @@ function Transaction() {
         transaction={selectedTransaction}
         onClose={() => setIsModalOpen(false)}
         onSuccess={() => {
-          fetchTransactions();
-          if (onTransactionUpdate) onTransactionUpdate();
+          fetchFilteredTransactions();
+          setAlertConfig({ isOpen: true, message: "Operação realizada com sucesso!", type: "success" });
         }}
+      />
+
+      <components.AlertModel 
+        isOpen={alertConfig.isOpen}
+        title={alertConfig.type === "error" ? "Erro" : "Sucesso"}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onClose={() => setAlertConfig({ isOpen: false, message: "" })}
       />
     </div>
 
