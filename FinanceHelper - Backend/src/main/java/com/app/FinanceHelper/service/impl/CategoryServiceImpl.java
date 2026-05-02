@@ -2,6 +2,7 @@ package com.app.FinanceHelper.service.impl;
 
 import com.app.FinanceHelper.exceptions.APIexception;
 import com.app.FinanceHelper.exceptions.ResourceNotFoundException;
+import com.app.FinanceHelper.helper.ImageSaver;
 import com.app.FinanceHelper.model.Category;
 import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.dto.CategoryDTO;
@@ -15,7 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -34,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     ModelMapper modelMapper;
 
     @Override
-    public CategoryResponse createCategory(UUID userID, CategoryDTO categoryDTO) {
+    public CategoryResponse createCategory(UUID userID, CategoryDTO categoryDTO, MultipartFile file) {
 
         UserProfile user = userProfileRepository.findById(userID)
                 .orElseThrow(() -> new ResourceNotFoundException("UserProfile", "userID", userID));
@@ -45,6 +51,9 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category categoryToCreate = modelMapper.map(categoryDTO, Category.class);
         categoryToCreate.setUserProfile(user);
+
+        String fileName = ImageSaver.saveImageLocally(file);
+        if (fileName != null) categoryToCreate.setImage(fileName);
 
         Category createdCategory = categoryRepository.save(categoryToCreate);
 
@@ -122,21 +131,26 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse updateCategory(UUID userID, UUID categoryID, CategoryDTO categoryDTO) {
+    public CategoryResponse updateCategory(UUID userID, UUID categoryID, CategoryDTO categoryDTO, MultipartFile file) {
         Category category = categoryRepository
                 .findByIdAndUserProfile_Id(categoryID, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", categoryID));
 
-        if(categoryDTO.getName() != null && !category.getName().isBlank() && !categoryDTO.getName().equalsIgnoreCase(category.getName())){
+        if(categoryDTO.getName() != null && !categoryDTO.getName().isBlank() && !categoryDTO.getName().equalsIgnoreCase(category.getName())){
             category.setName(categoryDTO.getName());
         }
 
-        if(categoryDTO.getColor() != null && !category.getColor().isBlank() && !categoryDTO.getColor().equalsIgnoreCase(category.getColor())){
+        if(categoryDTO.getColor() != null && !categoryDTO.getColor().isBlank() && !categoryDTO.getColor().equalsIgnoreCase(category.getColor())){
             category.setColor(categoryDTO.getColor());
         }
 
-        if(categoryDTO.getDescription() != null && !category.getDescription().isBlank() && !categoryDTO.getDescription().equalsIgnoreCase(category.getDescription())){
+        if(categoryDTO.getDescription() != null && !categoryDTO.getDescription().isBlank() && !categoryDTO.getDescription().equalsIgnoreCase(category.getDescription())){
             category.setDescription(categoryDTO.getDescription());
+        }
+
+        if(categoryDTO.getImage() != null && !categoryDTO.getImage().isBlank() && !categoryDTO.getImage().equalsIgnoreCase(category.getImage())){
+            String fileName = ImageSaver.saveImageLocally(file);
+            if (fileName != null) category.setImage(fileName);
         }
 
         Category savedCategory = categoryRepository.save(category);

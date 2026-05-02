@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
@@ -22,12 +23,13 @@ public class CategoryController {
     @Autowired
     CategoryService categoryService;
 
-    @PostMapping
+    @PostMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<CategoryResponse> createCategory(
             @AuthenticationPrincipal UserProfile user,
-            @Valid @RequestBody CategoryDTO categoryDTO
+            @Valid @ModelAttribute CategoryDTO categoryDTO,
+            @RequestParam(value = "file", required = false) MultipartFile file
     ){
-        CategoryResponse categoryResponse = categoryService.createCategory(user.getId(),categoryDTO);
+        CategoryResponse categoryResponse = categoryService.createCategory(user.getId(), categoryDTO, file);
         return new ResponseEntity<>(categoryResponse, HttpStatus.CREATED);
     }
 
@@ -67,14 +69,15 @@ public class CategoryController {
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/update")
+    @PutMapping(path = "/update", consumes = { "multipart/form-data" })
     public ResponseEntity<CategoryResponse> updateCategory(
             @AuthenticationPrincipal UserProfile user,
             @RequestParam UUID categoryID,
-           @Valid @RequestBody CategoryDTO categoryDTO
+            @Valid @ModelAttribute CategoryDTO categoryDTO,
+            @RequestParam(value = "file", required = false) MultipartFile file
     ){
-        CategoryResponse response = categoryService.updateCategory(user.getId(), categoryID, categoryDTO);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        CategoryResponse categoryResponse = categoryService.updateCategory(user.getId(), categoryID, categoryDTO, file);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @PutMapping("/image/{categoryID}")

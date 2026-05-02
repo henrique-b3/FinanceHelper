@@ -37,7 +37,7 @@ public class Category {
     @PrePersist
     public void defaultValues() {
         if (this.image == null || this.image.isBlank()) {
-            this.image = "icone_padrao.png";
+            this.image = "default.png";
         }
 
         if (this.color == null || this.color.isBlank()) {

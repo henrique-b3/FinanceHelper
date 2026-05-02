@@ -60,6 +60,7 @@ public class MyGlobalExceptionHandler{
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIResponse> handleGlobalException(Exception e){
+        e.printStackTrace();
         APIResponse apiResponse = new APIResponse("Ocorreu um erro interno no servidor.", false);
         return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }

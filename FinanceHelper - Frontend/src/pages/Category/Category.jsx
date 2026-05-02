@@ -157,13 +157,23 @@ function Category() {
       ) : (
         <ul className="categories-list">
           {categoriesList.map((t) => (
-            <li key={t.id} className="category-item" onClick={() => handleOpenAnalytics(t)} title="Estatísticas">
+            <li key={t.id} className="category-item">
               <div className="category-info-left">
                 <div className="category-icon-bg">
-                  <div
-                    className="category-color-dot"
-                    style={{ backgroundColor: t.color || "#007bff" }}
-                  ></div>
+                  <div className="category-icon-bg" style={{ overflow: "hidden" }}>
+                    {t.image && t.image !== "default.png" && t.image !== "icone_padrao.png" ? (
+                      <img
+                        src={`http://localhost:8080/uploads/${t.image}`}
+                        alt={t.name}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                    ) : (
+                      <div
+                        className="category-color-dot"
+                        style={{ backgroundColor: t.color || "#007bff" }}
+                      ></div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="category-details">
@@ -188,6 +198,13 @@ function Category() {
                   title="Apagar"
                 >
                   <img src={images.deleteItem} alt="Apagar" />
+                </button>
+                <button
+                  onClick={() => handleOpenAnalytics(t)}
+                  className="action-btn edit-btn"
+                  title="Estatísticas"
+                >
+                  <img src={images.stats} alt="Stats" />
                 </button>
               </div>
             </li>

@@ -4,6 +4,7 @@ import com.app.FinanceHelper.payload.dto.CategoryDTO;
 import com.app.FinanceHelper.payload.response.CategoryResponse;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 public interface CategoryService {
 
-    CategoryResponse createCategory(UUID userID, CategoryDTO categoryDTO);
+    CategoryResponse createCategory(UUID userID, CategoryDTO categoryDTO, MultipartFile file);
 
     Set<CategoryResponse> getAllCategories(UUID userID);
 
@@ -24,5 +25,5 @@ public interface CategoryService {
 
     List<CategoryResponse> getCategoriesByName(UUID id, String categoryName);
 
-    CategoryResponse updateCategory(UUID userID, UUID categoryID, CategoryDTO categoryDTO);
+    CategoryResponse updateCategory(UUID userID, UUID categoryID, CategoryDTO categoryDTO, MultipartFile file);
 }

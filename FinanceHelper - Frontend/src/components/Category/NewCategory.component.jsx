@@ -8,6 +8,7 @@ function NewCategory({ isOpen, onClose, onSuccess, category = null }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [color, setColor] = useState("#007bff");
+  const [file, setFile] = useState(null);
 
   const [alertConfig, setAlertConfig] = useState({
     isOpen: false,
@@ -56,35 +57,24 @@ function NewCategory({ isOpen, onClose, onSuccess, category = null }) {
 
   const handleCreateCategory = async (e) => {
     e.preventDefault();
-
     try {
+      const formData = new FormData();
+      formData.append("name", name);
+      if (description) formData.append("description", description);
+      if (color) formData.append("color", color);
+      if (file) formData.append("file", file);
+
       if (!category) {
-        await api.post("/category", {
-          name: name,
-          description: description,
-          color: color,
-          image: "icone.png",
-        });
+        await api.post("/category", formData,);
       } else {
-        await api.put(
-          "/category/update",
-          {
-            name: name,
-            description: description,
-            color: color,
-            image: "icone.png",
-          },
-          {
-            params: { categoryID: category.id },
-          },
-        );
+        await api.put(`/category/update/${category.id}`, formData,);
       }
 
       if (onSuccess) onSuccess();
-
       setName("");
       setDescription("");
       setColor("#007bff");
+      setFile(null);
       onClose();
     } catch (error) {
       handleError(error);
@@ -131,6 +121,17 @@ function NewCategory({ isOpen, onClose, onSuccess, category = null }) {
               type="color"
               value={color}
               onChange={(e) => setColor(e.target.value)}
+            />
+          </label>
+
+          <label className="textLabel">
+            Ícone / Imagem:
+            <input
+              className="form-input"
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFile(e.target.files[0])}
+              style={{ padding: "10px" }}
             />
           </label>
 

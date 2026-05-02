@@ -7,6 +7,7 @@ import eyeOff from './eye-off.svg';
 import logo from './Logo.png';
 import deleteItem from './delete.svg';
 import edit from './edit.svg'
+import stats from './stats.svg'
 
 
 export const images = {
@@ -18,5 +19,6 @@ export const images = {
   eyeOff,
   logo,
   deleteItem,
-  edit
+  edit,
+  stats
 };

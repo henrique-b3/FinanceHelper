@@ -89,7 +89,7 @@ public class Goal {
     @PrePersist
     public void defaultValues() {
         if (this.icon == null || this.icon.isBlank()) {
-            this.icon = "icone_padrao.png";
+            this.icon = "default.png";
         }
 
         if (this.color == null || this.color.isBlank()) {

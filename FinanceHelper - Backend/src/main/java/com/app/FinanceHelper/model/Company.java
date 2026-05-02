@@ -22,6 +22,7 @@ public class Company {
     String name;
 
     String color;
+    String image;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -31,4 +32,15 @@ public class Company {
     @ManyToOne
     @JoinColumn(name = "category_id")
     Category category;
+
+    @PrePersist
+    public void defaultValues() {
+        if (this.image == null || this.image.isBlank()) {
+            this.image = "default.png";
+        }
+
+        if (this.color == null || this.color.isBlank()) {
+            this.color = "#CCCCCC";
+        }
+    }
 }

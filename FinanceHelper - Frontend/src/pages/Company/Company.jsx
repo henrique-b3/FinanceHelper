@@ -160,8 +160,6 @@ function Company() {
             <li
               key={t.id}
               className="category-item"
-              onClick={() => handleOpenAnalytics(t)}
-              title="Estatísticas"
             >
               <div className="category-info-left">
                 <div className="category-icon-bg">
@@ -190,6 +188,13 @@ function Company() {
                   title="Apagar"
                 >
                   <img src={images.deleteItem} alt="Apagar" />
+                </button>
+                <button
+                  onClick={() => handleOpenAnalytics(t)}
+                  className="action-btn"
+                  title="Estatísticas"
+                >
+                  <img src={images.stats} alt="Stats" />
                 </button>
               </div>
             </li>

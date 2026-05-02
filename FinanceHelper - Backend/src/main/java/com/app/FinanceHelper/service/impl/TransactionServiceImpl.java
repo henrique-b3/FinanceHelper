@@ -1,6 +1,6 @@
 package com.app.FinanceHelper.service.impl;
 
-import com.app.FinanceHelper.Filter.TransactionFilter;
+import com.app.FinanceHelper.filter.TransactionFilter;
 import com.app.FinanceHelper.exceptions.ResourceNotFoundException;
 import com.app.FinanceHelper.model.Category;
 import com.app.FinanceHelper.model.Company;
@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 

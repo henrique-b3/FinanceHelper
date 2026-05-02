@@ -1,4 +1,4 @@
-package com.app.FinanceHelper.Filter;
+package com.app.FinanceHelper.filter;
 
 import com.app.FinanceHelper.model.Transaction;
 import com.app.FinanceHelper.payload.dto.TransactionFilterDTO;

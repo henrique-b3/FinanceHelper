@@ -1,8 +1,6 @@
 package com.app.FinanceHelper.service.impl;
 
-import ch.qos.logback.core.model.Model;
-import com.app.FinanceHelper.Filter.GoalFilter;
-import com.app.FinanceHelper.controller.GoalController;
+import com.app.FinanceHelper.filter.GoalFilter;
 import com.app.FinanceHelper.enums.GoalStatus;
 import com.app.FinanceHelper.exceptions.APIexception;
 import com.app.FinanceHelper.exceptions.ResourceNotFoundException;
@@ -16,7 +14,6 @@ import com.app.FinanceHelper.payload.response.GoalResponse;
 import com.app.FinanceHelper.payload.response.GoalStatusResponse;
 import com.app.FinanceHelper.repository.*;
 import com.app.FinanceHelper.service.GoalService;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
