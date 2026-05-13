@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import api from "../../services/api";
 import "./NewModal.css";
+import { useAlert } from "../../contexts/AlertContext";
 
 function AnalyticsModal({ isOpen, onClose, entity, type }) {
   const [chartData, setChartData] = useState([]);
@@ -11,6 +12,7 @@ function AnalyticsModal({ isOpen, onClose, entity, type }) {
   const [endDate, setEndDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     if (isOpen) {
@@ -57,7 +59,7 @@ function AnalyticsModal({ isOpen, onClose, entity, type }) {
 
       processChartData(transactions);
     } catch (error) {
-      console.error("Erro ao buscar dados para análise", error);
+      showAlert(error, "error");
       setTotalSpent(0);
       setChartData([]);
     } finally {

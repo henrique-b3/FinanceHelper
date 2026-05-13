@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import api from "../../../services/api";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import "./Categories.chart.css";
+import { useAlert } from "../../contexts/AlertContext";
 
 function GoalBar() {
   const [chartData, setChartData] = useState([]);
+  const { showAlert } = useAlert();
   
   const formatarDinheiro = (valor) => {
     return new Intl.NumberFormat('pt-PT', {
@@ -19,7 +21,7 @@ function GoalBar() {
       .then((answer) => {
         setChartData(answer.data);
       })
-      .catch((erro) => console.error("Erro ao carregar gráfico", erro));
+      .catch((error) => showAlert(error, "error"));
   }, []);
 
   return (

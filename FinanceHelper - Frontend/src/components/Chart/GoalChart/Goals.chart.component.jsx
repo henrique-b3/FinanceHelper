@@ -26,7 +26,7 @@ function GoalBarChart() {
       .then((answer) => {
         setGoals(answer.data);
       })
-      .catch((erro) => console.error("Erro ao carregar gráfico", erro));
+      .catch((error) => showAlert("Erro ao carregar gráfico", "error"));
   }, []);
 
   return (

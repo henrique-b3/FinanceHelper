@@ -3,6 +3,7 @@ import api from "../../services/api";
 import * as components from "../../components";
 import { images } from "../../svg";
 import "./Goal.css";
+import { useAlert } from "../../contexts/AlertContext";
 
 function Goal() {
   const [goalsList, setGoalsList] = useState([]);
@@ -17,6 +18,8 @@ function Goal() {
   const [status, setStatus] = useState("");
   const [sortOption, setSortOption] = useState("");
 
+  const { showAlert } = useAlert();
+
   // Modais e Alertas
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,11 +27,7 @@ function Goal() {
     isOpen: false,
     idToDelete: null,
   });
-  const [alertConfig, setAlertConfig] = useState({
-    isOpen: false,
-    message: "",
-    type: "error",
-  });
+  
 
   const ORDERBY_OPTIONS = [
     { value: "endDate-asc", label: "Data Fim (mais próxima)" },
@@ -50,17 +49,17 @@ function Goal() {
     api
       .get("/category/all")
       .then((answer) => setCategoriesList(answer.data))
-      .catch(handleError);
+      .catch((error) => showAlert(error, "error"));
 
     api
       .get("/company/all")
       .then((answer) => setCompaniesList(answer.data))
-      .catch(handleError);
+      .catch((error) => showAlert(error, "error"));
 
     api
       .get("/goal/status")
       .then((answer) => setStatusList(answer.data))
-      .catch(handleError);
+      .catch((error) => showAlert(error, "error"));
 
     fetchFilteredGoals();
   }, []);
@@ -77,17 +76,6 @@ function Goal() {
     if (!limitAmount || limitAmount === 0) return 0;
     const percent = (spendAmount / limitAmount) * 100;
     return percent > 100 ? 100 : percent;
-  };
-
-  const handleError = (error) => {
-    let errorMessage = "Ocorreu um erro inesperado.";
-    if (error.response?.data?.message)
-      errorMessage = error.response.data.message;
-    setAlertConfig({ isOpen: true, message: errorMessage, type: "error" });
-  };
-
-  const handleSuccess = (successMessage) => {
-    setAlertConfig({ isOpen: true, message: successMessage, type: "success" });
   };
 
   const fetchFilteredGoals = () => {
@@ -108,7 +96,7 @@ function Goal() {
         const data = answer.data.content || answer.data;
         setGoalsList(data);
       })
-      .catch(handleError);
+      .catch((error) => showAlert(error, "error"));
   };
 
   const handleSearchSubmit = (e) => {
@@ -135,10 +123,10 @@ function Goal() {
       });
       setConfirmConfig({ isOpen: false, idToDelete: null });
       fetchFilteredGoals();
-      handleSuccess("Objetivo apagado com sucesso");
+      showAlert("Objetivo apagado com sucesso", "success");
     } catch (error) {
       setConfirmConfig({ isOpen: false, idToDelete: null });
-      handleError(error);
+      showAlert(error, "error");
     }
   };
 
@@ -360,21 +348,13 @@ function Goal() {
         onClose={() => setConfirmConfig({ isOpen: false, idToDelete: null })}
       />
 
-      <components.AlertModel
-        isOpen={alertConfig.isOpen}
-        title={alertConfig.type === "error" ? "Erro" : "Sucesso"}
-        message={alertConfig.message}
-        type={alertConfig.type}
-        onClose={() => setAlertConfig({ isOpen: false, message: "" })}
-      />
-
       <components.NewGoal
         isOpen={isModalOpen}
         goal={selectedGoal}
         onClose={() => setIsModalOpen(false)}
         onSuccess={() => {
           fetchFilteredGoals();
-          handleSuccess("Operação realizada com sucesso!");
+
         }}
       />
     </div>

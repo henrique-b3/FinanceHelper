@@ -4,23 +4,24 @@ import api from "../../services/api";
 import * as components from "../../components";
 // import { images } from "../../svg";
 import "./Transaction.css";
+import { useAlert } from "../../contexts/AlertContext";
 
 function Transaction() {
   const [transactionsList, setTransactionsList] = useState([]);
   const [companiesList, setCompaniesList] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
 
-   const [selectedTransaction, setSelectedTransaction] = useState([]);
+  const [selectedTransaction, setSelectedTransaction] = useState([null]);
 
   const [searchTransaction, setSearchTransaction] = useState("");
   const [categoryID, setCategoryID] = useState("");
   const [companyID, setCompanyID] = useState("");
-  
+
   const [sortOption, setSortOption] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [alertConfig, setAlertConfig] = useState({ isOpen: false, message: "", type: "error" });
+  const { showAlert } = useAlert();
 
   const ORDERBY_OPTIONS = [
     { value: "data-asc", label: "Data (antigo)" },
@@ -29,38 +30,22 @@ function Transaction() {
     { value: "valor-asc", label: "Valor (mais baixo)" },
   ];
 
-  const handleError = (error) => {
-    let errorMessage = "Ocorreu um erro inesperado.";
-    if (typeof error === "string") {
-      errorMessage = error;
-    } else if (error.response && error.response.data) {
-      const data = error.response.data;
-      if (data.message) errorMessage = data.message;
-      else if (typeof data === "object") {
-        const errors = Object.values(data);
-        if (errors.length > 0) errorMessage = errors[0];
-      } else if (typeof data === "string") errorMessage = data;
-    } else if (error.message) {
-      errorMessage = error.message;
-    }
-    setAlertConfig({ isOpen: true, message: errorMessage, type: "error" });
-  };
 
   useEffect(() => {
     api.get("/category/all")
       .then((answer) => setCategoriesList(answer.data))
-      .catch((error) => handleError(error));
+      .catch((error) => showAlert(error, "error"));
 
     api.get("/company/all")
       .then((answer) => setCompaniesList(answer.data))
-      .catch((error) => handleError(error));
-      
+      .catch((error) => showAlert(error, "error"));
+
     fetchFilteredTransactions();
   }, []);
 
   const fetchFilteredTransactions = () => {
     const params = {
-      page: 0, 
+      page: 0,
       size: 20
     };
 
@@ -79,8 +64,8 @@ function Transaction() {
       .then((answer) => {
         setTransactionsList(answer.data.content);
       })
-      .catch((erro) => {
-        handleError(error);
+      .catch((error) => {
+        showAlert(error, "error");
       });
   };
 
@@ -111,7 +96,7 @@ function Transaction() {
 
       <nav className="search-nav">
         <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-          
+
           <input
             type="text"
             value={searchTransaction}
@@ -169,13 +154,13 @@ function Transaction() {
           </label>
 
           <button type="submit" className="search-btn">Filtrar</button>
-          
+
           <button type="button" onClick={() => {
-              setSearchTransaction("");
-              setCategoryID("");
-              setCompanyID("");
-              setSortOption("");
-              setTimeout(() => fetchFilteredTransactions(), 0); 
+            setSearchTransaction("");
+            setCategoryID("");
+            setCompanyID("");
+            setSortOption("");
+            setTimeout(() => fetchFilteredTransactions(), 0);
           }}>
             Limpar
           </button>
@@ -184,65 +169,56 @@ function Transaction() {
 
 
       <div className="transactions-container glass-card">
-      <div className="transactions-header">
-        <h3 className="section-title">Transações Recentes</h3>
-      </div>
-
-      {transactionsList.length === 0 ? (
-        <div className="empty-state">
-          <p>Ainda não registou nada este mês. 🧊</p>
+        <div className="transactions-header">
+          <h3 className="section-title">Transações Recentes</h3>
         </div>
-      ) : (
-        <ul className="transaction-list">
-          {transactionsList.map((t) => (
-            <li key={t.id} className="transaction-item" onClick={() => handleOpenModal(t)}>
-              <div className="transaction-info">
-                <div
-                  className="transaction-icon"
-                  style={{
-                    background: t.categoryColor
-                      ? `${t.categoryColor}33`
-                      : "rgba(255, 255, 255, 0.1)",
-                  }}
-                >
-                  💳
+
+        {transactionsList.length === 0 ? (
+          <div className="empty-state">
+            <p>Ainda não registou nada este mês. 🧊</p>
+          </div>
+        ) : (
+          <ul className="transaction-list">
+            {transactionsList.map((t) => (
+              <li key={t.id} className="transaction-item" onClick={() => handleOpenModal(t)}>
+                <div className="transaction-info">
+                  <div
+                    className="transaction-icon"
+                    style={{
+                      background: t.categoryColor
+                        ? `${t.categoryColor}33`
+                        : "rgba(255, 255, 255, 0.1)",
+                    }}
+                  >
+                    💳
+                  </div>
+
+                  <div className="transaction-details">
+                    <span className="transaction-name">
+                      {t.companyName || t.categoryName || "Despesa"}
+                    </span>
+                    <span className="transaction-date">
+                      {t.categoryName} •{" "}
+                      {new Date(t.transactionDate).toLocaleDateString("pt-PT")}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="transaction-details">
-                  <span className="transaction-name">
-                    {t.companyName || t.categoryName || "Despesa"}
-                  </span>
-                  <span className="transaction-date">
-                    {t.categoryName} •{" "}
-                    {new Date(t.transactionDate).toLocaleDateString("pt-PT")}
-                  </span>
-                </div>
-              </div>
+                <span className="transaction-amount">- {t.amount} €</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <components.NewTransaction
+          isOpen={isModalOpen}
+          transaction={selectedTransaction}
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={() => {
+            fetchFilteredTransactions();
+          }}
+        />
 
-              <span className="transaction-amount">- {t.amount} €</span>
-            </li>
-          ))}
-        </ul>
-      )}
-      <components.NewTransaction 
-        isOpen={isModalOpen}
-        transaction={selectedTransaction}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={() => {
-          fetchFilteredTransactions();
-          setAlertConfig({ isOpen: true, message: "Operação realizada com sucesso!", type: "success" });
-        }}
-      />
-
-      <components.AlertModel 
-        isOpen={alertConfig.isOpen}
-        title={alertConfig.type === "error" ? "Erro" : "Sucesso"}
-        message={alertConfig.message}
-        type={alertConfig.type}
-        onClose={() => setAlertConfig({ isOpen: false, message: "" })}
-      />
-    </div>
-
+      </div>
     </div>
   );
 }

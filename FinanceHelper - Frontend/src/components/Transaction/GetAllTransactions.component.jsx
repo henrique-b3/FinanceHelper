@@ -3,11 +3,14 @@ import api from "../../services/api";
 import { createPortal } from "react-dom";
 import "./GetAllTransactions.css";
 import NewTransaction from "./NewTransaction.component";
+import { useAlert } from "../../contexts/AlertContext";
 
 function GetAllTransaction({ onTransactionUpdate }) {
   const [transactionsList, setTransactionsList] = useState([]);
   const [erro, setErro] = useState("");
   const [limitAmount, setLimitAmount] = useState(5);
+
+  const { showAlert } = useAlert();
 
   const fetchTransactions = () => {
     api
@@ -19,9 +22,8 @@ function GetAllTransaction({ onTransactionUpdate }) {
       .then((answer) => {
         setTransactionsList(answer.data);
       })
-      .catch((erro) => {
-        console.error("Erro ao buscar transações", erro);
-        setErro("Não foi possível carregar as suas transações.");
+      .catch((error) => {
+        showAlert(error, "error");
       });
   };
 

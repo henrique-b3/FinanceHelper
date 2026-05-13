@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useState } from "react";
 import api from "../../services/api";
 import "../Modal/NewModal.css";
+import { useAlert } from "../../contexts/AlertContext";
 
 function Register({ isOpen, onClose }) {
   const [name, setName] = useState("");
@@ -13,6 +14,7 @@ function Register({ isOpen, onClose }) {
   const [erro, setErro] = useState("");
 
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   if (!isOpen) return null;
 
@@ -37,7 +39,7 @@ function Register({ isOpen, onClose }) {
       onClose();
       
     } catch (error) {
-      setErro("Error");
+      showAlert(error, "error");
       console.error(error);
     }
   };

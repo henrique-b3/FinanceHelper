@@ -41,8 +41,4 @@ function NavMenu(){
     )
 }
 
-function handler(){
-
-}
-
 export default NavMenu;

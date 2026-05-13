@@ -38,13 +38,13 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyResponse createCompany(UUID userID, CompanyDTO companyDTO) {
 
         UserProfile userProfile = userProfileRepository.findById(userID)
-                .orElseThrow(() -> new ResourceNotFoundException("UserProfile", "userID", userID));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário", "userID", userID));
 
         Category category = categoryRepository.findByIdAndUserProfile_Id(companyDTO.getCategoryID(), userID)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", companyDTO.getCategoryID()));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria", "categoryID", companyDTO.getCategoryID()));
 
         if (companyRepository.existsByNameAndUserProfile_Id(companyDTO.getName(), userID)) {
-            throw new APIexception("Já existe uma empresa com esse nome");
+            throw new APIexception("company.exists");
         }
 
         Company companyToCreate = modelMapper.map(companyDTO, Company.class);
@@ -113,7 +113,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         if(companyDTO.getCategoryID() != null && !companyDTO.getCategoryID().equals(company.getCategory().getId())){
             Category category = categoryRepository.findByIdAndUserProfile_Id(companyDTO.getCategoryID(), userID)
-                    .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", companyDTO.getCategoryID()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoria", "categoryID", companyDTO.getCategoryID()));
 
             company.setCategory(category);
         }

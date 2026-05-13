@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import api from "../../services/api";
 import "../Modal/NewModal.css";
+import { useAlert } from "../../contexts/AlertContext";
 
 function NewGoal({ isOpen, onClose, onSuccess, goal = null }) {
   const [name, setName] = useState("");
@@ -15,10 +16,12 @@ function NewGoal({ isOpen, onClose, onSuccess, goal = null }) {
   // Estados para Categoria e Empresa
   const [categoryID, setCategoryID] = useState("");
   const [companyID, setCompanyID] = useState("");
+
+  const { showAlert } = useAlert();
   
   const [categoriesList, setCategoriesList] = useState([]);
   const [companiesList, setCompaniesList] = useState([]); // Adicionado estado para empresas
-  const [erro, setErro] = useState("");
+
 
   useEffect(() => {
     if (isOpen) {
@@ -26,13 +29,13 @@ function NewGoal({ isOpen, onClose, onSuccess, goal = null }) {
       api
         .get("/category/all")
         .then((answer) => setCategoriesList(answer.data))
-        .catch((erro) => console.error("Erro ao buscar categorias", erro));
+        .catch((error) => showAlert(error, "error"));
 
       // Carregar Empresas
       api
         .get("/company/all")
         .then((answer) => setCompaniesList(answer.data))
-        .catch((erro) => console.error("Erro ao buscar empresas", erro));
+        .catch((error) => showAlert(error, "error"));
     }
   }, [isOpen]);
 
@@ -58,7 +61,6 @@ function NewGoal({ isOpen, onClose, onSuccess, goal = null }) {
       setEndDate("");
       setCategoryID("");
       setCompanyID("");
-      setErro("");
     }
   }, [isOpen, goal]);
 
@@ -66,11 +68,10 @@ function NewGoal({ isOpen, onClose, onSuccess, goal = null }) {
 
   const handleCreateGoal = async (e) => {
     e.preventDefault();
-    setErro("");
 
     // Validação: Tem de escolher pelo menos um
     if (!categoryID && !companyID) {
-      setErro("Por favor, associe o objetivo a uma Categoria ou a uma Empresa.");
+      showAlert("Por favor, associe o objetivo a uma Categoria ou a uma Empresa.", "error");
       return;
     }
 
@@ -98,8 +99,7 @@ function NewGoal({ isOpen, onClose, onSuccess, goal = null }) {
       if (onSuccess) onSuccess();
       onClose();
     } catch (error) {
-      console.error(error);
-      setErro("Erro ao guardar objetivo. Verifique os dados e tente novamente.");
+      showAlert(error, "error");
     }
   };
 

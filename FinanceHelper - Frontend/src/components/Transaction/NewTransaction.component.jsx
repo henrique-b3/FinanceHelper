@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import api from "../../services/api";
 import "../Modal/NewModal.css";
 import * as components from "../../components";
+import { useAlert } from "../../contexts/AlertContext";
 
 function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
   const [description, setDescription] = useState("");
@@ -12,29 +13,10 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
   const [companyID, setCompanyID] = useState("");
   const [categoriesList, setcategoriesList] = useState([]);
   const [companiesList, setcompaniesList] = useState([]);
-  const [alertConfig, setAlertConfig] = useState({
-    isOpen: false,
-    message: "",
-    type: "error",
-  });
+
   const [confirmConfig, setConfirmConfig] = useState({ isOpen: false });
 
-  const handleError = (error) => {
-    let errorMessage = "Ocorreu um erro inesperado.";
-    if (typeof error === "string") {
-      errorMessage = error;
-    } else if (error.response && error.response.data) {
-      const data = error.response.data;
-      if (data.message) errorMessage = data.message;
-      else if (typeof data === "object") {
-        const errors = Object.values(data);
-        if (errors.length > 0) errorMessage = errors[0];
-      } else if (typeof data === "string") errorMessage = data;
-    } else if (error.message) {
-      errorMessage = error.message;
-    }
-    setAlertConfig({ isOpen: true, message: errorMessage, type: "error" });
-  };
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     if (isOpen) {
@@ -43,14 +25,14 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
         .then((answer) => {
           setcategoriesList(answer.data);
         })
-        .catch((error) => handleError(error));
+        .catch((error) => showAlert(error, "error"));
 
       api
         .get("/company/all")
         .then((answer) => {
           setcompaniesList(answer.data);
         })
-        .catch((error) => handleError(error));
+        .catch((error) => showAlert(error, "error"));
     }
   }, [isOpen]);
 
@@ -60,7 +42,6 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
       setAmount(transaction.amount || "");
       setCategoryID(transaction.categoryID || "");
       setCompanyID(transaction.companyID || "");
-      setAlertConfig({ isOpen: false, message: "", type: "error" });
 
       if (transaction.transactionDate) {
         setTransactionDate(
@@ -73,7 +54,6 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
       setTransactionDate("");
       setCompanyID("");
       setCategoryID("");
-      setAlertConfig({ isOpen: false, message: "", type: "error" });
     }
   }, [isOpen, transaction]);
 
@@ -83,7 +63,7 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
     e.preventDefault();
 
     if (!categoryID) {
-      handleError("Por favor, selecione uma Categoria para esta Transação.");
+      showAlert("Por favor, selecione uma Categoria para esta Transação.", "error");
       return;
     }
 
@@ -121,7 +101,7 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
       setCategoryID("");
       onClose();
     } catch (error) {
-      handleError(error);
+      showAlert(error, "error");
     }
   };
 
@@ -137,7 +117,7 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
       onClose();
     } catch (error) {
       setConfirmConfig({ isOpen: false });
-      handleError(error);
+      showAlert(error, "error");
     }
   };
 
@@ -248,14 +228,6 @@ function NewTransaction({ isOpen, onClose, onSuccess, transaction = null }) {
         message="Tem a certeza que deseja apagar esta transação? Esta ação não pode ser desfeita."
         onConfirm={executeDelete}
         onClose={() => setConfirmConfig({ isOpen: false })}
-      />
-
-      <components.AlertModel
-        isOpen={alertConfig.isOpen}
-        title="Atenção"
-        message={alertConfig.message}
-        type={alertConfig.type}
-        onClose={() => setAlertConfig({ isOpen: false, message: "" })}
       />
     </div>,
     document.body,

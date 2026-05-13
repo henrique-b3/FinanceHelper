@@ -1,5 +1,6 @@
 package com.app.FinanceHelper.payload.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,16 +16,18 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class TransactionDTO {
-    String description;
+    private String description;
 
-    @NotNull(message = "Transaction amount cannot be empty!")
-    BigDecimal amount;
+    @NotNull(message = "{transaction.amount.notnull}")
+    private BigDecimal amount;
 
-    @NotNull(message = "Transaction date cannot be empty!")
-    LocalDate transactionDate;
+    @NotNull(message = "{transaction.date.notnull}")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate transactionDate;
 
-    UUID companyID;
+    // A transação deve pertencer a uma categoria
+    @NotNull(message = "{transaction.category.notnull}")
+    private UUID categoryID;
 
-    @NotNull(message = "Category ID cannot be empty!")
-    UUID categoryID;
+    private UUID companyID;
 }

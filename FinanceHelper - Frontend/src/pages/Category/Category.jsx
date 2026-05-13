@@ -4,15 +4,18 @@ import api from "../../services/api";
 import * as components from "../../components";
 import { images } from "../../svg";
 import "./Category.css";
+import { useAlert } from "../../contexts/AlertContext";
 
 function Category() {
   const [categoriesList, setCategoriesList] = useState([]);
-  const [searchCategory, setSearchCategory] = useState([]);
+  const [searchCategory, setSearchCategory] = useState([""]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [analyticsCategory, setAnalyticsCategory] = useState(null);
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
+
+  const { showAlert } = useAlert();
 
   const handleOpenAnalytics = (category) => {
     setAnalyticsCategory(category);
@@ -24,42 +27,10 @@ function Category() {
     idToDelete: null,
   });
 
-  const [alertConfig, setAlertConfig] = useState({
-    isOpen: false,
-    message: "",
-    type: "error",
-  });
 
   useEffect(() => {
     fetchCategories();
   }, []);
-
-  const handleError = (error) => {
-    let errorMessage = "Ocorreu um erro inesperado.";
-
-    if (typeof error === "string") {
-      errorMessage = error;
-    } else if (error.response && error.response.data) {
-      const data = error.response.data;
-
-      if (data.message) {
-        errorMessage = data.message;
-      } else if (typeof data === "object") {
-        const errors = Object.values(data);
-        if (errors.length > 0) errorMessage = errors[0];
-      } else if (typeof data === "string") {
-        errorMessage = data;
-      }
-    } else if (error.message) {
-      errorMessage = error.message;
-    }
-
-    setAlertConfig({ isOpen: true, message: errorMessage, type: "error" });
-  };
-
-  const handleSuccess = (successMessage) => {
-    setAlertConfig({ isOpen: true, message: successMessage, type: "success" });
-  };
 
   const fetchCategories = () => {
     api
@@ -68,7 +39,7 @@ function Category() {
         setCategoriesList(answer.data);
       })
       .catch((error) => {
-        handleError(error);
+        showAlert(error, "error");
       });
   };
 
@@ -83,11 +54,11 @@ function Category() {
       });
       setConfirmConfig({ isOpen: false, idToDelete: null });
       fetchCategories();
-      handleSuccess("Categoria apagada com sucesso");
+      showAlert("Categoria apagada com sucesso", "success");
+
     } catch (error) {
       setConfirmConfig({ isOpen: false, idToDelete: null });
-      console.error("Erro ao apagar categoria", error);
-      handleError(error);
+      showAlert(error, "error");
     }
   };
 
@@ -107,7 +78,7 @@ function Category() {
         setCategoriesList(answer.data);
       })
       .catch((error) => {
-        handleError(error);
+        showAlert(error, "error");
       });
   };
 
@@ -220,21 +191,12 @@ function Category() {
         onClose={() => setConfirmConfig({ isOpen: false, idToDelete: null })}
       />
 
-      <components.AlertModel
-        isOpen={alertConfig.isOpen}
-        title={alertConfig.type === "error" ? "Erro" : "Sucesso"}
-        message={alertConfig.message}
-        type={alertConfig.type}
-        onClose={() => setAlertConfig({ isOpen: false, message: "" })}
-      />
-
       <components.NewCategory
         isOpen={isModalOpen}
         category={selectedCategory}
         onClose={() => setIsModalOpen(false)}
         onSuccess={() => {
           fetchCategories();
-          handleSuccess("Operação realizada com sucesso!");
         }}
       />
 

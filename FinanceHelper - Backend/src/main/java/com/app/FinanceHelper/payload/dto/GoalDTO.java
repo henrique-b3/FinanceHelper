@@ -15,25 +15,21 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class GoalDTO {
+    @NotBlank(message = "{goal.name.notblank}")
+    @Size(min = 3, max = 50, message = "{goal.name.size}")
+    private String name;
 
-    @NotBlank(message = "Goal Name cannot be empty!")
-    @Size(min = 3, max = 50, message = "The name must has more than {min} and less than {max} characters")
-    String name;
+    private String description;
 
-    String description;
+    private String icon;
+    private String color;
 
-    String icon;
-    String color;
+    @NotNull(message = "{goal.limit.notnull}")
+    private BigDecimal limitAmount;
 
-    /*@NotBlank(message = "Goal Name cannot be empty!")
-    String type;*/ //Desabilitado temporariamente
+    private LocalDate startDate;
+    private LocalDate endDate;
 
-    @NotNull(message = "Limit amount cannot be empty!")
-    BigDecimal limitAmount;
-
-    LocalDate startDate;
-    LocalDate endDate;
-
-    UUID categoryID;
-    UUID companyID;
+    private UUID categoryID;
+    private UUID companyID;
 }

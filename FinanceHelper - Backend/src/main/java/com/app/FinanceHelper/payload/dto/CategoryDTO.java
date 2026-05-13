@@ -17,14 +17,13 @@ import java.util.UUID;
 @Data
 public class CategoryDTO {
 
-    @NotBlank(message = "Category Name cannot be empty!")
-    @Size(min = 3, max = 50, message = "The name must has more than {min} and less than {max} characters")
-    String name;
+    @NotBlank(message = "{category.name.notblank}")
+    private String name;
 
-    String description;
+    private String description;
 
-    @Size(min = 3, max = 50, message = "The image path must has more than {min} and less than {max} characters")
-    String image;
+    @Size(min = 3, max = 50, message = "{category.image.size}")
+    private String image;
 
-    String color;
+    private String color;
 }

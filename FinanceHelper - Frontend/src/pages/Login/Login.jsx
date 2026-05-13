@@ -6,6 +6,7 @@ import "../../App.css";
 import { images } from "../../svg";
 import * as pages from "..";
 import * as components from "../../components";
+import { useAlert } from "../../contexts/AlertContext";
 
 
 function Login() {
@@ -13,6 +14,8 @@ function Login() {
   const [password, setPassword] = useState("");
   const [erro, setErro] = useState("");
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+
+  const { showAlert } = useAlert();
 
   const navigate = useNavigate();
 
@@ -32,7 +35,7 @@ function Login() {
       localStorage.setItem("token", token);
       navigate("/dashboard");
     } catch (error) {
-      setErro("Error");
+      showAlert(error, "error");
     }
   };
 

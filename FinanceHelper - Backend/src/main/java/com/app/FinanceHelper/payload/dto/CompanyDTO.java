@@ -12,14 +12,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class CompanyDTO {
+    @NotBlank(message = "{company.name.notblank}")
+    @Size(min = 2, max = 50, message = "{company.name.size}")
+    private String name;
 
-    @NotBlank(message = "Company name cannot be empty!")
-    @Size(min = 2, max = 50, message = "The name must have between {min} and {max} characters")
-    String name;
+    @Size(max = 20, message = "{company.color.size}")
+    private String color;
 
-    @Size(max = 20, message = "Color must have at most {max} characters")
-    String color;
-
-    @NotNull(message = "Category ID is required!")
-    UUID categoryID;
+    @NotNull(message = "{company.category.notnull}")
+    private UUID categoryID;
 }

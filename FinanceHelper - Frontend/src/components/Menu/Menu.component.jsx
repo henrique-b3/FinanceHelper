@@ -3,12 +3,15 @@ import api from "../../services/api";
 import "./Menu.css";
 import "../../pages/Dashboard/Dashboard.css"
 import { images } from "../../svg";
+import { useAlert } from "../../contexts/AlertContext";
 
 function Menu({ onTransactionCreated }) {
   const [totalAmount, setTotalAmount] = useState(0);
   const [goals, setGoals] = useState(0);
   const [transactions, setTransactions] = useState(0);
   const [showAmount, setShowAmount] = useState(true);
+
+  const { showAlert } = useAlert();
 
   const displayedAmount = showAmount ? totalAmount.toFixed(2) : "****";
 
@@ -19,7 +22,7 @@ function Menu({ onTransactionCreated }) {
         setTotalAmount(answer.data);
       })
       .catch((erro) => {
-        console.error("Erro ao buscar total", erro);
+        showAlert(error, "error");
       });
 
     api
@@ -28,7 +31,7 @@ function Menu({ onTransactionCreated }) {
         setTransactions(answer.data);
       })
       .catch((erro) => {
-        console.error("Erro ao buscar total", erro);
+        showAlert(error, "error");
       });
   }, [onTransactionCreated]);
 
@@ -38,8 +41,8 @@ function Menu({ onTransactionCreated }) {
       .then((answer) => {
         setGoals(answer.data);
       })
-      .catch((erro) => {
-        console.error("Erro ao buscar total", erro);
+      .catch((error) => {
+        showAlert(error, "error");
       });
   }, []);
   

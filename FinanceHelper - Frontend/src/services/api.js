@@ -22,20 +22,29 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
-        let errorMessage = "Ocorreu um erro inesperado. Tente novamente.";
+        let errorMessage = "Ocorreu um erro inesperado. Tente novamente mais tarde.";
 
-        if (error.response && error.response.data) {
-            const { data } = error.response;
-            
-            if (data.message) {
-                errorMessage = data.message;
-            } 
+        // 1. Cenário: O servidor está offline ou a internet falhou (sem resposta)
+        if (!error.response) {
+            errorMessage = "Não foi possível conectar ao servidor. Verifique a sua ligação à internet.";
+            return Promise.reject(errorMessage);
+        }
 
-            else if (typeof data === 'object') {
-                const keys = Object.keys(data);
-                if (keys.length > 0) {
-                     errorMessage = data[keys[0]]; 
-                }
+        const { data, status } = error.response;
+
+        if (status === 401 || status === 403) {
+            errorMessage = "A sua sessão expirou ou não tem permissão. Por favor, inicie sessão novamente.";
+            localStorage.removeItem('token'); window.location.href = '/login';
+        } 
+        
+        else if (data && data.message) {
+            errorMessage = data.message;
+        } 
+        
+        else if (data && typeof data === 'object') {
+            const keys = Object.keys(data);
+            if (keys.length > 0) {
+                errorMessage = data[keys[0]]; 
             }
         }
 
