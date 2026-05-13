@@ -8,7 +8,7 @@ import { useAlert } from "../../contexts/AlertContext";
 
 function Category() {
   const [categoriesList, setCategoriesList] = useState([]);
-  const [searchCategory, setSearchCategory] = useState([""]);
+  const [searchCategory, setSearchCategory] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -26,7 +26,6 @@ function Category() {
     isOpen: false,
     idToDelete: null,
   });
-
 
   useEffect(() => {
     fetchCategories();
@@ -55,7 +54,6 @@ function Category() {
       setConfirmConfig({ isOpen: false, idToDelete: null });
       fetchCategories();
       showAlert("Categoria apagada com sucesso", "success");
-
     } catch (error) {
       setConfirmConfig({ isOpen: false, idToDelete: null });
       showAlert(error, "error");
@@ -131,12 +129,25 @@ function Category() {
             <li key={t.id} className="category-item">
               <div className="category-info-left">
                 <div className="category-icon-bg">
-                  <div className="category-icon-bg" style={{ overflow: "hidden" }}>
-                    {t.image && t.image !== "default.png" && t.image !== "icone_padrao.png" ? (
+                  <div
+                    className="category-icon-bg"
+                    style={{ overflow: "hidden" }}
+                  >
+                    {t.image &&
+                    t.image !== "default.png" &&
+                    t.image !== "icone_padrao.png" ? (
                       <img
                         src={`http://localhost:8080/uploads/${t.image}`}
                         alt={t.name}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.nextElementSibling.style.display = "block";
+                        }}
                       />
                     ) : (
                       <div

@@ -45,10 +45,11 @@ public class GoalController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Set<GoalResponse>> getAllGoals(
-            @AuthenticationPrincipal UserProfile user
+    public ResponseEntity<Page<GoalResponse>> getAllGoals(
+            @AuthenticationPrincipal UserProfile user,
+            Pageable pageable
     ){
-        Set<GoalResponse> goalResponses = goalService.getAllGoals(user.getId());
+        Page<GoalResponse> goalResponses = goalService.getAllGoals(user.getId(), pageable);
         return new ResponseEntity<>(goalResponses, HttpStatus.OK);
     }
 
@@ -78,7 +79,7 @@ public class GoalController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PutMapping("/{goalID}")
+    @PutMapping("/update")
     public ResponseEntity<GoalResponse> updateGoal(
             @AuthenticationPrincipal UserProfile user,
             @RequestParam UUID goalID,

@@ -11,7 +11,6 @@ function Register({ isOpen, onClose }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [erro, setErro] = useState("");
 
   const navigate = useNavigate();
   const { showAlert } = useAlert();
@@ -52,7 +51,6 @@ function Register({ isOpen, onClose }) {
         </button>
 
         <h2 style={{ marginTop: 0, color: "#333" }}>Criar conta</h2>
-        {erro && <p style={{ color: "red" }}>{erro}</p>}
 
         <form className="formModel" onSubmit={handleRegister}>
           <label className="textLabel">

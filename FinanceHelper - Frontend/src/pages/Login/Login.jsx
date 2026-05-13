@@ -12,7 +12,6 @@ import { useAlert } from "../../contexts/AlertContext";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [erro, setErro] = useState("");
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
   const { showAlert } = useAlert();
@@ -48,7 +47,6 @@ function Login() {
       <img className="logo" src={images.logo} alt={images.logo} />
       <div className="login-card">
         <h2>Login</h2>
-        {erro && <div className="login-error">{erro}</div>}
 
         <form onSubmit={handleLogin} className="login-form">
           <div className="input-group">

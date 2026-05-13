@@ -20,7 +20,7 @@ function NewGoal({ isOpen, onClose, onSuccess, goal = null }) {
   const { showAlert } = useAlert();
   
   const [categoriesList, setCategoriesList] = useState([]);
-  const [companiesList, setCompaniesList] = useState([]); // Adicionado estado para empresas
+  const [companiesList, setCompaniesList] = useState([]); 
 
 
   useEffect(() => {
@@ -113,7 +113,6 @@ function NewGoal({ isOpen, onClose, onSuccess, goal = null }) {
         <h2 style={{ marginTop: 0, color: "white" }}>
           {goal ? "Editar objetivo" : "Criar novo objetivo"}
         </h2>
-        {erro && <p style={{ color: "#ff4d4f", fontSize: "0.9rem" }}>{erro}</p>}
 
         <form className="formModel" onSubmit={handleCreateGoal}>
           <label className="textLabel">

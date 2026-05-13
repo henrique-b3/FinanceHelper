@@ -88,9 +88,6 @@ public class Goal {
 
     @PrePersist
     public void defaultValues() {
-        if (this.icon == null || this.icon.isBlank()) {
-            this.icon = "default.png";
-        }
 
         if (this.color == null || this.color.isBlank()) {
             this.color = "#CCCCCC";
@@ -106,7 +103,7 @@ public class Goal {
             throw new APIexception("A data inicial não pode ser nula");
         }
 
-        if(this.startDate != null && this.endDate != null && (this.startDate.isAfter(endDate) || this.startDate.isEqual(endDate))){
+        if(this.startDate != null && this.endDate != null && (this.startDate.isAfter(endDate))){
             throw new APIexception("A data de inicio não pode ser após a data final");
         }
     }

@@ -24,10 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,13 +57,13 @@ public class GoalServiceImpl implements GoalService {
 
         if(goalDTO.getCategoryID() != null){
             Category category = categoryRepository.findByIdAndUserProfile_Id(goalDTO.getCategoryID(),userID)
-                    .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", userID));
+                    .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", goalDTO.getCategoryID()));
 
             goal.setCategory(category);
 
         }else if(goalDTO.getCompanyID() != null){
             Company company = companyRepository.findByIdAndUserProfile_Id(goalDTO.getCompanyID(),userID)
-                    .orElseThrow(() -> new ResourceNotFoundException("Company", "CompanyID", userID));
+                    .orElseThrow(() -> new ResourceNotFoundException("Company", "CompanyID", goalDTO.getCompanyID()));
 
             goal.setCompany(company);
         }
@@ -88,7 +85,7 @@ public class GoalServiceImpl implements GoalService {
     public GoalResponse getGoal(UUID userID, UUID goalID) {
 
         Goal foundGoal =  goalRepository.findByIdAndUserProfile_Id(goalID, userID)
-               .orElseThrow(() -> new ResourceNotFoundException("Goal", "goalID", userID));
+               .orElseThrow(() -> new ResourceNotFoundException("Goal", "goalID", goalID));
 
         BigDecimal spent = BigDecimal.ZERO;
         if (foundGoal.getCategory() != null) {
@@ -110,37 +107,41 @@ public class GoalServiceImpl implements GoalService {
     }
 
     @Override
-    public Set<GoalResponse> getAllGoals(UUID userID) {
+    public Page<GoalResponse> getAllGoals(UUID userID, Pageable pageable) {
 
-        List<Goal> goals = goalRepository.findAllByUserProfile_Id(userID);
+        Page<Goal> goalPage = goalRepository.findAllByUserProfile_Id(userID, pageable);
 
-        return goals.stream().map(
-                goal -> {
-                    BigDecimal spent = BigDecimal.ZERO;
-                    if (goal.getCategory() != null) {
-                        spent = transactionRepository.getTotalSpentByCategoryAndDate(userID, goal.getCategory().getId(), goal.getStartDate(), goal.getEndDate());
-                    } else if (goal.getCompany() != null) {
-                        spent = transactionRepository.getTotalSpentByCompanyAndDate(userID, goal.getCompany().getId(), goal.getStartDate(), goal.getEndDate());
-                    }
-                    goal.setSpendAmount(spent);
+        if (goalPage.isEmpty()) return Page.empty();
 
-                    GoalResponse goalResponse = modelMapper.map(goal, GoalResponse.class);
+        List<UUID> goalIds = goalPage.getContent().stream()
+                .map(Goal::getId)
+                .collect(Collectors.toList());
 
-                    if(goal.getCategory() != null){
-                        goalResponse.setCategoryID(goal.getCategory().getId());
-                    } else{
-                        goalResponse.setCompanyID(goal.getCompany().getId());
-                    }
+        List<GoalRepository.GoalSpendProjection> spends = goalRepository.getSpendAmountsForGoals(goalIds);
+        Map<UUID, BigDecimal> spendMap = spends.stream()
+                .collect(Collectors.toMap(
+                        GoalRepository.GoalSpendProjection::getGoalId,
+                        GoalRepository.GoalSpendProjection::getSpendAmount
+                ));
+        
+        return goalPage.map(goal -> {
+            goal.setSpendAmount(spendMap.getOrDefault(goal.getId(), BigDecimal.ZERO));
 
-                    return goalResponse;
-                }).collect(Collectors.toSet());
+            GoalResponse goalResponse = modelMapper.map(goal, GoalResponse.class);
+            if(goal.getCategory() != null) {
+                goalResponse.setCategoryID(goal.getCategory().getId());
+            } else {
+                goalResponse.setCompanyID(goal.getCompany().getId());
+            }
+            return goalResponse;
+        });
     }
 
     @Override
     public GoalResponse updateGoal(UUID userID, UUID goalID, GoalDTO goalDTO) {
 
         Goal foundGoal =  goalRepository.findByIdAndUserProfile_Id(goalID, userID)
-                .orElseThrow(() -> new ResourceNotFoundException("Goal", "goalID", userID));
+                .orElseThrow(() -> new ResourceNotFoundException("Goal", "goalID", goalID));
 
 
         if(goalDTO.getName() != null && !goalDTO.getName().equals(foundGoal.getName())) {
@@ -179,7 +180,7 @@ public class GoalServiceImpl implements GoalService {
 
         if(goalDTO.getCategoryID() != null && !goalDTO.getCategoryID().equals(foundGoal.getCategory().getId())) {
             Category category = categoryRepository.findByIdAndUserProfile_Id(goalDTO.getCategoryID(), userID)
-                    .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", userID));
+                    .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", goalDTO.getCategoryID()));
 
             foundGoal.setCategory(category);
             foundGoal.setCompany(null);
@@ -187,7 +188,7 @@ public class GoalServiceImpl implements GoalService {
 
         if(goalDTO.getCompanyID() != null && !goalDTO.getCompanyID().equals(foundGoal.getCompany().getId())) {
             Company company = companyRepository.findByIdAndUserProfile_Id(goalDTO.getCompanyID(),userID)
-                    .orElseThrow(() -> new ResourceNotFoundException("Company", "CompanyID", userID));
+                    .orElseThrow(() -> new ResourceNotFoundException("Company", "CompanyID", goalDTO.getCompanyID()));
 
             foundGoal.setCompany(company);
             foundGoal.setCategory(null);
@@ -295,7 +296,7 @@ public class GoalServiceImpl implements GoalService {
     public GoalResponse deleteGoal(UUID userID, UUID goalID) {
 
         Goal deletedGoal =  goalRepository.findByIdAndUserProfile_Id(goalID, userID)
-                .orElseThrow(() -> new ResourceNotFoundException("Goal", "goalID", userID));
+                .orElseThrow(() -> new ResourceNotFoundException("Goal", "goalID", goalID));
 
         goalRepository.delete(deletedGoal);
 

@@ -7,7 +7,6 @@ import { useAlert } from "../../contexts/AlertContext";
 
 function GetAllTransaction({ onTransactionUpdate }) {
   const [transactionsList, setTransactionsList] = useState([]);
-  const [erro, setErro] = useState("");
   const [limitAmount, setLimitAmount] = useState(5);
 
   const { showAlert } = useAlert();
@@ -36,8 +35,6 @@ function GetAllTransaction({ onTransactionUpdate }) {
       <div className="transactions-header">
         <h3 className="section-title">Transações Recentes</h3>
       </div>
-
-      {erro && <div className="error-message">{erro}</div>}
 
       {transactionsList.length === 0 ? (
         <div className="empty-state">

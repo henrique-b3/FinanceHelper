@@ -11,7 +11,7 @@ function Transaction() {
   const [companiesList, setCompaniesList] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
 
-  const [selectedTransaction, setSelectedTransaction] = useState([null]);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   const [searchTransaction, setSearchTransaction] = useState("");
   const [categoryID, setCategoryID] = useState("");

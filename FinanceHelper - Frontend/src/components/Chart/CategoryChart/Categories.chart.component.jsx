@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import api from "../../../services/api";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import "./Categories.chart.css";
-import { useAlert } from "../../contexts/AlertContext";
+import { useAlert } from "../../../contexts/AlertContext";
 
 function GoalBar() {
   const [chartData, setChartData] = useState([]);
   const { showAlert } = useAlert();
-  
+
   const formatarDinheiro = (valor) => {
-    return new Intl.NumberFormat('pt-PT', {
-      style: 'currency',
-      currency: 'EUR'
+    return new Intl.NumberFormat("pt-PT", {
+      style: "currency",
+      currency: "EUR",
     }).format(valor);
   };
 
@@ -27,7 +27,7 @@ function GoalBar() {
   return (
     <div className="categories-card-container glass-card">
       <h3 className="section-title">Gastos mensal</h3>
-      
+
       {chartData.length === 0 ? (
         <p className="empty-graph-message">Sem dados este mês.</p>
       ) : (
@@ -35,22 +35,31 @@ function GoalBar() {
           <div className="graph-container">
             <ResponsiveContainer width="100%" height="100%" minHeight={220}>
               <PieChart>
-                <Pie 
-                  data={chartData} 
-                  cx="50%" 
-                  cy="50%" 
-                  innerRadius={60} 
-                  outerRadius={80} 
-                  paddingAngle={5} 
+                <Pie
+                  data={chartData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
                   dataKey="value"
                 >
                   {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color || '#cccccc'} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.color || "#cccccc"}
+                    />
                   ))}
                 </Pie>
-                <Tooltip 
+                <Tooltip
                   formatter={(value) => formatarDinheiro(value)}
-                  contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333', borderRadius: '8px' }}
+                  contentStyle={{
+                    backgroundColor: "#1a1a1a",
+                    border: "1px solid #333",
+                    borderRadius: "8px",
+                  }}
+                  itemStyle={{ color: "#ffffff" }}
+                  labelStyle={{ color: "#cccccc" }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -60,13 +69,15 @@ function GoalBar() {
             {chartData.map((cat, idx) => (
               <div key={idx} className="legend-item">
                 <div className="legend-label-group">
-                  <div 
-                    className="legend-color-indicator" 
-                    style={{ backgroundColor: cat.color || '#ccc' }}
+                  <div
+                    className="legend-color-indicator"
+                    style={{ backgroundColor: cat.color || "#ccc" }}
                   ></div>
                   <span>{cat.name}</span>
                 </div>
-                <span className="legend-value">{formatarDinheiro(cat.value)}</span>
+                <span className="legend-value">
+                  {formatarDinheiro(cat.value)}
+                </span>
               </div>
             ))}
           </div>

@@ -75,4 +75,16 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
     Integer countByUserProfile_Id(UUID userID);
 
     Integer countByUserProfile_IdAndCategoryId(UUID userID, UUID id);
+
+
+    public interface CategoryCountProjection {
+        UUID getCategoryId();
+        Integer getTransactionCount();
+    }
+
+    @Query("SELECT t.category.id AS categoryId, CAST(COUNT(t.id) AS int) AS transactionCount " +
+            "FROM Transaction t " +
+            "WHERE t.userProfile.id = :userID AND t.category IS NOT NULL " +
+            "GROUP BY t.category.id")
+    List<CategoryCountProjection> countTransactionsPerCategoryByUser(@Param("userID") UUID userID);
 }

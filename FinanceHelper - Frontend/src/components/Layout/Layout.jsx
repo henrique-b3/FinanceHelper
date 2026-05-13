@@ -6,9 +6,7 @@ function Layout() {
   return (
     <div className="app-layout">
       <div className="layout-wrapper">
-        
         <NavMenu />
-        
         <main className="main-content">
           <Outlet /> 
         </main>

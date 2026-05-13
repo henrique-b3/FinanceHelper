@@ -8,7 +8,7 @@ import { useAlert } from "../../contexts/AlertContext";
 
 function Company() {
   const [companiesList, setCompaniesList] = useState([]);
-  const [searchCompany, setSearchCompany] = useState([""]);
+  const [searchCompany, setSearchCompany] = useState("");
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 

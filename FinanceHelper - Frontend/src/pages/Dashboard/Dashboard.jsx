@@ -8,7 +8,6 @@ function Dashboard() {
   const [profile, setProfile] = useState(null);
   const [greeting, setGreeting] = useState("");
   const [updateTrigger, setUpdateTrigger] = useState(0);
-  const [erro, setErro] = useState("");
 
   const refreshData = () => setUpdateTrigger((prev) => prev + 1);
   const navigate = useNavigate();
@@ -38,7 +37,6 @@ function Dashboard() {
 
   return (
     <div className="mainDiv">
-      <components.NavMenu />
       <header className="welcome">
         <div>
           <p>{greeting},</p>

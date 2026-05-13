@@ -20,7 +20,7 @@ public interface GoalService {
 
     GoalResponse deleteGoal(UUID userID, UUID goalID);
 
-    Set<GoalResponse> getAllGoals(UUID userID);
+    Page<GoalResponse> getAllGoals(UUID userID, Pageable pageable);
 
     GoalResponse updateGoal(UUID userID, UUID goalID, GoalDTO goalDTO);
 

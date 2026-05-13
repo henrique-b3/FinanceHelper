@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -79,15 +80,23 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Set<CategoryResponse> getAllCategories(UUID userID) {
 
-        return categoryRepository.findAllByUserProfile_Id(userID)
-                .stream()
+        List<Category> categories = categoryRepository.findAllByUserProfile_Id(userID);
+
+        if (categories.isEmpty()) return Set.of();
+
+        List<TransactionRepository.CategoryCountProjection> counts =
+                transactionRepository.countTransactionsPerCategoryByUser(userID);
+
+        Map<UUID, Integer> countsMap = counts.stream()
+                .collect(Collectors.toMap(
+                        TransactionRepository.CategoryCountProjection::getCategoryId,
+                        TransactionRepository.CategoryCountProjection::getTransactionCount
+                ));
+
+        return categories.stream()
                 .map(category -> {
                     CategoryResponse response = modelMapper.map(category, CategoryResponse.class);
-
-                    Integer count = transactionRepository.countByUserProfile_IdAndCategoryId(userID, category.getId());
-
-                    response.setTransactionsCount(count != null ? count : 0);
-
+                    response.setTransactionsCount(countsMap.getOrDefault(category.getId(), 0));
                     return response;
                 })
                 .collect(Collectors.toSet());
