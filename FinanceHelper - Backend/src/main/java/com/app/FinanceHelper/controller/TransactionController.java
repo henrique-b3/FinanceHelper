@@ -2,11 +2,14 @@ package com.app.FinanceHelper.controller;
 
 import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.dto.TransactionDTO;
+import com.app.FinanceHelper.payload.dto.TransactionFilterDTO;
 import com.app.FinanceHelper.payload.response.CategoryExpenseResponse;
 import com.app.FinanceHelper.payload.response.TransactionResponse;
 import com.app.FinanceHelper.service.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -65,6 +68,24 @@ public class TransactionController {
     ){
         List<TransactionResponse> transactionResponse = transactionService.getAllTransactions(user.getId(), limit);
         return new ResponseEntity<>(transactionResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> countTransactions(
+            @AuthenticationPrincipal UserProfile user
+    ){
+        Integer countTransactions = transactionService.countTransactions(user.getId());
+        return new ResponseEntity<>(countTransactions, HttpStatus.OK);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<TransactionResponse>> getFilteredTransactions(
+            @AuthenticationPrincipal UserProfile user,
+            TransactionFilterDTO filterDTO,
+            Pageable pageable
+    ) {
+        Page<TransactionResponse> result = transactionService.getTransactionsWithFilters(user.getId(), filterDTO, pageable);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping("/update")

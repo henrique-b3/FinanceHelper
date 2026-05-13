@@ -5,6 +5,10 @@ import categories from './categories.svg';
 import eyeShow from './eye-show.svg';
 import eyeOff from './eye-off.svg';
 import logo from './Logo.png';
+import deleteItem from './delete.svg';
+import edit from './edit.svg'
+import stats from './stats.svg'
+
 
 export const images = {
   transaction,
@@ -13,5 +17,8 @@ export const images = {
   categories,
   eyeShow,
   eyeOff,
-  logo
+  logo,
+  deleteItem,
+  edit,
+  stats
 };

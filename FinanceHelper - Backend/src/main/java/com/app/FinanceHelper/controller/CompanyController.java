@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -47,10 +48,29 @@ public class CompanyController {
         return new ResponseEntity<>(companyResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{companyID}")
+    @GetMapping("/all/byName")
+    public ResponseEntity<List<CompanyResponse>> getAllCompaniesByName(
+            @AuthenticationPrincipal UserProfile user,
+            @RequestParam String companyName
+    ){
+        List<CompanyResponse> companyResponse = companyService.getAllCompaniesByName(user.getId(), companyName);
+        return new ResponseEntity<>(companyResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<CompanyResponse> updateCompany(
+            @AuthenticationPrincipal UserProfile user,
+            @RequestParam UUID companyID,
+            @Valid @RequestBody CompanyDTO companyDTO
+    ){
+        CompanyResponse companyResponse = companyService.updateCompany(user.getId(),companyID, companyDTO);
+        return new ResponseEntity<>(companyResponse, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete")
     public ResponseEntity<CompanyResponse> deleteCompanyById(
             @AuthenticationPrincipal UserProfile user,
-            @PathVariable UUID companyID
+            @RequestParam UUID companyID
     ){
         CompanyResponse companyResponse = companyService.deleteCompany(user.getId(), companyID);
         return new ResponseEntity<>(companyResponse, HttpStatus.OK);

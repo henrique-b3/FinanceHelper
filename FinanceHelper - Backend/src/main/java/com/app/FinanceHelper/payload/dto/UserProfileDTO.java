@@ -7,25 +7,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class UserProfileDTO {
-    @NotBlank(message = "User name cannot be empty!")
-    @Size(min = 5, max = 50, message = "The name must has more than {min} and less than {max} characters")
-    String name;
+    @NotBlank(message = "{user.name.notblank}")
+    @Size(min = 5, max = 50, message = "{user.name.size}")
+    private String name;
 
-    @NotBlank(message = "Email cannot be empty!")
-    @Email(message = "Invalid email format")
-    String email;
+    @NotBlank(message = "{user.lastname.notblank}")
+    @Size(min = 3, max = 50, message = "{user.lastname.size}")
+    private String lastName;
 
-    @NotBlank(message = "Last name cannot be empty!")
-    @Size(min = 3, max = 50, message = "The last name must has more than {min} and less than {max} characters")
-    String lastName;
+    @NotBlank(message = "{user.email.notblank}")
+    @Email(message = "{user.email.invalid}")
+    private String email;
 
-    @NotBlank(message = "Password cannot be empty!")
-    @Size(min = 6, max = 20, message = "The password must has more than {min} and less than {max} characters")
-    String password;
+    @NotBlank(message = "{user.pwd.notblank}")
+    @Size(min = 6, max = 20, message = "{user.pwd.size}")
+    private String password;
 }

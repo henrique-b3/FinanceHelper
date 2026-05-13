@@ -1,0 +1,13 @@
+export { default as NewCategory } from "../components/Category/NewCategory.component";
+export { default as NewGoal } from "../components/Goal/NewGoal.component";
+export { default as NewCompany } from "../components/Company/NewCompany.component";
+export { default as NewTransaction } from "../components/Transaction/NewTransaction.component";
+export { default as AllTransactions } from "../components/Transaction/GetAllTransactions.component";
+export { default as CategoriesChart } from "./Chart/CategoryChart/Categories.chart.component";
+export { default as GoalBarChart } from "./Chart/GoalChart/Goals.chart.component";
+export { default as NavMenu } from "../components/NavMenu/NavMenu.component";
+export { default as Menu } from "../components/Menu/Menu.component";
+export { default as Register } from "../components/Register/Register.component";
+export { default as ConfirmModel } from "../components/Modal/ConfirmModal.component";
+export { default as AlertModel } from "../components/Modal/AlertModal.component";
+export { default as AnalyticsModal } from "../components/Modal/AnalyticsModal.component";

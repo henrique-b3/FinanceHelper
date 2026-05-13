@@ -1,0 +1,161 @@
+.goal-card-container {
+    padding: 2rem;
+    margin-top: 2rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex: 1; 
+}
+
+.goals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* Estilização da barra de scroll (scroll-bar) para manter o aspeto clean */
+.goals-list::-webkit-scrollbar {
+    width: 6px;
+}
+.goals-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.goals-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+}
+.goals-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* O cartão individual de cada objetivo */
+.goal-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.2rem;
+    border-radius: 16px;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.goal-item:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.goal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.goal-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.goal-icon {
+    font-size: 1.3rem;
+    background: rgba(255, 255, 255, 0.1);
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.goal-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.goal-name {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: white;
+}
+
+.goal-date {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 2px;
+}
+
+.goal-status {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Configurações Visuais da Barra de Progresso */
+.goal-progress-wrapper {
+    margin: 15px 0;
+}
+
+.goal-progress-bar-bg {
+    width: 100%;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.goal-progress-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+}
+
+/* Rodapés com os valores e a situação financeira */
+.goal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.goal-spent {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.goal-limit {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+}
+
+.goal-remaining {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #4caf50; /* Verde escuro/legível para o valor positivo */
+    font-weight: 500;
+    text-align: right;
+}
+
+.goal-exceeded {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #ff4d4f; /* Vermelho claro do seu tema para o valor negativo */
+    font-weight: 500;
+    text-align: right;
+}
+
+.empty-graph-message {
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    padding: 3rem 0;
+    font-size: 0.95rem;
+}

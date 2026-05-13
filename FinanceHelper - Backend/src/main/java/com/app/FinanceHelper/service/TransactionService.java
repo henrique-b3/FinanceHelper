@@ -1,9 +1,12 @@
 package com.app.FinanceHelper.service;
 
 import com.app.FinanceHelper.payload.dto.TransactionDTO;
+import com.app.FinanceHelper.payload.dto.TransactionFilterDTO;
 import com.app.FinanceHelper.payload.response.CategoryExpenseResponse;
 import com.app.FinanceHelper.payload.response.TransactionResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,4 +28,8 @@ public interface TransactionService {
     BigDecimal getTotalSpentByMonth(UUID userID);
 
     TransactionResponse updateTransaction(UUID userID, UUID transactionID, TransactionDTO transactionDTO);
+
+    Integer countTransactions(UUID userID);
+
+    Page<TransactionResponse> getTransactionsWithFilters(UUID userID, TransactionFilterDTO filterDTO, Pageable pageable);
 }

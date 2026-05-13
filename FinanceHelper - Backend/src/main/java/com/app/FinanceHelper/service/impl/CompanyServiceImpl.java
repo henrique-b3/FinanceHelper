@@ -13,6 +13,7 @@ import com.app.FinanceHelper.repository.UserProfileRepository;
 import com.app.FinanceHelper.service.CompanyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,13 +38,13 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyResponse createCompany(UUID userID, CompanyDTO companyDTO) {
 
         UserProfile userProfile = userProfileRepository.findById(userID)
-                .orElseThrow(() -> new ResourceNotFoundException("UserProfile", "userID", userID));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário", "userID", userID));
 
         Category category = categoryRepository.findByIdAndUserProfile_Id(companyDTO.getCategoryID(), userID)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryID", companyDTO.getCategoryID()));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria", "categoryID", companyDTO.getCategoryID()));
 
         if (companyRepository.existsByNameAndUserProfile_Id(companyDTO.getName(), userID)) {
-            throw new APIexception("Company already exists with name: " + companyDTO.getName());
+            throw new APIexception("company.exists");
         }
 
         Company companyToCreate = modelMapper.map(companyDTO, Company.class);
@@ -55,7 +56,6 @@ public class CompanyServiceImpl implements CompanyService {
 
         CompanyResponse companyResponse = modelMapper.map(companyToCreate, CompanyResponse.class);
         companyResponse.setCategoryID(category.getId());
-        companyResponse.setUserID(userProfile.getId());
 
         return companyResponse;
     }
@@ -64,42 +64,83 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyResponse getCompany(UUID userID, UUID companyID) {
 
-        if(!userProfileRepository.existsById(userID)){
-            throw new ResourceNotFoundException("UserProfile","userID", userID);
-        }
-
         Company company = companyRepository.findByIdAndUserProfile_Id(companyID, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Company", "companyID", companyID));
 
         CompanyResponse companyResponse = modelMapper.map(company, CompanyResponse.class);
         companyResponse.setCategoryID(company.getCategory().getId());
-        companyResponse.setUserID(company.getUserProfile().getId());
 
         return companyResponse;
     }
 
     @Override
     public Set<CompanyResponse> getAllCompanies(UUID userID) {
-        if(!userProfileRepository.existsById(userID)){
-            throw new ResourceNotFoundException("UserProfile","userID", userID);
-        }
 
         return companyRepository.findAllByUserProfile_Id(userID)
                 .stream()
-                .map(company -> modelMapper.map(company, CompanyResponse.class))
+                .map(company -> {
+                    CompanyResponse companyResponse = modelMapper.map(company, CompanyResponse.class);
+                    companyResponse.setCategoryID(company.getCategory().getId());
+                    return companyResponse;
+                })
                 .collect(Collectors.toSet());
     }
+
+    @Override
+    public List<CompanyResponse> getAllCompaniesByName(UUID userID, String companyName) {
+        return companyRepository.findByNameStartingWithIgnoreCaseAndUserProfile_Id(companyName, userID)
+                .stream()
+                .map(company -> {
+                    CompanyResponse companyResponse = modelMapper.map(company, CompanyResponse.class);
+                    companyResponse.setCategoryID(company.getCategory().getId());
+                    return companyResponse;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public CompanyResponse updateCompany(UUID userID,UUID companyID, CompanyDTO companyDTO) {
+        Company company = companyRepository.findByIdAndUserProfile_Id(companyID, userID)
+                .orElseThrow(() -> new ResourceNotFoundException("Company", "companyID", companyID));
+
+        if(companyDTO.getName() != null && !companyDTO.getName().isBlank() && !companyDTO.getName().equals(company.getName())){
+            company.setName(companyDTO.getName());
+        }
+
+        if(companyDTO.getColor() != null && !companyDTO.getColor().isBlank() &&!companyDTO.getColor().equals(company.getColor())){
+            company.setColor(companyDTO.getColor());
+        }
+
+        if(companyDTO.getCategoryID() != null && !companyDTO.getCategoryID().equals(company.getCategory().getId())){
+            Category category = categoryRepository.findByIdAndUserProfile_Id(companyDTO.getCategoryID(), userID)
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoria", "categoryID", companyDTO.getCategoryID()));
+
+            company.setCategory(category);
+        }
+
+        Company savedCompany = companyRepository.save(company);
+
+        CompanyResponse companyResponse = modelMapper.map(savedCompany, CompanyResponse.class);
+        companyResponse.setCategoryID(company.getCategory().getId());
+
+        return companyResponse;
+    }
+
 
     @Override
     public CompanyResponse deleteCompany(UUID userID, UUID companyID) {
         Company company = companyRepository.findByIdAndUserProfile_Id(companyID, userID)
                 .orElseThrow(() -> new ResourceNotFoundException("Company", "companyID", companyID));
 
-        companyRepository.delete(company);
+        try {
+            companyRepository.delete(company);
+            companyRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new com.app.FinanceHelper.exceptions.DataIntegrityViolationException(company.getName(), "Company");
+        }
 
         CompanyResponse companyResponse = modelMapper.map(company, CompanyResponse.class);
         companyResponse.setCategoryID(company.getCategory().getId());
-        companyResponse.setUserID(company.getUserProfile().getId());
 
         return companyResponse;
     }

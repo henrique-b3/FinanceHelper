@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
@@ -22,12 +23,13 @@ public class CategoryController {
     @Autowired
     CategoryService categoryService;
 
-    @PostMapping
+    @PostMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<CategoryResponse> createCategory(
             @AuthenticationPrincipal UserProfile user,
-            @Valid @RequestBody CategoryDTO categoryDTO
+            @Valid @ModelAttribute CategoryDTO categoryDTO,
+            @RequestParam(value = "file", required = false) MultipartFile file
     ){
-        CategoryResponse categoryResponse = categoryService.createCategory(user.getId(),categoryDTO);
+        CategoryResponse categoryResponse = categoryService.createCategory(user.getId(), categoryDTO, file);
         return new ResponseEntity<>(categoryResponse, HttpStatus.CREATED);
     }
 
@@ -49,6 +51,7 @@ public class CategoryController {
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
+
     @GetMapping("/all")
     public ResponseEntity<Set<CategoryResponse>> getAllCategories(
             @AuthenticationPrincipal UserProfile user
@@ -57,11 +60,24 @@ public class CategoryController {
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{categoryID}")
-    public ResponseEntity<CategoryResponse> updateCategory(
-           @Valid @RequestBody CategoryDTO categoryDTO
+    @GetMapping("/all/byName")
+    public ResponseEntity<List<CategoryResponse>> getCategoriesByName(
+            @AuthenticationPrincipal UserProfile user,
+            @RequestParam String categoryName
     ){
-        return null;
+        List<CategoryResponse> categoryResponse = categoryService.getCategoriesByName(user.getId(),categoryName);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/update", consumes = { "multipart/form-data" })
+    public ResponseEntity<CategoryResponse> updateCategory(
+            @AuthenticationPrincipal UserProfile user,
+            @RequestParam UUID categoryID,
+            @Valid @ModelAttribute CategoryDTO categoryDTO,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ){
+        CategoryResponse categoryResponse = categoryService.updateCategory(user.getId(), categoryID, categoryDTO, file);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @PutMapping("/image/{categoryID}")
@@ -74,12 +90,13 @@ public class CategoryController {
         return null;
     }
 
-    @DeleteMapping("/{categoryID}")
+    @DeleteMapping("/delete")
     public ResponseEntity<CategoryResponse> deleteCategory(
             @AuthenticationPrincipal UserProfile user,
-            @PathVariable UUID categoryID
+            @RequestParam UUID categoryID
     ){
-        return null;
+        CategoryResponse categoryResponse = categoryService.deleteCategory(user.getId(), categoryID);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteAllCategories")

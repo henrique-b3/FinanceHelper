@@ -2,16 +2,20 @@ package com.app.FinanceHelper.controller;
 
 import com.app.FinanceHelper.model.UserProfile;
 import com.app.FinanceHelper.payload.dto.GoalDTO;
+import com.app.FinanceHelper.payload.dto.GoalFilterDTO;
 import com.app.FinanceHelper.payload.response.GoalResponse;
+import com.app.FinanceHelper.payload.response.GoalStatusResponse;
 import com.app.FinanceHelper.service.GoalService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,14 +45,41 @@ public class GoalController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Set<GoalResponse>> getAllGoals(
-            @AuthenticationPrincipal UserProfile user
+    public ResponseEntity<Page<GoalResponse>> getAllGoals(
+            @AuthenticationPrincipal UserProfile user,
+            Pageable pageable
     ){
-        Set<GoalResponse> goalResponses = goalService.getAllGoals(user.getId());
+        Page<GoalResponse> goalResponses = goalService.getAllGoals(user.getId(), pageable);
         return new ResponseEntity<>(goalResponses, HttpStatus.OK);
     }
 
-    @PutMapping("/{goalID}")
+    @GetMapping("/stats")
+    public ResponseEntity<GoalStatusResponse> getGoalsStatus(
+            @AuthenticationPrincipal UserProfile user
+    ){
+        GoalStatusResponse goalStatusResponses = goalService.getGoalsStats(user.getId());
+        return new ResponseEntity<>(goalStatusResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<List<String>> getStatus(
+            @AuthenticationPrincipal UserProfile user
+    ){
+        List<String> statusList = goalService.getGoalsStatus(user.getId());
+        return new ResponseEntity<>(statusList, HttpStatus.OK);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<GoalResponse>> getFilteredGoals(
+            @AuthenticationPrincipal UserProfile user,
+            GoalFilterDTO goalFilterDTO,
+            Pageable pageable
+    ){
+        Page<GoalResponse> result = goalService.    getGoalsWithFilters(user.getId(), goalFilterDTO, pageable);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PutMapping("/update")
     public ResponseEntity<GoalResponse> updateGoal(
             @AuthenticationPrincipal UserProfile user,
             @RequestParam UUID goalID,

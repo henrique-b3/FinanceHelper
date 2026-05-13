@@ -74,21 +74,20 @@ public class Goal {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @NotNull(message = "Category cannot be empty!")
     Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    Company company;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotNull(message = "Category cannot be empty!")
+    @NotNull(message = "User cannot be empty!")
     UserProfile userProfile;
 
 
     @PrePersist
     public void defaultValues() {
-        if (this.icon == null || this.icon.isBlank()) {
-            this.icon = "icone_padrao.png";
-        }
 
         if (this.color == null || this.color.isBlank()) {
             this.color = "#CCCCCC";
@@ -99,13 +98,13 @@ public class Goal {
         }
 
         if(this.startDate != null && this.endDate == null){
-            throw new APIexception("End date cannot be null");
+            throw new APIexception("A data final não pode ser nula");
         } else if (this.startDate == null && this.endDate != null) {
-            throw new APIexception("Start date cannot be null");
+            throw new APIexception("A data inicial não pode ser nula");
         }
 
-        if(this.startDate != null && this.endDate != null && (this.startDate.isAfter(endDate) || this.startDate.isEqual(endDate))){
-            throw new APIexception("Start date cannot be after end date");
+        if(this.startDate != null && this.endDate != null && (this.startDate.isAfter(endDate))){
+            throw new APIexception("A data de inicio não pode ser após a data final");
         }
     }
 }

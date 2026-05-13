@@ -64,53 +64,8 @@
     font-weight: 500;
 }
 
-.input-group input {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    padding: 14px;
-    color: white;
-    font-size: 1rem;
-    font-family: inherit;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-.input-group input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-}
-
-.input-group input:focus {
-    border-color: rgba(255, 255, 255, 0.5);
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
-}
-
-.login-button {
-    background: #007bff; 
-    color: white;
-    border: none;
-    padding: 15px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-}
-
-.login-button:hover {
-    background: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
-}
-
-.login-button:active {
-    transform: translateY(0);
-}
-
 .logo{
-    width: 300px;
+    width: 350px;
     height: 300px;
     background-color: transparent;
     display: flex;

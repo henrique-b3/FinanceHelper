@@ -1,0 +1,191 @@
+/* Container Principal */
+.categoryContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 0;
+  color: white;
+}
+
+/* Cabeçalho com Título e Botão */
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.new-category-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.new-category-btn:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* Barra de Pesquisa */
+.search-nav {
+  margin-bottom: 2rem;
+}
+
+.search-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: white;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Lista de Categorias */
+.categories-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 16px; 
+}
+
+/* Cartão da Categoria (Similar à imagem) */
+.category-item {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(3, 3, 14, 0.644);
+  border-radius: 16px;
+  padding: 16px 20px;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.category-item:hover {
+  background: #0057b348;
+  transform: translateY(-2px);
+}
+
+/* Grupo da Esquerda (Ícone + Texto) */
+.category-info-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Quadrado do Ícone (Fundo azul muito escuro/transparente com círculo no meio) */
+.category-icon-bg {
+  width: 48px;
+  height: 48px;
+  background: rgba(0, 123, 255, 0.15); /* Fundo com opacidade */
+  border-radius: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Ponto de cor baseado na categoria */
+.category-color-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Detalhes de Texto */
+.category-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.category-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.transactions-associated {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Ações (Botões da Direita) */
+.category-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.action-btn img {
+  width: 20px;
+  height: 20px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.edit-btn:hover img {
+  opacity: 1;
+}
+
+.delete-btn:hover {
+  background: rgba(255, 77, 79, 0.1);
+}
+
+.delete-btn:hover img {
+  opacity: 1;
+  filter: brightness(1.2); /* Realça a cor do ícone de apagar */
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+  .categories-list {
+    grid-template-columns: 1fr; 
+  }
+}
