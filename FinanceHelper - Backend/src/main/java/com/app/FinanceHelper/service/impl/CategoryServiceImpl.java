@@ -127,13 +127,19 @@ public class CategoryServiceImpl implements CategoryService {
             throw new ResourceNotFoundException("Category", "name", categoryName);
         }
 
+        List<UUID> categoryIds = categories.stream().map(Category::getId).collect(Collectors.toList());
+        List<TransactionRepository.CategoryCountProjection> counts = transactionRepository.countTransactionsForCategoryIds(categoryIds);
+
+        Map<UUID, Integer> countsMap = counts.stream()
+                .collect(Collectors.toMap(
+                        TransactionRepository.CategoryCountProjection::getCategoryId,
+                        TransactionRepository.CategoryCountProjection::getTransactionCount
+                ));
+
         return categories.stream()
                 .map(category -> {
                     CategoryResponse response = modelMapper.map(category, CategoryResponse.class);
-
-                    Integer count = transactionRepository.countByUserProfile_IdAndCategoryId(id, category.getId());
-                    response.setTransactionsCount(count != null ? count : 0);
-
+                    response.setTransactionsCount(countsMap.getOrDefault(category.getId(), 0));
                     return response;
                 })
                 .collect(Collectors.toList());

@@ -269,26 +269,29 @@ public class GoalServiceImpl implements GoalService {
 
         Page<Goal> goalPage = goalRepository.findAll(spec, pageable);
 
-        return goalPage.map(
-                goal -> {
-                    BigDecimal spent = BigDecimal.ZERO;
-                    if (goal.getCategory() != null) {
-                        spent = transactionRepository.getTotalSpentByCategoryAndDate(userID, goal.getCategory().getId(), goal.getStartDate(), goal.getEndDate());
-                    } else if (goal.getCompany() != null) {
-                        spent = transactionRepository.getTotalSpentByCompanyAndDate(userID, goal.getCompany().getId(), goal.getStartDate(), goal.getEndDate());
-                    }
-                    goal.setSpendAmount(spent);
+        if (goalPage.isEmpty()) return Page.empty();
 
-                    GoalResponse goalResponse = modelMapper.map(goal, GoalResponse.class);
+        List<UUID> goalIds = goalPage.getContent().stream().map(Goal::getId).collect(Collectors.toList());
+        List<GoalRepository.GoalSpendProjection> spends = goalRepository.getSpendAmountsForGoals(goalIds);
+        Map<UUID, BigDecimal> spendMap = spends.stream()
+                .collect(Collectors.toMap(
+                        GoalRepository.GoalSpendProjection::getGoalId,
+                        GoalRepository.GoalSpendProjection::getSpendAmount
+                ));
 
-                    if(goal.getCategory() != null){
-                        goalResponse.setCategoryID(goal.getCategory().getId());
-                    } else{
-                        goalResponse.setCompanyID(goal.getCompany().getId());
-                    }
+        return goalPage.map(goal -> {
+            goal.setSpendAmount(spendMap.getOrDefault(goal.getId(), BigDecimal.ZERO));
 
-                    return goalResponse;
-                });
+            GoalResponse goalResponse = modelMapper.map(goal, GoalResponse.class);
+
+            if(goal.getCategory() != null){
+                goalResponse.setCategoryID(goal.getCategory().getId());
+            } else if (goal.getCompany() != null) {
+                goalResponse.setCompanyID(goal.getCompany().getId());
+            }
+
+            return goalResponse;
+        });
     }
 
 

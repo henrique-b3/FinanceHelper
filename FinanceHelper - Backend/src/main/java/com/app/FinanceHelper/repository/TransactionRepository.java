@@ -4,6 +4,8 @@ import com.app.FinanceHelper.model.Transaction;
 import com.app.FinanceHelper.payload.response.CategoryExpenseResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -19,14 +21,15 @@ import java.util.UUID;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID>, JpaSpecificationExecutor<Transaction> {
 
+    @EntityGraph(attributePaths = {"company", "category"})
     Optional<Transaction> findByIdAndUserProfile_Id(UUID transactionID, UUID userID);
 
     @Query("SELECT t FROM Transaction t JOIN FETCH t.company JOIN FETCH t.category WHERE t.userProfile.id = :userID")
     List<Transaction> findAllByUserProfile_Id(@Param("userID") UUID userID);
 
-    @Query("SELECT t FROM Transaction t JOIN FETCH t.company JOIN FETCH t.category WHERE t.userProfile.id = :userID ORDER BY t.transactionDate DESC")
+    @EntityGraph(attributePaths = {"company", "category"})
+    @Query("SELECT t FROM Transaction t WHERE t.userProfile.id = :userID ORDER BY t.transactionDate DESC")
     Page<Transaction> findByUserProfileIdOrderByTransactionDateDesc(@Param("userID") UUID userID, Pageable pageable);
-
 
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t " +
             "WHERE t.userProfile.id = :userID " +
@@ -71,6 +74,15 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @EntityGraph(attributePaths = {"company", "category"})
+    Page<Transaction> findAll(Specification<Transaction> spec, Pageable pageable);
+
+    @Query("SELECT t.category.id AS categoryId, CAST(COUNT(t.id) AS int) AS transactionCount " +
+            "FROM Transaction t " +
+            "WHERE t.category.id IN :categoryIds " +
+            "GROUP BY t.category.id")
+    List<CategoryCountProjection> countTransactionsForCategoryIds(@Param("categoryIds") List<UUID> categoryIds);
 
     Integer countByUserProfile_Id(UUID userID);
 

@@ -26,7 +26,7 @@ public class Category {
     String image;
     String color;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @NotNull(message = "UserProfile cannot be empty!")
     UserProfile userProfile;

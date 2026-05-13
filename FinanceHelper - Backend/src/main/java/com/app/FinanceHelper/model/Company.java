@@ -24,12 +24,12 @@ public class Company {
     String color;
     String image;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @NotNull(message = "User profile cannot be empty!")
     UserProfile userProfile;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     Category category;
 

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,12 +20,16 @@ import java.util.UUID;
 public interface GoalRepository extends JpaRepository<Goal, UUID> {
     boolean existsByNameAndUserProfile_Id(String name, UUID userID);
 
+    @EntityGraph(attributePaths = {"company", "category"})
     Optional<Goal> findByIdAndUserProfile_Id(UUID goalID, UUID userID);
 
+    @EntityGraph(attributePaths = {"category", "company"})
     Page<Goal> findAllByUserProfile_Id(UUID userID, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"category", "company"})
     List<Goal> findAllByUserProfile_Id(UUID userID);
 
+    @EntityGraph(attributePaths = {"category", "company"})
     Page<Goal> findAll(Specification<Goal> spec, Pageable pageable);
 
 

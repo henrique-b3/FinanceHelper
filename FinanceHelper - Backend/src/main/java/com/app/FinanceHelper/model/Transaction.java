@@ -29,16 +29,16 @@ public class Transaction {
     @Column(nullable = false)
     LocalDate transactionDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @NotNull(message = "UserProfile cannot be empty!")
     UserProfile userProfile;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     Company company;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     @NotNull(message = "Category cannot be empty!")
     Category category;
