@@ -24,7 +24,8 @@ function GoalBarChart() {
     api
       .get("/goal/all")
       .then((answer) => {
-        setGoals(answer.data);
+        const data = answer.data.content || answer.data; 
+        setGoals(data);
       })
       .catch((error) => showAlert("Erro ao carregar gráfico", "error"));
   }, []);

@@ -40,7 +40,9 @@ function NewCategory({ isOpen, onClose, onSuccess, category = null }) {
       if (!category) {
         await api.post("/category", formData,);
       } else {
-        await api.put(`/category/update/${category.id}`, formData,);
+        await api.put(`/category/update`, formData,{
+            params: { categoryID: category.id },
+          },);
       }
 
       if (onSuccess) onSuccess();

@@ -20,7 +20,6 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setErro("");
 
     try {
       const resposta = await api.post("/auth/login", {

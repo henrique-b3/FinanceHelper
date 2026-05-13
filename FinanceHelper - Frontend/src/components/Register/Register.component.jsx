@@ -19,10 +19,9 @@ function Register({ isOpen, onClose }) {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setErro("");
 
     if (password !== confirmPassword) {
-      setErro("As senhas não coincidem");
+      showAlert("As senhas não coincidem", "error");
       return;
     }
 
@@ -35,18 +34,39 @@ function Register({ isOpen, onClose }) {
       });
 
       navigate("/login");
+      showAlert("Conta criada com sucesso! Faça login", "success");
+      clearData();
       onClose();
-      
     } catch (error) {
       showAlert(error, "error");
       console.error(error);
     }
   };
 
+  const clearData = () => {
+    setName("");
+    setLastName("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+  };
+
   return createPortal(
-    <div className="modalOverlay" onClick={onClose}>
+    <div
+      className="modalOverlay"
+      onClick={() => {
+        clearData();
+        onClose();
+      }}
+    >
       <div className="modalContent" onClick={(e) => e.stopPropagation()}>
-        <button className="closeButton" onClick={onClose}>
+        <button
+          className="closeButton"
+          onClick={() => {
+            clearData();
+            onClose();
+          }}
+        >
           ✕
         </button>
 

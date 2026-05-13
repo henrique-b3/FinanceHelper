@@ -23,6 +23,8 @@ public interface GoalRepository extends JpaRepository<Goal, UUID> {
 
     Page<Goal> findAllByUserProfile_Id(UUID userID, Pageable pageable);
 
+    List<Goal> findAllByUserProfile_Id(UUID userID);
+
     Page<Goal> findAll(Specification<Goal> spec, Pageable pageable);
 
 
